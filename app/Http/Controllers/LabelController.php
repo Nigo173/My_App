@@ -1,0 +1,179 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\LogModel;
+use App\Models\LabelModel;
+use App\Models\TradeModel;
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
+
+class LabelController extends Controller
+{
+    public function index(Request $request)
+    {
+        try
+        {
+            $LabelModel = new LabelModel();
+
+            if(isset($request->search) && $request->search != '' && $request->isMethod('get'))
+            {
+                $label = $LabelModel->Where('l_TitleOne', $request->search)->get();
+                return view('label', ['label' => $label]);
+            }
+            else if(isset($request->Id) && $request->Id != '' && $request->isMethod('post'))
+            {
+                $label = $LabelModel->Where('id', $request->Id)->get()->first();
+
+                if(isset($label->id))
+                {
+                    return view('label', ['data' => $label, 'action' => 'label_update']);
+                }
+
+                return view('label', ['msg' => '搜尋無此標籤']);
+            }
+            else if(isset($request->create))
+            {
+                $id = $this->get_random_Id();
+
+                return view('label', ['action' => 'label_create', 'lId' => $id]);
+            }
+            // ALL
+            $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
+            return view('label', ['label' => $label]);
+        }
+        catch(DecryptException $e)
+        {
+            return view('label', ['msg' => '搜尋異常錯誤']);
+        }
+    }
+
+    private function random_str(): string
+    {
+        $array = ['A','B','C','D','E','F','G','H'];
+        $randomItems = Arr::random($array).Arr::random($array).mt_rand(0, 9).mt_rand(0, 9).mt_rand(0, 9);
+        return $randomItems;
+    }
+
+    private function get_random_Id(): string
+    {
+        $data = new LabelModel();
+        $random_Id = $this->random_str();
+
+        for($i = 0; $i < 500; $i++)
+        {
+            if(!$data->where('l_Id', $random_Id)->exists())
+            {
+                break;
+            }
+
+            $random_Id = random_str();
+        }
+
+        return $random_Id;
+    }
+
+    public function create(Request $request)
+    {
+        $request->except(['msg']);
+        $msg = "建立標籤成功";
+        $LabelModel = new LabelModel();
+
+        if($request->isMethod('post'))
+        {
+            try
+            {
+                $count = $LabelModel->where('id', '>', 0)->get();
+
+                if($count->count() > 8)
+                {
+                    $msg = "標籤數量異常";
+                    $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
+                    return view('label', ['label' => $label, 'msg' => $msg]);
+                }
+
+                $data = $LabelModel->create([
+                    'l_Id'=>$request->lId,
+                    'l_Title'=>$request->title,
+                    'l_TitleOne'=>$request->titleOne,
+                    'l_TitleTwo'=>$request->titleTwo,
+                    'l_TitleThree'=>$request->titleThree,
+                    'l_TitleFour'=>$request->titleFour,
+                    'l_TitleFive'=>$request->titleFive,
+                    'l_TitleSix'=>$request->titleSix,
+                    'l_TitleSeven'=>$request->titleSeven
+                ]);
+
+                if(!$data->save())
+                {
+                    $msg = "建立標籤失敗";
+                }
+
+                $this->create_Log($request, $msg);
+            }
+            catch(DecryptException $e)
+            {
+                return view('error');
+            }
+        }
+        unset($_POST);
+        // ALL
+        $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
+        return view('label', ['label' => $label, 'msg' => $msg]);
+    }
+
+    public function update(Request $request)
+    {
+        $request->except(['msg']);
+        $msg = '編輯標籤成功';
+        $LabelModel = new LabelModel();
+
+        if(isset($request->Id) && $request->Id != '' && $request->isMethod('post'))
+        {
+            try
+            {
+                $data = $LabelModel->where('id', $request->Id)->update([
+                    'l_TitleOne'=>$request->titleOne,
+                    'l_TitleTwo'=>$request->titleTwo,
+                    'l_TitleThree'=>$request->titleThree,
+                    'l_TitleFour'=>$request->titleFour,
+                    'l_TitleFive'=>$request->titleFive,
+                    'l_TitleSix'=>$request->titleSix,
+                    'l_TitleSeven'=>$request->titleSeven
+                ]);
+
+                if(!$data)
+                {
+                    $msg = "編輯標籤失敗";
+                }
+
+                $this->create_Log($request, $msg);
+            }
+            catch(DecryptException $e)
+            {
+
+                return view('error');
+            }
+        }
+        unset($_POST);
+        // ALL
+        $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
+        return view('label', ['label' => $label, 'msg' => $msg]);
+    }
+
+    public function print()
+    {
+
+        return view('label_print');
+    }
+
+    private function create_Log(Request $request, string $note)
+    {
+        $note = session('Account').'執行 => '.$note;
+        $mac = strtok(exec('getmac'), ' ');
+        $url = $request->getRequestUri();
+        $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
+        LogModel::create(['log' => $data]);
+    }
+}
