@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 // use Illuminate\Support\Facades\Crypt;
-// use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\LogModel;
 use App\Models\AdminsModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Exception;
 
 class AdminsController extends Controller
 {
@@ -46,7 +46,7 @@ class AdminsController extends Controller
 
             return view('admins_list', ['action' => $action, 'admin' => $admins, 'msg' => $msg]);
         }
-        catch(DecryptException $e)
+        catch(Exception $e)
         {
             return view('admins_list', ['msg' => '搜尋異常錯誤']);
         }
@@ -87,7 +87,7 @@ class AdminsController extends Controller
                     return view('admins_list', ['action' => 'admins_create', 'msg' => $msg]);
                 }
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }
@@ -172,7 +172,7 @@ class AdminsController extends Controller
                     $request->session()->put('Name', $request->name);
                 }
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }
@@ -200,7 +200,7 @@ class AdminsController extends Controller
 
                 $this->create_Log($request, $msg);
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }
@@ -356,8 +356,10 @@ class AdminsController extends Controller
     private function create_Log(Request $request, string $note)
     {
         $note = session('Account').'執行 => (會員帳號:'.$request->Id.' 會員姓名: '.$request->name.')'.$note;
-        $mac = strtok(exec('getmac'), ' ');
-        $url = $request->getRequestUri();
+        // $mac = strtok(exec('getmac'), ' ');
+        // $url = $request->getRequestUri();
+        $mac = '';
+        $url = '';
         $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
         LogModel::create(['log' => $data]);
     }

@@ -11,6 +11,7 @@ use App\Models\LogModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Exception;
 
 class MemberController extends Controller
 {
@@ -67,7 +68,7 @@ class MemberController extends Controller
             $member = $MemberModel->limit(100)->reorder('updated_at', 'desc')->get();
             return view('member_list', ['action' => $action, 'member' => $member, 'msg' => $msg]);
         }
-        catch(DecryptException $e)
+        catch(Exception $e)
         {
             return view('member_list', ['msg' => '搜尋異常錯誤']);
         }
@@ -158,7 +159,7 @@ class MemberController extends Controller
                     return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
                 }
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }
@@ -206,7 +207,7 @@ class MemberController extends Controller
                 }
                 $this->create_Log($request, $msg);
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }
@@ -234,7 +235,7 @@ class MemberController extends Controller
 
                 $this->create_Log($request, $msg);
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }

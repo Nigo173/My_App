@@ -8,7 +8,7 @@ use App\Models\AdminsModel;
 use App\Models\LabelModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Exception;
 
 class TradeController extends Controller
 {
@@ -52,7 +52,7 @@ class TradeController extends Controller
 
                 return view('trade', ['msg' => '搜尋無此人']);
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('trade', ['msg' => '搜尋異常錯誤']);
             }
@@ -68,56 +68,43 @@ class TradeController extends Controller
         {
             try
             {
-                if($request->session()->get('id') == '')
+                $tId = date('Ymdhis', time()).$request->Id;
+
+                $data = TradeModel::create([
+                    't_Id'=>$tId,
+                    't_aId'=>$request->session()->get('Account'),
+                    't_aName'=>$request->session()->get('Name'),
+                    't_lId'=>$request->lId,
+                    't_lTitle'=>$request->lTitle,
+                    't_mId'=>$request->Id,
+                    't_mCardId'=>$request->cardId,
+                    't_mName'=>$request->name
+                ]);
+
+                $msg = "交易成功";
+                $tId = '';
+
+                if($data->save())
                 {
-                    $tId = date('Ymdhis', time()).$request->Id;
-
-                    $data = TradeModel::create([
-                        't_Id'=>$tId,
-                        't_aId'=>$request->session()->get('Account'),
-                        't_aName'=>$request->session()->get('Name'),
-                        't_lId'=>$request->lId,
-                        't_lTitle'=>$request->lTitle,
-                        't_mId'=>$request->Id,
-                        't_mCardId'=>$request->cardId,
-                        't_mName'=>$request->name
-                    ]);
-
-                    $msg = "交易成功";
-                    $tId = '';
-
-                    if($data->save())
-                    {
-                        $tId = $data->id;
-
-                        $request->session()->put('id', $data->id);
-                        $this->create_Log($request, $msg);
-                    }
-                    else
-                    {
-                        $msg = "交易失敗";
-                        $this->create_Log($request, $msg);
-                    }
-
-                    $trade = '';
-
-                    if($tId != '')
-                    {
-                        $trade = TradeModel::where('id', $tId)->get()->first();
-                    }
-
-                    return view('trade', ['msg' => $msg, 'trade' => $trade]);
+                    $tId = $data->id;
+                    $this->create_Log($request, $msg);
                 }
-                else if($request->session()->get('id') == 'error')
+                else
                 {
-                    $request->session()->put('id', '');
-                    return redirect()->route('trade');
+                    $msg = "交易失敗";
+                    $this->create_Log($request, $msg);
                 }
 
-                $request->session()->put('id', 'error');
-                return view('trade', ['msg' => '執行錯誤']);
+                $trade = '';
+
+                if($tId != '')
+                {
+                    $trade = TradeModel::where('id', $tId)->get()->first();
+                }
+
+                return view('trade', ['msg' => $msg, 'trade' => $trade]);
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }

@@ -8,6 +8,7 @@ use App\Models\LabelModel;
 use App\Models\TradeModel;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Exception;
 
 class LabelController extends Controller
 {
@@ -43,7 +44,7 @@ class LabelController extends Controller
             $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
             return view('label', ['label' => $label]);
         }
-        catch(DecryptException $e)
+        catch(Exception $e)
         {
             return view('label', ['msg' => '搜尋異常錯誤']);
         }
@@ -112,7 +113,7 @@ class LabelController extends Controller
 
                 $this->create_Log($request, $msg);
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }
@@ -150,9 +151,8 @@ class LabelController extends Controller
 
                 $this->create_Log($request, $msg);
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
-
                 return view('error');
             }
         }
@@ -162,11 +162,10 @@ class LabelController extends Controller
         return view('label', ['label' => $label, 'msg' => $msg]);
     }
 
-    public function print()
-    {
-
-        return view('label_print');
-    }
+    // public function print()
+    // {
+    //     return view('label_print');
+    // }
 
     private function create_Log(Request $request, string $note)
     {

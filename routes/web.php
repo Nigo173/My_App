@@ -2,10 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
-use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AdminsController;
 use App\Http\Controllers\LogController;
@@ -29,9 +27,7 @@ Route::prefix('/')->group(function () {
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-
 // Home
-// Route::middleware(LogMiddleware::class)
 Route::middleware(AdminsMiddleware::class)
 ->prefix('dashboard')
 ->group(function()
@@ -42,8 +38,6 @@ Route::middleware(AdminsMiddleware::class)
         Route::get('/', [TradeController::class, 'index'])->name('trade');
         Route::post('create', [TradeController::class, 'create'])->name('trade_create');
     });
-
-    // Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('member')->group(function () {
         Route::get('/', [MemberController::class, 'index'])->name('member');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\LogModel;
 use Illuminate\Http\Request;
+use Exception;
 
 class LogController extends Controller
 {
@@ -16,7 +17,7 @@ class LogController extends Controller
         //         $data = $log->where('log', 'like', '%'.$request->search.'%')->limit(100)->reorder('updated_at', 'desc')->get();
         //         return view('log', ['log' => $data]);
         //     }
-        //     catch(DecryptException $e)
+        //     catch(Exception $e)
         //     {
         //         return view('error');
         //     }
@@ -39,7 +40,7 @@ class LogController extends Controller
             $log = $LogModel->limit(100)->reorder('updated_at', 'desc')->get();
             return view('log', ['log' => $log]);
         }
-        catch(DecryptException $e)
+        catch(Exception $e)
         {
             return view('log', ['msg' => '搜尋異常錯誤']);
         }
@@ -64,7 +65,7 @@ class LogController extends Controller
                 }
                 unset($_POST);
             }
-            catch(DecryptException $e)
+            catch(Exception $e)
             {
                 return view('error');
             }

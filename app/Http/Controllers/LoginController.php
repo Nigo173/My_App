@@ -5,8 +5,9 @@ use Illuminate\Http\Request;
 use App\Models\Middleware\AuthMiddleware;
 use App\Models\AdminsModel;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Contracts\Encryption\DecryptException;
 // use Illuminate\Support\Facades\Session;
+use App\Models\LogModel;
+use Exception;
 
 // use App\Models\LoginModel;
 // use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,7 @@ class LoginController extends Controller
         {
             $request->session()->invalidate();
             $request->session()->regenerateToken();
+            $this->delete_log();
         }
 
         return view('login');
@@ -56,9 +58,9 @@ class LoginController extends Controller
                     return view('login', ['err' => '帳號停權']);
                 }
 
-                $mac = trim(substr(shell_exec('getmac'), 159, 20));
+                // $mac = trim(substr(shell_exec('getmac'), 159, 20));
                 $data = AdminsModel::where('a_Id', $request->account)->update([
-                    'a_Mac' => $mac,
+                    'a_Mac' => 'test234',
                 ]);
 
                 if(!$data)
@@ -71,11 +73,11 @@ class LoginController extends Controller
                 return view('login', ['err' => '登入失敗']);
             }
         }
-        catch(DecryptException $e)
+        catch(Exception $e)
         {
             return view('error');
         }
-        
+
         return redirect()->route('dashboard');
 
         // print_r($request->all());
@@ -112,5 +114,19 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
         // dd('sss');
         return redirect()->route('login');
+    }
+
+    private function delete_log()
+    {
+        try
+        {
+            LogModel::where('id', $request->Id)
+            ->where('created_at', '<','DATE_SUB(NOW(), INTERVAL 7 DAY')
+            ->delete();
+        }
+        catch(Exception $e)
+        {
+            return view('error');
+        }
     }
 }

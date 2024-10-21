@@ -36,7 +36,7 @@
         <div class="pX-2 py-5">
             {{-- 搜尋 --}}
             <form class="max-w-md mx-auto">
-                <div class="relative">
+                {{-- <div class="relative mb-3">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 20 20">
@@ -49,6 +49,47 @@
                         placeholder="關鍵字 身分證 或 姓名" />
                     <button type="submit"
                         class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">搜尋</button>
+                </div> --}}
+
+                <div class="flex justify-around w-full">
+                    <select name="selectShift" onchange="this.form.submit()"
+                        class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="" selected>班查詢</option>
+                        <option value="早班" {{ isset($selectShift) && $selectShift == '早班' ? 'selected' : '' }}>早班
+                        </option>
+                        <option value="中班" {{ isset($selectShift) && $selectShift == '中班' ? 'selected' : '' }}>中班
+                        </option>
+                        <option value="晚班" {{ isset($selectShift) && $selectShift == '晚班' ? 'selected' : '' }}>晚班
+                        </option>
+                    </select>
+                    <select name="selectMonth" onchange="this.form.submit()"
+                        class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="" selected>月查詢</option>
+                        <option value="1" {{ isset($selectMonth) && $selectMonth == '1' ? 'selected' : '' }}>1月
+                        </option>
+                        <option value="2" {{ isset($selectMonth) && $selectMonth == '2' ? 'selected' : '' }}>2月
+                        </option>
+                        <option value="3" {{ isset($selectMonth) && $selectMonth == '3' ? 'selected' : '' }}>3月
+                        </option>
+                        <option value="4" {{ isset($selectMonth) && $selectMonth == '4' ? 'selected' : '' }}>4月
+                        </option>
+                        <option value="5" {{ isset($selectMonth) && $selectMonth == '5' ? 'selected' : '' }}>5月
+                        </option>
+                        <option value="6" {{ isset($selectMonth) && $selectMonth == '6' ? 'selected' : '' }}>6月
+                        </option>
+                        <option value="7" {{ isset($selectMonth) && $selectMonth == '7' ? 'selected' : '' }}>7月
+                        </option>
+                        <option value="8" {{ isset($selectMonth) && $selectMonth == '8' ? 'selected' : '' }}>8月
+                        </option>
+                        <option value="9" {{ isset($selectMonth) && $selectMonth == '9' ? 'selected' : '' }}>9月
+                        </option>
+                        <option value="10" {{ isset($selectMonth) && $selectMonth == '10' ? 'selected' : '' }}>10月
+                        </option>
+                        <option value="11" {{ isset($selectMonth) && $selectMonth == '11' ? 'selected' : '' }}>11月
+                        </option>
+                        <option value="12" {{ isset($selectMonth) && $selectMonth == '12' ? 'selected' : '' }}>12月
+                        </option>
+                    </select>
                 </div>
             </form>
             {{-- 表格清單 --}}

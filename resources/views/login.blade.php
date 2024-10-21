@@ -8,6 +8,8 @@
     <title>{{ env('APP_NAME') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <script src="{{ asset('assets/jquery.min.js') }}"></script>
 </head>
 
 <body class="flex items-center justify-center px-10 py-10">

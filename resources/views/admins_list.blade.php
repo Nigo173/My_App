@@ -136,7 +136,7 @@
                                                         編輯
                                                     </button>
                                                 @endif
-                                                @if ($action == 'admins_delete')
+                                                @if ($action == 'admins_delete' && $admins->a_Id != session('Account'))
                                                     <input type="hidden" name="delete" value="delete">
                                                     <button type="submit"
                                                         class="px-2 py-1.5 text-white bg-red-700 hover:bg-red-800 text-md text-center">
@@ -204,7 +204,7 @@
                         <div class="flex flex-wrap py-4 px-0 w-full text-sm">
                             <div class="flex items-center me-4">
                                 <input checked id="state" type="radio" value="1" name="state"
-                                    @if ($action == 'admins_update') onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
+                                    @if ($action == 'admins_update' && isset($data)) onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
                             {{ $data->a_State == '1' ? 'checked' : '' }}
                             @else
                             onclick="{{ intval(session('Level')) < 2 ? 'return false' : '' }}" checked @endif
@@ -214,7 +214,7 @@
                             </div>
                             <div class="flex items-center me-4">
                                 <input id="state" type="radio" value="0" name="state"
-                                    @if ($action == 'admins_update') onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
+                                    @if ($action == 'admins_update' && isset($data)) onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
                             {{ $data->a_State == '0' ? 'checked' : '' }}
                             @else
                             onclick="{{ intval(session('Level')) < 2 ? 'return false' : '' }}" @endif
@@ -232,8 +232,8 @@
                         <div class="flex flex-wrap py-4 px-0 w-full text-sm">
                             <div class="flex items-center me-4">
                                 <input checked id="state" type="radio" value="1" name="level"
-                                    @if (isset($action) && $action == 'admins_update') onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
-                                {{ $data->a_Level == '1' || $data->a_State == null ? 'checked' : '' }}
+                                    @if (isset($action) && $action == 'admins_update' && isset($data)) onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
+                                {{ isset($data) && ($data->a_Level == '1' || $data->a_State == null) ? 'checked' : '' }}
                                 @else
                                 onclick="return false" checked @endif
                                     class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -243,7 +243,7 @@
                             @if (isset($action) && $action == 'admins_update')
                                 <div class="flex items-center me-4 {{ $data->a_Level == '2' ? '' : 'hidden' }}">
                                     <input id="state" type="radio" value="2" name="level"
-                                        onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
+                                        onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
                                         class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="level"
                                         class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">權限管理員</label>
@@ -260,7 +260,7 @@
                             <div class="flex items-center me-4">
                                 <input id="inline-checkbox" type="checkbox" name="member_Permissions[]"
                                     value="c"
-                                    @if (isset($action) && $action == 'admins_update') onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
+                                    @if (isset($action) && $action == 'admins_update' && isset($data)) onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
                                     {{ explode('_', $data->member_Permissions)[0] == 'member' && strpos(explode('_', $data->member_Permissions)[1], 'c') > -1 ? 'checked' : '' }}
                                     onclick="return false" @endif
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -277,7 +277,7 @@
                             <div class="flex items-center me-4">
                                 <input id="inline-checkbox" type="checkbox" name="member_Permissions[]"
                                     value="u"
-                                    @if (isset($action) && $action == 'admins_update') onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
+                                    @if (isset($action) && $action == 'admins_update' && isset($data)) onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
                                     {{ explode('_', $data->member_Permissions)[0] == 'member' && strpos(explode('_', $data->member_Permissions)[1], 'd') > -1 ? 'checked' : '' }}
                                     onclick="return false" @endif
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -288,8 +288,8 @@
                                 <div class="flex items-center me-4 {{ $data->a_Level == '2' ? '' : 'hidden' }}">
                                     <input id="inline-checkbox" type="checkbox" name="member_Permissions[]"
                                         value="d"
-                                        @if (isset($action) && $action == 'admins_update') onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
-                                    {{ explode('_', $data->member_Permissions)[0] == 'member' && strpos(explode('_', $data->member_Permissions)[1], 'd') > -1 ? 'checked' : '' }}
+                                        @if (isset($action) && $action == 'admins_update' && isset($data)) onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
+                                        {{ explode('_', $data->member_Permissions)[0] == 'member' && strpos(explode('_', $data->member_Permissions)[1], 'd') > -1 ? 'checked' : '' }}
                                     onclick="return false" @endif
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="inline-checkbox"
@@ -310,8 +310,8 @@
                                     <div class="flex items-center me-4">
                                         <input id="inline-checkbox" type="checkbox" name="admins_Permissions[]"
                                             value="c"
-                                            onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
-                                            {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }}
+                                            onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
+                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }} @endif
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="inline-checkbox"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">新增</label>
@@ -319,8 +319,8 @@
                                     <div class="flex items-center me-4">
                                         <input id="inline-checkbox" type="checkbox" name="admins_Permissions[]"
                                             value="r"
-                                            onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
-                                            {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }}
+                                            onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
+                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }} @endif
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="inline-checkbox"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">查詢</label>
@@ -328,8 +328,8 @@
                                     <div class="flex items-center me-4">
                                         <input id="inline-checkbox" type="checkbox" name="admins_Permissions[]"
                                             value="u"
-                                            onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
-                                            {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }}
+                                            onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
+                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }} @endif
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="inline-checkbox"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">編輯</label>
@@ -337,8 +337,8 @@
                                     <div class="flex items-center me-4">
                                         <input id="inline-checkbox" type="checkbox" name="admins_Permissions[]"
                                             value="d"
-                                            onclick="{{ $data->a_Level == '2' ? 'return false' : '' }}"
-                                            {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }}
+                                            onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
+                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }} @endif
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="inline-checkbox"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">刪除</label>
