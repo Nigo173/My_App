@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('t_mId', 10)->comment('會員編號');
             $table->string('t_mCardId', 10)->comment('會員身分證');
             $table->string('t_mName', 10)->comment('會員姓名');
+            $table->longText('t_mImg', 10)->comment('會員照片');
             // $table->string('t_Title', 15)->comment('交易名稱');
             // $table->string('t_Content', 100)->comment('交易內容')->nullable();
             // $table->string('t_Money', 10)->comment('交易金額');

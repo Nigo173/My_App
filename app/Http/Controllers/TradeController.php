@@ -78,7 +78,8 @@ class TradeController extends Controller
                     't_lTitle'=>$request->lTitle,
                     't_mId'=>$request->Id,
                     't_mCardId'=>$request->cardId,
-                    't_mName'=>$request->name
+                    't_mName'=>$request->name,
+                    't_mImg'=>$request->mImg,
                 ]);
 
                 $msg = "交易成功";

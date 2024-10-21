@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ env('APP_NAME') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    <script src="{{ asset('assets/jquery.min.js') }}"></script>
 </head>
 
 <body class="bg-slate-200">
     <header class="bg-slate-800 shadow-lg text-lg font-bold">
         <nav class="flex">
-            <div class="flex items-center justify-center gap-20  pt-5 pb-5 w-5/6">
+            <div class="flex items-center justify-center gap-20 pt-5 pb-5 w-5/6">
                 <a href="{{ route('member') }}" class="nav-link text-slate-100">會員管理</a>
                 <a href="{{ route('dashboard') }}" class="nav-link text-slate-100">來店統計</a>
                 <a href="{{ route('trade') }}" class="nav-link text-slate-100">點餐系統</a>
@@ -28,6 +28,8 @@
     <main class="relative py-8 mx-auto px-2 max-w-screen-2xl text-slate-900">
         {{ $slot }}
     </main>
+
+
 </body>
 
 </html>

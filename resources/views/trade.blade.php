@@ -35,10 +35,34 @@
                 </div>
             @endif
 
-            <div class="h-full">
-                <img class="w-full {{ isset($member) && $member->m_Img != '' ? '' : 'hidden' }}"
-                    src="{{ isset($member) ? $member->m_Img : '' }}">
+            <div class="h-full relative">
+                {{-- 照片 --}}
+                <div class="relative h-100 h-1/4 z-0 w-full mb-8 group">
+                    <div class="absolute bottom-0 top-5 w-full h-full bg-slate-300">
+                        <div class="relative">
+                            <label for="myfileid" class="cursor-pointer" title="上傳圖片">
+                                <img class="w-full h-full" id="imgView" src="">
+                                <div class="absolute left-0 top-0 w-10 h-10">
+                                    <input type="file" name="img" id="myfileid"
+                                        accept="image/png, image/gif, image/jpeg"
+                                        class="text-sm w-24 text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                        required />
+                                </div>
+                            </label>
+                            <input type="hidden" name="mImg" value="">
+                        </div>
+                    </div>
+
+                    <label for="img"
+                        class="text-red-700 peer-focus:font-medium absolute text-sm z-10 right-0 -top-1">照片
+                        *圖片小於2MB*</label>
+                </div>
+                <canvas id="my_canvas"></canvas>
+                <video id="my_video" poster="https://alldata.sgp1.digitaloceanspaces.com/images%2Fwebcam_hint.png"
+                    playsinline autoplay muted></video>
+
                 <form action="{{ route('trade') }}" method="GET">
+
                     <div class="flex items-center mb-6 mt-5">
                         <div class="md:w-1/3">
                             <label class="block text-center" for="cardId">
@@ -120,11 +144,9 @@
                                 <input type="{{ isset($member) ? 'submit' : 'text' }}" name="lTitle"
                                     {{ isset($member) ? '' : 'readonly' }}
                                     class=" bg-gray-200 border-2 border-blue-800 rounded-full p-1 mx-auto text-center text-sm font-semibold text-gray-700 w-10 h-10 cursor-pointer hover:bg-blue-400"
-                                    value="{{ $labels->l_Title }}"
-                                    onclick="clearText()" @if (isset($member))
-                                data-modal-target="Modal" data-modal-toggle="Modal"
-                            @endif
-                        @endforeach
+                                    value="{{ $labels->l_Title }}" onclick="clearText()"
+                                    @if (isset($member)) data-modal-target="Modal" data-modal-toggle="Modal" @endif />
+                            @endforeach
                         @endif
                     </div>
                 </form>
@@ -224,8 +246,7 @@
         </script>
     @endif
     <script>
-        function clearText(event)
-        {
+        function clearText(event) {
             event.disabled = true;
 
             setTimeout(() => {
@@ -245,5 +266,21 @@
         setTimeout(() => {
             document.getElementById('toast-success-button').click();
         }, seconds);
+
+        document.getElementById('myfileid').addEventListener('change', function(event) {
+            var preview = document.getElementById('imgView');
+            var file = event.target.files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function() {
+                preview.src = reader.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+            }
+        });
     </script>
 </x-layout>

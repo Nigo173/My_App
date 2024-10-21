@@ -51,9 +51,9 @@
                         class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">搜尋</button>
                 </div> --}}
 
-                <div class="flex justify-around w-full">
+                <div class="grid gap-4 grid-cols-2 p-4 bg-gray-300">
                     <select name="selectShift" onchange="this.form.submit()"
-                        class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="" selected>班查詢</option>
                         <option value="早班" {{ isset($selectShift) && $selectShift == '早班' ? 'selected' : '' }}>早班
                         </option>
@@ -63,7 +63,7 @@
                         </option>
                     </select>
                     <select name="selectMonth" onchange="this.form.submit()"
-                        class="w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="" selected>月查詢</option>
                         <option value="1" {{ isset($selectMonth) && $selectMonth == '1' ? 'selected' : '' }}>1月
                         </option>

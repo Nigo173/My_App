@@ -20,3 +20,9 @@ youtuber
 https://www.youtube.com/watch?v=R4Bc_nLRm7o&list=PL38wFHH4qYZXH8Gb7PIbmyjdsWdEJLImp&index=10
 https://www.youtube.com/watch?v=LtzPygnIqn4
 https://www.youtube.com/watch?v=tLgDMqXuSW0
+
+http://laravelapp.rf.gd/login
+
+相機
+https://ithelp.ithome.com.tw/m/articles/10239176
+https://webmix.cc/lab/show_webcam_on_video_and_take_a_picture

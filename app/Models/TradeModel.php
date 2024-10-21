@@ -16,7 +16,8 @@ class TradeModel extends Model
                             't_lTitle',
                             't_mId',
                             't_mCardId',
-                            't_mName'
+                            't_mName',
+                            't_mImg'
                             // 't_Content',
                             // 't_Money',
                             // 't_PayDateTime',
