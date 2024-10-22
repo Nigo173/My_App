@@ -1,37 +1,4 @@
 <x-layout>
-    @if (isset($msg) && $msg != '')
-        <div id="toast-success"
-            class="absolute right-10 top-10 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
-            role="alert">
-            <div
-                class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 {{ strpos($msg, '成功') ? 'text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200' : 'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200' }}  ">
-                @if (strpos($msg, '成功'))
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                        viewBox="0 0 20 20">
-                        <path
-                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-                    </svg>
-                @else
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                        viewBox="0 0 20 20">
-                        <path
-                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />
-                    </svg>
-                @endif
-            </div>
-            <div class="ms-3 text-sm font-normal">{{ $msg }}</div>
-            <button type="button" id="toast-success-button"
-                class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
-                data-dismiss-target="#toast-success" aria-label="Close">
-                <span class="sr-only">Close</span>
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                </svg>
-            </button>
-        </div>
-    @endif
     <div
         class="relative {{ !isset($admin) ? 'max-w-lg bg-slate-200 mx-auto' : '' }} overflow-x-auto shadow-xl rounded-lg">
         <div class="pX-2 py-5">
@@ -87,7 +54,7 @@
                     </thead>
                     <tbody>
                         @foreach ($admin as $admins)
-                            <tr
+                            <tr id="{{ $admins->a_Id }}"
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
                                 <td class="px-6 py-4">
                                     {{ $admins->a_Id }}
@@ -127,21 +94,26 @@
                                 @if ($action != 'admins_list')
                                     <td class="px-6 py-4 text-ellipsis overflow-hidden">
                                         @if (intval(session('Level')) > 0)
-                                            <form action="" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="Id" value="{{ $admins->a_Id }}">
-                                                @if ($action == 'admins_update')
+                                            @if ($action == 'admins_update')
+                                                <form action="" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="Id" value="{{ $admins->a_Id }}">
                                                     <button type="submit"
                                                         class="px-2 py-1.5 text-gray-600 bg-yellow-300 hover:bg-yellow-400 text-md text-center">
                                                         編輯
                                                     </button>
-                                                @endif
-                                                @if ($action == 'admins_delete' && $admins->a_Id != session('Account'))
+                                            @endif
+
+                                            @if ($action == 'admins_delete' && $admins->a_Id != session('Account'))
+                                                <form id="formDelete" data-action="{{ route($action) }}">
+                                                    @csrf
                                                     <input type="hidden" name="delete" value="delete">
+                                                    <input type="hidden" name="Id" value="{{ $admins->a_Id }}">
+
                                                     <button type="submit"
                                                         class="px-2 py-1.5 text-white bg-red-700 hover:bg-red-800 text-md text-center">
                                                         刪除</button>
-                                                @endif
+                                            @endif
                                             </form>
                                         @endif
                                     </td>
@@ -152,7 +124,7 @@
                 </table>
             @else
                 {{-- 表單 --}}
-                <form class="max-w-md mx-auto" action="{{ route($action) }}" method="POST">
+                <form id="formCreate" class="max-w-md mx-auto" data-action="{{ route($action) }}" method="POST">
                     @csrf
                     <input type="hidden" name="update" value="update">
                     <input type="hidden" name="Id"
@@ -353,10 +325,10 @@
                     @endif
                     <div class="text-center">
                         @if (isset($data))
-                            <button type="submit" data-modal-target="Modal" data-modal-toggle="Modal"
+                            <button type="submit"
                                 class="text-white bg-yellow-300 hover:bg-yellow-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-10 py-2 text-center dark:bg-yellow-300 dark:hover:bg-yellow-400 dark:focus:ring-yellow-600">編輯</button>
                         @else
-                            <button type="submit" data-modal-target="Modal" data-modal-toggle="Modal"
+                            <button type="submit"
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-10 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">新增</button>
                         @endif
                     </div>
@@ -364,9 +336,33 @@
             @endif
         </div>
     </div>
+    {{-- Toast --}}
+    <div id="toast-success"
+        class="hidden absolute right-10 top-10 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+        role="alert">
+        <div
+            class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200 ">
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                viewBox="0 0 20 20">
+                <path
+                    d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+            </svg>
+        </div>
+        <div class="ms-3 text-sm font-normal" id="toast-success-msg"></div>
+        <button type="button" id="toast-success-button"
+            class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+            data-dismiss-target="#toast-success" aria-label="Close">
+            <span class="sr-only">Close</span>
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+        </button>
+    </div>
     {{-- Modal Loading --}}
-    <div id="Modal"
-        class="absolute left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
+    <div id="Modal" data-modal-backdrop="static" tabindex="-1"
+        class="hidden absolute left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
         <svg aria-hidden="true" class="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -377,37 +373,68 @@
                 fill="currentFill" />
         </svg>
     </div>
-    {{-- Modal Image --}}
-    <div id="popup-modal" tabindex="-1"
-        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow w-96 h-96 dark:bg-gray-700">
-                <button type="button"
-                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                    data-modal-hide="popup-modal">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                    </svg>
-                    <span class="sr-only">Close modal</span>
-                </button>
-                <img class="w-full h-full mx-auto" id="modalImg" src="">
-            </div>
-        </div>
-    </div>
 
     <script>
-        let second = {{ isset($admin) || isset($data) || !isset($Id) ? 0 : 5000 }};
+        const form = $('#formCreate,#formDelete');
 
-        setTimeout(() => {
-            document.getElementById('Modal').classList.add('hidden');
-        }, second);
+        $(form).on('submit', function(event) {
+            event.preventDefault();
+            // 驗證表單
 
-        let seconds = {{ isset($msg) && $msg != '' ? 3000 : 0 }};
+            const reportValidity = form[0].reportValidity();
 
-        setTimeout(() => {
-            document.getElementById('toast-success-button').click();
-        }, seconds);
+            if (reportValidity) {
+                $('#Modal').removeClass('hidden');
+                const url = $(this).attr('data-action');
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: new FormData(this),
+                    dataType: 'JSON',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.msg.indexOf("成功") > -1) {
+                            form.trigger("reset");
+                        }
+                        // 刪除tr
+                        if (url.indexOf("delete") > -1) {
+                            if (response.msg.indexOf("成功") > -1) {
+
+                                var jsonstringify = JSON.stringify(form.serializeArray());
+                                var jsonEle = JSON.parse(jsonstringify);
+
+                                console.log(jsonEle);
+
+                                $('#' + jsonEle[2]['value']).remove();
+                            }
+                        } else if (url.indexOf("create")) {
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        }
+                        $('#toast-success').removeClass('hidden');
+                        $('#toast-success-msg').text(response.msg);
+                    },
+                    error: function(response) {
+                        $('#toast-success').toggleClass(
+                            'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
+                        );
+                        $('#toast-success').find('path').attr('d',
+                            'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
+                        );
+                    },
+                    complete: function() {
+                        $('#Modal').addClass('hidden');
+
+                        setTimeout(() => {
+                            $('#toast-success').addClass('hidden');
+                        }, 3000);
+                    }
+                });
+            }
+        });
     </script>
 </x-layout>

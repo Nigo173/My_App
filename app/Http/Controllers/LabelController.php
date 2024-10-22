@@ -106,19 +106,24 @@ class LabelController extends Controller
                     'l_TitleSeven'=>$request->titleSeven
                 ]);
 
-                if(!$data->save())
+                if($data->save())
+                {
+                    $msg = "建立標籤成功";
+                    $this->create_Log($request, $msg);
+                    return response()->json(['action'=>'list','msg'=>$msg]);
+                }
+                else
                 {
                     $msg = "建立標籤失敗";
+                    $this->create_Log($request, $msg);
+                    return response()->json(['action'=>'create','msg'=>$msg]);
                 }
-
-                $this->create_Log($request, $msg);
             }
             catch(Exception $e)
             {
                 return view('error');
             }
         }
-        unset($_POST);
         // ALL
         $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
         return view('label', ['label' => $label, 'msg' => $msg]);
@@ -155,8 +160,8 @@ class LabelController extends Controller
             {
                 return view('error');
             }
+            return $this->list($request, 'admins_update', $msg);
         }
-        unset($_POST);
         // ALL
         $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
         return view('label', ['label' => $label, 'msg' => $msg]);

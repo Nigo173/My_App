@@ -36,6 +36,7 @@ Route::middleware(AdminsMiddleware::class)
 
     Route::prefix('trade')->group(function () {
         Route::get('/', [TradeController::class, 'index'])->name('trade');
+        Route::post('list', [TradeController::class, 'list'])->name('trade_list');
         Route::post('create', [TradeController::class, 'create'])->name('trade_create');
     });
 

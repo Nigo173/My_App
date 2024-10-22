@@ -78,13 +78,15 @@ class AdminsController extends Controller
                 {
                     $msg = "新增成功";
                     $this->create_Log($request, $msg);
-                    return $this->list($request, 'admins_list', $msg);
+                    return response()->json(['action'=>'list','msg'=>$msg]);
+                    // return $this->list($request, 'admins_list', $msg);
                 }
                 else
                 {
                     $msg = "新增失敗";
                     $this->create_Log($request, $msg);
-                    return view('admins_list', ['action' => 'admins_create', 'msg' => $msg]);
+                    return response()->json(['action'=>'create','msg'=>$msg]);
+                    // return view('admins_list', ['action' => 'admins_create', 'msg' => $msg]);
                 }
             }
             catch(Exception $e)
@@ -92,7 +94,6 @@ class AdminsController extends Controller
                 return view('error');
             }
         }
-        unset($_POST);
         return view('admins_list', ['action' => 'admins_create', 'Id' => $this->get_random_Id()]);
     }
 
@@ -176,6 +177,7 @@ class AdminsController extends Controller
             {
                 return view('error');
             }
+            return response()->json(['action'=>'update','msg'=>$msg]);
         }
         return $this->list($request, 'admins_update', $msg);
     }
@@ -204,6 +206,7 @@ class AdminsController extends Controller
             {
                 return view('error');
             }
+            return response()->json(['action'=>'delete','msg'=>$msg]);
         }
         return $this->list($request, 'admins_delete', $msg);
     }

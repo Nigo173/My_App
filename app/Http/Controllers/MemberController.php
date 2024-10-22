@@ -79,6 +79,10 @@ class MemberController extends Controller
         $request->except(['msg']);
         $msg = '';
 
+        // 會員編號
+        $count = MemberModel::select('m_Id')->count() + 1;
+        $Id = sprintf('%06d', $count);
+
         if($request->isMethod('post'))
         {
             try
@@ -118,8 +122,6 @@ class MemberController extends Controller
                     }
                 }
 
-                $id = $this->get_random_Id();
-
                 // $q->select('m_CardId')->where('m_CardId', $request->cardId)->get();
                 // MemberModel::select('m_CardId')->where('m_CardId', $request->cardId)->get()->toArray()
 
@@ -134,8 +136,13 @@ class MemberController extends Controller
                     return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
                 }
 
+                // 會員編號
+                $count = MemberModel::select('m_Id')->count() + 1;
+                $Id = sprintf('%06d', $count);
+                // $id = $this->get_random_Id();
+
                 $data = MemberModel::create([
-                    'm_Id'=>$id,
+                    'm_Id'=>$Id,
                     'm_CardId'=>$request->cardId,
                     'm_Name'=>$request->name,
                     'm_Birthday'=>$request->birthday,
@@ -150,13 +157,15 @@ class MemberController extends Controller
                 {
                     $msg = "新增成功";
                     $this->create_Log($request, $msg);
-                    return $this->list($request, 'member_list', $msg);
+                    // return $this->list($request, 'member_list', $msg);
+                    return response()->json(['action'=>'list','msg'=>$msg]);
                 }
                 else
                 {
                     $msg = "新增失敗";
                     $this->create_Log($request, $msg);
-                    return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
+                    // return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
+                    return response()->json(['action'=>'create','msg'=>$msg]);
                 }
             }
             catch(Exception $e)
@@ -164,7 +173,7 @@ class MemberController extends Controller
                 return view('error');
             }
         }
-        return view('member_list', ['action' => 'member_create']);
+        return view('member_list', ['action' => 'member_create', 'Id' => $Id]);
     }
 
     public function update(Request $request)
@@ -211,6 +220,7 @@ class MemberController extends Controller
             {
                 return view('error');
             }
+            return response()->json(['action'=>'update','msg'=>$msg]);
         }
         return $this->list($request, 'member_update', $msg);
     }
@@ -239,8 +249,9 @@ class MemberController extends Controller
             {
                 return view('error');
             }
+            return response()->json(['action'=>'delete','msg'=>$msg]);
         }
-        return $this->list($request, 'member_delete', $msg);
+        return $this->list($request, 'member_delete', $msg);        
     }
 
     private function get_Permissions(): string

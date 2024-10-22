@@ -14,50 +14,71 @@ class TradeController extends Controller
 {
     public function index(Request $request)
     {
-        if(isset($request->cardId) && $request->isMethod('get'))
+        return view('trade');
+    }
+
+    public function list(Request $request)
+    {
+        try
         {
-            try
+
+            dd($request);
+
+            if(isset($request->search))
             {
-                $member = MemberModel::Where('m_CardId', $request->cardId)->get()->first();
+                $member = MemberModel::Where('m_Id', $request->Id)
+                ->orWhere('m_CardId',$request->cardId)
+                ->orWhere('m_Name',$request->name)
+                ->orWhere('m_Phone',$request->phone)
+                ->get();
 
-                if(isset($member->m_CardId))
-                {
-                    //  SELECT COUNT(*), t_lTitle  FROM (SELECT t_lTitle FROM `trade` WHERE t_mCardId= 'C333333333' LIMIT 5) AS a
-
-                    DB::enableQueryLog();
-
-                    $memberlabel = TradeModel::select(TradeModel::raw('count(*) AS t_Count ,t_mCardId'),'t_lTitle')
-                    ->where('t_mCardId', $request->cardId)->groupBy('t_mCardId','t_lTitle')
-                    ->limit(5)->reorder('updated_at', 'desc')->get();
-
-                    // $SubQuery = TradeModel::orderBy('created_at', 'desc')->where('t_mCardId', 'C333333333');
-
-                    // ->orderBy('updated_at', 'desc')->skip(3)->take(3);
-
-                    // $memberlabel = DB::table(DB::raw("({$SubQuery->toSql()}) as sub where 1=1"))->select(
-                    // array(
-                    //     DB::raw('COUNT(`created_at`) as `date`'),
-                    //     't_mCardId'
-                    // )
-                    // )
-                    // ->mergeBindings($SubQuery->getQuery())->get();
-
-                    // dd($memberlabel); // Sh
-
-                    // dd(DB::getQueryLog()); // Sh
-
-                    $label = LabelModel::limit(8)->reorder('updated_at', 'desc')->get();
-                    return view('trade', ['member' => $member, 'label' => $label, 'memberlabel' => $memberlabel]);
-                }
-
-                return view('trade', ['msg' => '搜尋無此人']);
+                return view('trade', ['member' => $member]);
             }
-            catch(Exception $e)
+            else if(isset($request->searchMember))
             {
-                return view('trade', ['msg' => '搜尋異常錯誤']);
+                //  SELECT COUNT(*), t_lTitle  FROM (SELECT t_lTitle FROM `trade` WHERE t_mCardId= 'C333333333' LIMIT 5) AS a
+
+                // DB::enableQueryLog();
+
+                dd($request->searchMember);
+
+                $memberlabel = TradeModel::select(TradeModel::raw('count(*) AS t_Count ,t_mCardId'),'t_lTitle')
+                ->where('t_mCardId', $request->cardId)->groupBy('t_mCardId','t_lTitle')
+                ->limit(5)->reorder('updated_at', 'desc')->get();
+
+                $data = MemberModel::Where('m_Id', $request->searchMember)
+                ->get()->first();
+
+
+                // $SubQuery = TradeModel::orderBy('created_at', 'desc')->where('t_mCardId', 'C333333333');
+
+                // ->orderBy('updated_at', 'desc')->skip(3)->take(3);
+
+                // $memberlabel = DB::table(DB::raw("({$SubQuery->toSql()}) as sub where 1=1"))->select(
+                // array(
+                //     DB::raw('COUNT(`created_at`) as `date`'),
+                //     't_mCardId'
+                // )
+                // )
+                // ->mergeBindings($SubQuery->getQuery())->get();
+
+                // dd($memberlabel); // Sh
+
+                // dd(DB::getQueryLog()); // Sh
+
+                $label = LabelModel::limit(8)->reorder('updated_at', 'desc')->get();
+                return view('trade', ['data' => $data, 'label' => $label, 'memberlabel' => $memberlabel]);
             }
+
+
+            return view('trade', ['msg' => '搜尋無此人']);
+        }
+        catch(Exception $e)
+        {
+            return view('trade', ['msg' => '搜尋異常錯誤']);
         }
         return view('trade');
+
     }
 
     public function create(Request $request)
