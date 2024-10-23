@@ -11,6 +11,7 @@ use App\Models\LogModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class MemberController extends Controller
@@ -65,7 +66,7 @@ class MemberController extends Controller
                 return view('member_list', ['action' => 'member_list', 'member' => $member]);
             }
             // ALL
-            $member = $MemberModel->limit(100)->reorder('updated_at', 'desc')->get();
+            $member = $MemberModel->limit(50)->reorder('updated_at', 'desc')->get();
             return view('member_list', ['action' => $action, 'member' => $member, 'msg' => $msg]);
         }
         catch(Exception $e)
@@ -95,12 +96,9 @@ class MemberController extends Controller
                     // /*Not From Form*/
                     // $img_size = getimagesize("imagepath");
 
-
                     // $img_size = getimagesizefromstring(file_get_contents($request->file('img')->path()));
-
                     // dd($img_size);
                     // $encode_Img = base64_encode(file_get_contents($request->file('img')->path()));
-
 
                     // $size_in_bytes = (int) (strlen(rtrim($encode_Img, '=')) * 3 / 4);
                     // $size_in_kb    = $size_in_bytes / 1024;
@@ -111,14 +109,16 @@ class MemberController extends Controller
                     //     return view('member_list', ['action' => 'member_create', 'msg' => '圖片大於2MB、請壓縮圖片']);
                     // }
 
-
                     // $img = "data:image/png;base64,". $encode_Img;
 
                     $img = $this->get_Image($request->file('img')->path());
 
                     if(strlen($img) < 10)
                     {
-                        return view('member_list', ['action' => 'member_create', 'msg' => '圖片大於2MB、請壓縮圖片']);
+                        $msg = "圖片大於2MB、請壓縮圖片";
+
+                        // return view('member_list', ['action' => 'member_create', 'msg' => '圖片大於2MB、請壓縮圖片']);
+                        return response()->json(['action'=>'list','msg'=>$msg]);
                     }
                 }
 
@@ -133,7 +133,8 @@ class MemberController extends Controller
                     $msg = "身分證號已存在";
                     // return redirect()->back()->withInput();
                     // return redirect()->route('member_list?msg=身分證號已存在', ['action' => 'member_create', 'msg' => $msg])->withInput();
-                    return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
+                    // return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
+                    return response()->json(['action'=>'list','msg'=>$msg]);
                 }
 
                 // 會員編號
@@ -251,7 +252,7 @@ class MemberController extends Controller
             }
             return response()->json(['action'=>'delete','msg'=>$msg]);
         }
-        return $this->list($request, 'member_delete', $msg);        
+        return $this->list($request, 'member_delete', $msg);
     }
 
     private function get_Permissions(): string

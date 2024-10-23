@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('trade', function (Blueprint $table) {
             $table->id();
             $table->string('t_Id', 25)->comment('交易編號');
+            $table->string('t_No', 25)->comment('交易標籤流水號');
             $table->string('t_aId', 10)->comment('管理員編號');
             $table->string('t_aName', 10)->comment('管理員姓名');
             $table->string('t_lId', 20)->comment('標籤編號');
@@ -21,7 +22,10 @@ return new class extends Migration
             $table->string('t_mId', 10)->comment('會員編號');
             $table->string('t_mCardId', 10)->comment('會員身分證');
             $table->string('t_mName', 10)->comment('會員姓名');
-            $table->longText('t_mImg', 10)->comment('會員照片');
+            $table->string('t_mBirthday', 10)->comment('會員生日');
+            $table->string('t_mPhone', 20)->comment('會員電話');
+            $table->longText('t_mImg')->comment('會員照片');
+
             // $table->string('t_Title', 15)->comment('交易名稱');
             // $table->string('t_Content', 100)->comment('交易內容')->nullable();
             // $table->string('t_Money', 10)->comment('交易金額');

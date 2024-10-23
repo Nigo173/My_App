@@ -132,7 +132,7 @@ class LabelController extends Controller
     public function update(Request $request)
     {
         $request->except(['msg']);
-        $msg = '編輯標籤成功';
+        $msg = '';
         $LabelModel = new LabelModel();
 
         if(isset($request->Id) && $request->Id != '' && $request->isMethod('post'))
@@ -149,6 +149,8 @@ class LabelController extends Controller
                     'l_TitleSeven'=>$request->titleSeven
                 ]);
 
+                $msg = '編輯標籤成功';
+
                 if(!$data)
                 {
                     $msg = "編輯標籤失敗";
@@ -160,23 +162,20 @@ class LabelController extends Controller
             {
                 return view('error');
             }
-            return $this->list($request, 'admins_update', $msg);
+            return response()->json(['action'=>'label','msg'=>$msg]);
         }
         // ALL
         $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
         return view('label', ['label' => $label, 'msg' => $msg]);
     }
 
-    // public function print()
-    // {
-    //     return view('label_print');
-    // }
-
     private function create_Log(Request $request, string $note)
     {
         $note = session('Account').'執行 => '.$note;
-        $mac = strtok(exec('getmac'), ' ');
-        $url = $request->getRequestUri();
+        // $mac = strtok(exec('getmac'), ' ');
+        // $url = $request->getRequestUri();
+        $mac = '';
+        $url = '';
         $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
         LogModel::create(['log' => $data]);
     }

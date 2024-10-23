@@ -23,7 +23,6 @@ class AuthMiddleware
             echo "Hello World";
         }
 
-
         if(true)
         {
             return $next($request);

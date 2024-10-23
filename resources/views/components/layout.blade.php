@@ -26,11 +26,9 @@
         </nav>
     </header>
 
-    <main class="relative py-8 mx-auto px-2 max-w-screen-2xl text-slate-900">
+    <main class="relative py-8 mx-auto px-2 max-w-screen-2xl text-slate-900 h-screen">
         {{ $slot }}
     </main>
-
-
 </body>
 
 </html>

@@ -10,6 +10,7 @@ class TradeModel extends Model
     protected $table = 'trade';
     protected $fillable = [
                             't_Id',
+                            't_No',
                             't_aId',
                             't_aName',
                             't_lId',
@@ -17,6 +18,8 @@ class TradeModel extends Model
                             't_mId',
                             't_mCardId',
                             't_mName',
+                            't_mBirthday',
+                            't_mPhone',
                             't_mImg'
                             // 't_Content',
                             // 't_Money',

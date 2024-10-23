@@ -134,7 +134,6 @@
                     <input type="hidden" name="update" value="update">
                     <input type="hidden" name="Id"
                         value="{{ $action == 'member_update' && isset($data) ? $data->m_Id : '' }}">
-
                     {{-- 照片 --}}
                     <div class="relative h-100 h-1/4 z-0 w-full mb-8 group">
                         <div class="absolute bottom-0 top-5 w-full h-full bg-slate-300">
@@ -194,12 +193,13 @@
                     <div class="grid md:grid-cols-2 md:gap-6">
                         {{-- 生日 --}}
                         <div class="relative z-0 w-full mb-5 group">
-                            <input type="date" class="absolute bg-transparent top-0 right-0 border-0" />
+                            <input type="date" class="absolute bg-transparent top-0 right-0 border-0"
+                                onchange="dateChange()" />
                             <input type="text" name="birthday"
                                 value="{{ $action == 'member_update' && isset($data) ? $data->m_Birthday : old('birthday') }}"
                                 maxlength="10"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                placeholder=" " />
+                                placeholder=" " required />
                             <label for="birthday"
                                 class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">生日</label>
                         </div>
@@ -209,7 +209,7 @@
                                 value="{{ $action == 'member_update' && isset($data) ? $data->m_Phone : old('phone') }}"
                                 maxlength="20"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                placeholder=" " />
+                                placeholder=" " required />
                             <label for="phone"
                                 class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">電話</label>
                         </div>
@@ -318,61 +318,87 @@
     </div>
 
     <script>
-        const form = $('#formCreate,#formDelete');
+        $(function() {
+            var form = $('#formCreate,#formDelete');
 
-        $(form).on('submit', function(event) {
-            event.preventDefault();
-            // 驗證表單
+            $(form).on('submit', function(event) {
+                event.preventDefault();
+                // 驗證表單
+                var reportValidity = form[0].reportValidity();
 
-            const reportValidity = form[0].reportValidity();
+                if (reportValidity) {
+                    $('#Modal').removeClass('hidden');
+                    var url = $(this).attr('data-action');
 
-            if (reportValidity) {
-                $('#Modal').removeClass('hidden');
-                const url = $(this).attr('data-action');
-
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: new FormData(this),
-                    dataType: 'JSON',
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function(response) {
-                        if (response.msg.indexOf("成功") > -1) {
-                            form.trigger("reset");
-                        }
-                        // 刪除tr
-                        if (url.indexOf("delete") > -1) {
-                            if (response.msg.indexOf("成功") > -1) {
-
-                                var jsonstringify = JSON.stringify(form.serializeArray());
-                                var jsonEle = JSON.parse(jsonstringify);
-                                $('#' + jsonEle[2]['value']).remove();
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: new FormData(this),
+                        dataType: 'JSON',
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.msg.indexOf('成功') > -1) {
+                                // form.trigger("reset");
+                            } else {
+                                $('#toast-success').toggleClass(
+                                    'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
+                                );
+                                $('#toast-success').find('path').attr('d',
+                                    'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
+                                );
                             }
-                        } else if (url.indexOf("create")) {
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        }
-                        $('#toast-success').removeClass('hidden');
-                        $('#toast-success-msg').text(response.msg);
-                    },
-                    error: function(response) {
-                        $('#toast-success').toggleClass(
-                            'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
-                        );
-                        $('#toast-success').find('path').attr('d',
-                            'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
-                        );
-                    },
-                    complete: function() {
-                        $('#Modal').addClass('hidden');
+                            // 刪除tr
+                            if (url.indexOf('delete') > -1) {
+                                if (response.msg.indexOf('成功') > -1) {
 
-                        setTimeout(() => {
-                            $('#toast-success').addClass('hidden');
-                        }, 3000);
-                    }
+                                    var jsonstringify = JSON.stringify(form.serializeArray());
+                                    var jsonEle = JSON.parse(jsonstringify);
+                                    $('#' + jsonEle[2]['value']).remove();
+                                }
+                            } else if (url.indexOf('create')) {
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            }
+                            $('#toast-success').removeClass('hidden');
+                            $('#toast-success-msg').text(response.msg);
+                        },
+                        error: function(response) {
+                            $('#toast-success').removeClass('hidden');
+                            $('#toast-success-msg').text('會員資料不完整，會員管理編輯');
+                            $('#toast-success').toggleClass(
+                                'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
+                            );
+                            $('#toast-success').find('path').attr('d',
+                                'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
+                            );
+                        },
+                        complete: function() {
+                            $('#Modal').addClass('hidden');
+
+                            setTimeout(() => {
+                                form.trigger('reset');
+                                $('#toast-success').addClass('hidden');
+                            }, 3000);
+                        }
+                    });
+                }
+            });
+
+            // 生日 * 民國年
+            setTimeout(function() {
+                dateChange();
+            }, 1000);
+
+            function dateChange() {
+                document.querySelector('input[type="date"]').addEventListener('change', function(
+                    event) {
+                    var selectDate = document.querySelector('input[type="date"]').value;
+                    var year = (parseInt(selectDate.substring(0, 4), 10) - 1911).toString();
+                    var newVal = year + '' + selectDate.substring(4, 10);
+                    document.querySelector('input[name="birthday"]').value = newVal;
                 });
             }
         });
@@ -393,24 +419,18 @@
             }
         });
 
-        // 圖片
+        // 日期選擇
+        // document.querySelector('input[name="birthday"]').addEventListener("click", function(e) {
+        //     setTimeout(function() {
+        //         document.querySelector('input[type="date"]').showPicker();
+        //     }, 250);
+        // });
+
+
+
+        // Modal圖片
         function showImage(url) {
             document.getElementById('modalImg').src = url;
         }
-
-        // 日期選擇
-        document.querySelector('input[name="birthday"]').addEventListener("click", function(e) {
-            setTimeout(function() {
-                document.querySelector('input[type="date"]').showPicker();
-            }, 250);
-        });
-
-        // 生日 * 民國年
-        document.querySelector('input[type="date"]').addEventListener("change", function(e) {
-            var selectDate = document.querySelector('input[type="date"]').value;
-            const year = parseInt(selectDate.substring(0, 4), 10) - 1911;
-            const newVal = year.toString() + selectDate.substring(4, 10);
-            $('input[name="birthday"]').val(newVal);
-        });
     </script>
 </x-layout>

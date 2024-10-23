@@ -1,49 +1,51 @@
 <x-layout>
-    <div class="relative overflow-x-auto sm:rounded-lg overflow-y-auto">
+    <div class="relative overflow-x-auto sm:rounded-lg h-lvh">
         <div class="max-w-sm rounded overflow-hidden shadow-lg mx-auto text-xl">
             <div class="h-full relative">
                 {{-- 照片 --}}
-                <div class="relative h-100 h-1/4 z-0 w-full mb-8 group">
-                    <div class="absolute bottom-0 top-5 w-full h-full bg-slate-300">
-                        <div class="relative">
-                            <label for="myfileid" class="cursor-pointer" title="上傳圖片">
-                                <img class="w-full h-full" id="imgView"
-                                    src="{{ isset($data) ? $data->m_CardId : '' }}">
-                                <div class="absolute left-0 top-0 w-10 h-10">
-                                    <input type="file" name="img" id="myfileid"
-                                        accept="image/png, image/gif, image/jpeg"
+                @if (isset($data))
+                    <div class="relative h-100 h-1/4 z-0 w-full mb-8 group">
+                        <div class="absolute bottom-0 top-5 w-full h-full bg-slate-300">
+                            <div class="relative">
+                                {{-- <label for="myfileid" class="cursor-pointer" title="上傳圖片"> --}}
+                                <img class="w-full h-full" id="imgView" src="{{ isset($data) ? $data->m_Img : '' }}">
+                                {{-- <div class="absolute left-0 top-0 w-10 h-10">
+                                    <input type="file" id="myfileid" accept="image/png, image/gif, image/jpeg"
                                         class="text-sm w-24 text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                         required />
-                                </div>
-                            </label>
-                            <input type="hidden" name="mImg" value="">
+                                </div> --}}
+                                {{-- </label> --}}
+                            </div>
                         </div>
-                    </div>
 
-                    <label for="img"
+                        {{-- <label for="img"
                         class="text-red-700 peer-focus:font-medium absolute text-sm z-10 right-0 -top-1">照片
-                        *圖片小於2MB*</label>
-                </div>
+                        *圖片小於2MB*</label> --}}
+                    </div>
+                @endif
                 {{-- <canvas id="my_canvas"></canvas>
                 <video id="my_video" poster="https://alldata.sgp1.digitaloceanspaces.com/images%2Fwebcam_hint.png"
                     playsinline autoplay muted></video> --}}
+                @if (!isset($data))
+                    <form class="w-10/12 mx-auto" action="{{ route('trade_list') }}" method="POST">
+                        @csrf
+                        <select onchange="this.form.submit()" name="searchMember"
+                            class="text-lg block py-2.5 px-0 w-full text-gray-500 bor bg-gray-200 border-0 border-b-2 border-gray-500 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <option value="" selected>
+                                {{ isset($member) && sizeof($member) > 0 ? '選擇清單' : '無查詢結果' }}{{ isset($member) ? sizeof($member) : '0' }}
+                            </option>
+                            @if (isset($member) && sizeof($member) > 0)
+                                @foreach ($member as $members)
+                                    <option value="{{ $members->m_Id }}">姓名:{{ $members->m_Name }}
+                                        電話:{{ $members->m_Phone }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </form>
+                @endif
 
-
-                <form class="max-w-sm mx-auto" action="{{ route('trade_list') }}" action="POST">
-                    @csrf
-                    <select onchange="this.form.submit()" name="searchMember"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-                        @if (isset($member))
-                            @foreach ($member as $members)
-                                <option value="" selected>選擇清單</option>
-                                <option value="{{ $members->m_Id }}">{{ $members->m_Name }}</option>
-                            @endforeach
-                        @endif
-                    </select>
-                </form>
-
-                <form action="{{ route('trade_list') }}" method="POST">
+                <form id="formUpdate" action="{{ route('trade_list') }}" method="POST">
                     @csrf
                     <div class="flex items-center mb-6 mt-5">
                         <div class="md:w-1/3">
@@ -77,18 +79,18 @@
                         </div>
                         <div class="md:w-2/3">
                             <input type="text" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
-                                maxlength="10"
+                                maxlength="20"
                                 class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
                         </div>
                     </div>
                     <div class="flex items-center mb-6 mt-5">
                         <div class="md:w-1/3">
-                            <label class="block text-center" for="birther">
+                            <label class="block text-center" for="birthday">
                                 生日:
                             </label>
                         </div>
                         <div class="md:w-2/3">
-                            <input type="text" name="birther" value="{{ isset($data) ? $data->m_Birther : '' }}"
+                            <input type="text" name="birthday" value="{{ isset($data) ? $data->m_Birthday : '' }}"
                                 maxlength="10"
                                 class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
                         </div>
@@ -105,7 +107,7 @@
                                 class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
                         </div>
                     </div>
-                    <input type="submit" class="text-white hidden" name="search" value="" />
+                    <input type="submit" class="text-white hidden" name="search" />
                 </form>
 
                 {{-- 交易紀錄 --}}
@@ -123,27 +125,35 @@
                         @endforeach
                     @endif
                 </div>
+                <span class="mx-auto">#標籤機連結</span>
 
-                <form action="{{ route('trade_create') }}" method="POST" class="mx-2 text-center" name="form">
-                    <span class="m-auto">#標籤機連結</span>
-                    @csrf
-
-                    <input type="hidden" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}" />
-                    <input type="hidden" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}" />
-                    <input type="hidden" name="name" value="{{ isset($data) ? $data->m_Name : '' }}" />
-                    <div class="grid grid-cols-4 gap-1 mt-3">
-                        @if (isset($label))
-                            @foreach ($label as $labels)
-                                <input type="hidden" name="lId" value="{{ $labels->l_Id }}" />
-                                <input type="{{ isset($data) ? 'submit' : 'text' }}" name="lTitle"
+                <div class="grid grid-cols-4 gap-1 mt-3">
+                    @if (isset($label))
+                        @foreach ($label as $labels)
+                            <form id="formCreate" data-action="{{ route('trade_create') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
+                                    required />
+                                <input type="hidden" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
+                                    required />
+                                <input type="hidden" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
+                                    required />
+                                <input type="hidden" name="birthday"
+                                    value="{{ isset($data) ? $data->m_Birthday : '' }}" required />
+                                <input type="hidden" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
+                                    required />
+                                <input type="hidden" name="mImg" value="{{ isset($data) ? $data->m_Img : '' }}"
+                                    required />
+                                <input type="hidden" name="lId" value="{{ $labels->l_Id }}" required />
+                                <input type="hidden" name="lTitle" value="{{ $labels->l_Title }}" required />
+                                <input type="{{ isset($data) ? 'submit' : 'hidden' }}"
                                     {{ isset($data) ? '' : 'readonly' }}
                                     class=" bg-gray-200 border-2 border-blue-800 rounded-full p-1 mx-auto text-center text-sm font-semibold text-gray-700 w-10 h-10 cursor-pointer hover:bg-blue-400"
-                                    value="{{ $labels->l_Title }}" onclick="clearText()"
-                                    @if (isset($data)) data-modal-target="Modal" data-modal-toggle="Modal" @endif />
-                            @endforeach
-                        @endif
-                    </div>
-                </form>
+                                    value="{{ $labels->l_Title }}" />
+                            </form>
+                        @endforeach
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -185,35 +195,74 @@
         </svg>
     </div>
 
+    <script>
+        $(function() {
+            $(document).on("submit", '#formCreate', function() {
+                event.preventDefault();
 
-    {{-- Printer Table --}}
-    @if (isset($trade) && $trade != '')
-        <section class="table" id="tables">
-            <div class="row titleOne">
-                <div>大同店</div>
-            </div>
-            <div class="row">
-                <div>限本人使用</div>
-            </div>
-            <div class="row">
-                <div>{{ $trade->t_lTitle }}</div>
-                <div>{{ $trade->t_lId }}</div>
-            </div>
-            <div class="row">
-                <div>{{ $trade->t_mCardId }}</div>
-                <div>{{ $trade->t_mName }}</div>
-            </div>
-            <div class="row">
-                <div>NO: {{ $trade->t_Id }}</div>
-            </div>
-        </section>
-    @endif
+                var form = $('#formCreate');
+                // 驗證表單
+                var reportValidity = form[0].reportValidity();
+                var reportValiditys = $('#formUpdate')[0].reportValidity();
 
-    @if (isset($trade) && $trade != '')
-        <script>
-            let divContents = document.getElementById("tables").innerHTML;
-            let printWindow = window.open('', '', 'height=1280, width=765');
-            printWindow.document.write(`
+                if (reportValidity && reportValiditys) {
+                    $('#Modal').removeClass('hidden');
+                    var url = $(this).attr('data-action');
+
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: new FormData(this),
+                        dataType: 'JSON',
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.msg.indexOf('成功') > -1) {
+                                // 列印
+                                setTimeout(() => {
+                                    printLabel(response);
+                                }, 1000);
+                            } else {
+                                $('#toast-success').toggleClass(
+                                    'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
+                                );
+                                $('#toast-success').find('path').attr('d',
+                                    'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
+                                );
+                            }
+
+                            $('#toast-success').removeClass('hidden');
+                            $('#toast-success-msg').text(response.msg);
+                        },
+                        error: function(response) {
+                            $('#toast-success').removeClass('hidden');
+                            $('#toast-success-msg').text('會員資料不完整，會員管理編輯');
+                            $('#toast-success').toggleClass(
+                                'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
+                            );
+                            $('#toast-success').find('path').attr('d',
+                                'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
+                            );
+                        },
+                        complete: function() {
+                            $('#Modal').addClass('hidden');
+
+                            setTimeout(() => {
+                                form.trigger('reset');
+                                $('#toast-success').addClass('hidden');
+                            }, 3000);
+                        }
+                    });
+                }
+            });
+
+            function printLabel(response) {
+                var trade = JSON.parse(response.trade);
+                var label = JSON.parse(response.label);
+                // size: 264px 188px;
+                var printWindow = window.open('', '', 'height=1280, width=765');
+                printWindow.document.write(`
                 <html>
                 <head>
                     <title>標籤列印</title>
@@ -221,10 +270,12 @@
                     @media print {
                         @page {
                             margin: 0;
-                            size: 264px 188px;
+                            size: landscape;
                         }
                         *
                         {
+                            padding: 0;
+                            margin: 0;
                             -webkit-print-color-adjust: exact !important;
                             text-align: center;
                         }
@@ -244,62 +295,72 @@
                             transform-origin: bottom left;
                             display: block;
                             position: absolute;
+                            text-align: center;
                         }
                         .titleOne {
                             font-size: 1.5rem !important;
                             font-weight: bold;
                         }
+
+                        .table::after {
+                            right: 100px;
+                            bottom: 0;
+                            left: 0;
+                        }
                     }
                     </style>
                 </head>
                 <body>
-                    ${divContents}
+                    <section class="table">
+                    <div class="row titleOne">
+                        <div>${label.l_Title}</div>
+                    </div>
+                    <div class="row">
+                        <div>${label.l_TitleOne}</div>
+                    </div>
+                    <div class="row">
+                        <div>${trade.t_lTitle}</div>
+                        <div>${trade.t_lId}</div>
+                    </div>
+                    <div class="row">
+                        <div>${trade.t_mCardId}</div>
+                        <div>${trade.t_mName}</div>
+                    </div>
+                    <div class="row">
+                        <div>${trade.t_No}</div>
+                    </div>
+                </section>
                 </body>
                 </html>
             `);
 
-            printWindow.print();
-            setTimeout(function() {
-                printWindow.close();
-            }, 10);
-        </script>
-    @endif
-    <script>
-        // function clearText(event) {
-        //     event.disabled = true;
-
-        //     setTimeout(() => {
-        //         let allInputs = document.querySelectorAll('input');
-        //         allInputs.forEach(singleInput => singleInput.value = '');
-        //     }, 4000);
-        // }
-
-        // let second = {{ isset($member) || isset($data) || !isset($Id) ? 0 : 5000 }};
-
-        // setTimeout(() => {
-        //     document.getElementById('Modal').classList.add('hidden');
-        // }, second);
-
-        // let seconds = {{ isset($msg) && $msg != '' ? 3000 : 0 }};
-
-        // setTimeout(() => {
-        //     document.getElementById('toast-success-button').click();
-        // }, seconds);
-
-        document.getElementById('myfileid').addEventListener('change', function(event) {
-            var preview = document.getElementById('imgView');
-            var file = event.target.files[0];
-            var reader = new FileReader();
-
-            reader.onloadend = function() {
-                preview.src = reader.result;
-            }
-
-            if (file) {
-                reader.readAsDataURL(file);
-            } else {
-                preview.src = "";
+                printWindow.print();
+                // setTimeout(function() {
+                //     printWindow.close();
+                // }, 10);
             }
         });
+
+        // document.getElementById('myfileid').addEventListener('change', function(event) {
+        //     var preview = document.getElementById('imgView');
+
+        //     var file = event.target.files[0];
+        //     var reader = new FileReader();
+
+        //     reader.onloadend = function() {
+        //         preview.src = reader.result;
+        //         var base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+
+        //         document.querySelectorAll('input[name="mImg"]').forEach(function(element) {
+        //             element.value = base64String;
+        //         });
+        //     }
+
+        //     if (file) {
+        //         reader.readAsDataURL(file);
+        //     } else {
+        //         preview.src = "";
+        //     }
+        // });
     </script>
 </x-layout>

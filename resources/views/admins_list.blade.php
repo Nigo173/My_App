@@ -203,11 +203,9 @@
                     <div class="relative z-0 w-full mb-5 group">
                         <div class="flex flex-wrap py-4 px-0 w-full text-sm">
                             <div class="flex items-center me-4">
-                                <input checked id="state" type="radio" value="1" name="level"
-                                    @if (isset($action) && $action == 'admins_update' && isset($data)) onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
-                                {{ isset($data) && ($data->a_Level == '1' || $data->a_State == null) ? 'checked' : '' }}
-                                @else
-                                onclick="return false" checked @endif
+                                <input id="state" type="radio" value="1" name="level"
+                                    {{ isset($data) && $data->a_Level == '1' ? 'checked' : '' }}
+                                    onclick="{{ isset($data) && ($data->a_Id == session('Account') || $data->a_Level == '1') ? 'return false' : '' }}"
                                     class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="state"
                                     class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">一般管理員</label>
@@ -215,7 +213,8 @@
                             @if (isset($action) && $action == 'admins_update')
                                 <div class="flex items-center me-4 {{ $data->a_Level == '2' ? '' : 'hidden' }}">
                                     <input id="state" type="radio" value="2" name="level"
-                                        onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
+                                        {{ isset($data) && $data->a_Level == '2' ? 'checked' : '' }}
+                                        onclick="{{ isset($data) && ($data->a_Id == session('Account') || $data->a_Level == '1') ? 'return false' : '' }}"
                                         class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="level"
                                         class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">權限管理員</label>
@@ -375,66 +374,64 @@
     </div>
 
     <script>
-        const form = $('#formCreate,#formDelete');
+        $(function() {
+            var form = $('#formCreate,#formDelete');
 
-        $(form).on('submit', function(event) {
-            event.preventDefault();
-            // 驗證表單
+            $(form).on('submit', function(event) {
+                event.preventDefault();
+                // 驗證表單
+                var reportValidity = form[0].reportValidity();
 
-            const reportValidity = form[0].reportValidity();
+                if (reportValidity) {
+                    $('#Modal').removeClass('hidden');
+                    var url = $(this).attr('data-action');
 
-            if (reportValidity) {
-                $('#Modal').removeClass('hidden');
-                const url = $(this).attr('data-action');
-
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: new FormData(this),
-                    dataType: 'JSON',
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function(response) {
-                        if (response.msg.indexOf("成功") > -1) {
-                            form.trigger("reset");
-                        }
-                        // 刪除tr
-                        if (url.indexOf("delete") > -1) {
-                            if (response.msg.indexOf("成功") > -1) {
-
-                                var jsonstringify = JSON.stringify(form.serializeArray());
-                                var jsonEle = JSON.parse(jsonstringify);
-
-                                console.log(jsonEle);
-
-                                $('#' + jsonEle[2]['value']).remove();
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: new FormData(this),
+                        dataType: 'JSON',
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function(response) {
+                            // if (response.msg.indexOf("成功") > -1) {
+                            //     form.trigger("reset");
+                            // }
+                            // 刪除tr
+                            if (url.indexOf("delete") > -1) {
+                                if (response.msg.indexOf('成功') > -1) {
+                                    var jsonstringify = JSON.stringify(form.serializeArray());
+                                    var jsonEle = JSON.parse(jsonstringify);
+                                    $('#' + jsonEle[2]['value']).remove();
+                                }
+                            } else if (url.indexOf("create")) {
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
                             }
-                        } else if (url.indexOf("create")) {
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        }
-                        $('#toast-success').removeClass('hidden');
-                        $('#toast-success-msg').text(response.msg);
-                    },
-                    error: function(response) {
-                        $('#toast-success').toggleClass(
-                            'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
-                        );
-                        $('#toast-success').find('path').attr('d',
-                            'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
-                        );
-                    },
-                    complete: function() {
-                        $('#Modal').addClass('hidden');
+                            $('#toast-success').removeClass('hidden');
+                            $('#toast-success-msg').text(response.msg);
+                        },
+                        error: function(response) {
+                            $('#toast-success').toggleClass(
+                                'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
+                            );
+                            $('#toast-success').find('path').attr('d',
+                                'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
+                            );
+                        },
+                        complete: function() {
+                            $('#Modal').addClass('hidden');
 
-                        setTimeout(() => {
-                            $('#toast-success').addClass('hidden');
-                        }, 3000);
-                    }
-                });
-            }
+                            setTimeout(() => {
+                                form.trigger('reset');
+                                $('#toast-success').addClass('hidden');
+                            }, 3000);
+                        }
+                    });
+                }
+            });
         });
     </script>
 </x-layout>

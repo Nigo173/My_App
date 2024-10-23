@@ -253,66 +253,65 @@
     </div>
 
     <script>
-        const form = $('#formCreate,#formDelete');
+        $(function() {
+            var form = $('#formCreate,#formDelete');
 
-        $(form).on('submit', function(event) {
-            event.preventDefault();
-            // 驗證表單
+            $(form).on('submit', function(event) {
+                event.preventDefault();
+                // 驗證表單
 
-            const reportValidity = form[0].reportValidity();
+                var reportValidity = form[0].reportValidity();
 
-            if (reportValidity) {
-                $('#Modal').removeClass('hidden');
-                const url = $(this).attr('data-action');
+                if (reportValidity) {
+                    $('#Modal').removeClass('hidden');
+                    var url = $(this).attr('data-action');
 
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: new FormData(this),
-                    dataType: 'JSON',
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function(response) {
-                        if (response.msg.indexOf("成功") > -1) {
-                            form.trigger("reset");
-                        }
-                        // 刪除tr
-                        if (url.indexOf("delete") > -1) {
-                            if (response.msg.indexOf("成功") > -1) {
-
-                                var jsonstringify = JSON.stringify(form.serializeArray());
-                                var jsonEle = JSON.parse(jsonstringify);
-
-                                console.log(jsonEle);
-
-                                $('#' + jsonEle[2]['value']).remove();
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: new FormData(this),
+                        dataType: 'JSON',
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.msg.indexOf('成功') > -1) {
+                                // form.trigger("reset");
+                            } else {
+                                $('#toast-success').toggleClass(
+                                    'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
+                                );
+                                $('#toast-success').find('path').attr('d',
+                                    'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
+                                );
                             }
-                        } else if (url.indexOf("create")) {
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        }
-                        $('#toast-success').removeClass('hidden');
-                        $('#toast-success-msg').text(response.msg);
-                    },
-                    error: function(response) {
-                        $('#toast-success').toggleClass(
-                            'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
-                        );
-                        $('#toast-success').find('path').attr('d',
-                            'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
-                        );
-                    },
-                    complete: function() {
-                        $('#Modal').addClass('hidden');
+                            // 刪除tr
+                            if (url.indexOf("delete") > -1) {
+                                if (response.msg.indexOf('成功') > -1) {
+                                    var jsonstringify = JSON.stringify(form.serializeArray());
+                                    var jsonEle = JSON.parse(jsonstringify);
+                                    $('#' + jsonEle[2]['value']).remove();
+                                }
+                            } else if (url.indexOf("create")) {
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            }
+                            $('#toast-success').removeClass('hidden');
+                            $('#toast-success-msg').text(response.msg);
+                        },
+                        error: function(response) {},
+                        complete: function() {
+                            $('#Modal').addClass('hidden');
 
-                        setTimeout(() => {
-                            $('#toast-success').addClass('hidden');
-                        }, 3000);
-                    }
-                });
-            }
+                            setTimeout(() => {
+                                form.trigger('reset');
+                                $('#toast-success').addClass('hidden');
+                            }, 3000);
+                        }
+                    });
+                }
+            });
         });
     </script>
 </x-layout>

@@ -67,7 +67,6 @@ Route::middleware(AdminsMiddleware::class)
         Route::any('/', [LabelController::class, 'index'])->name('label');
         Route::post('create', [LabelController::class, 'create'])->name('label_create');
         Route::post('update', [LabelController::class, 'update'])->name('label_update');
-        Route::get('print', [LabelController::class, 'print'])->name('label_print');
     });
 });
 

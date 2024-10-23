@@ -1,4 +1,8 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteRule ^(.*)$ /Laravel/public/$1 [L]
-</IfModule>
+<VirtualHost laravel.local:80>
+    DocumentRoot "D:\xampp\My_App\public"
+    <Directory "D:\xampp\My_App\public">
+        Options All
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
