@@ -21,12 +21,16 @@
                                 class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">搜尋</button>
                         </div>
                     </form>
-                    <form action="{{ route('label') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="create" value="create">
-                        <input type="submit" value="新增"
-                            class="text-white end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2" />
-                    </form>
+                    @if (isset($label) > 0)
+                        @if (sizeof($label) <= 6)
+                            <form action="{{ route('label') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="create" value="create">
+                                <input type="submit" value="新增"
+                                    class="text-white end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2" />
+                            </form>
+                        @endif
+                    @endif
                 </div>
                 {{-- 表格清單 --}}
                 <table class="w-full mt-5 text-md text-center text-gray-600 border border-gray-400">
@@ -43,18 +47,6 @@
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 標題3
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                標題4
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                標題5
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                標題6
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                標題7
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 資料日期
@@ -82,23 +74,11 @@
                                         {{ $labels->l_TitleThree }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ $labels->l_TitleFour }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        {{ $labels->l_TitleFive }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        {{ $labels->l_TitleSix }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        {{ $labels->l_TitleSeven }}
-                                    </td>
-                                    <td class="px-6 py-4">
                                         {{ $labels->created_at }}<br>
                                         {{ $labels->updated_at }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        @if (intval(session('Level')) == 2)
+                                        @if (session('Level') == '2')
                                             <form action="{{ route('label') }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="Id" value="{{ $labels->id }}">
@@ -125,20 +105,13 @@
                         <input type="hidden" name="create">
                     @endif
 
-                    <div class="grid grid-rows-4 grid-cols-1 gap-2 mb-5">
-                        {{-- 編號 --}}
+                    <div class="grid grid-rows-4 grid-cols-1 gap-3 mb-5 border-2 border-gray-500">
+                        {{-- 代號 --}}
                         <div class="mx-auto">
-                            <input type="text" name="lId" maxlength="2"
-                                value="{{ isset($data) ? $data->l_Id : $lId }}"
-                                class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                placeholder=" " required readonly />
-                        </div>
-                        {{-- 標題 --}}
-                        <div class="mx-auto">
-                            <input type="text" name="title" maxlength="2"
+                            <input type="text" name="title" maxlength="3"
                                 value="{{ isset($data) ? $data->l_Title : '' }}"
                                 class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                placeholder=" " required />
+                                placeholder="標籤代號" required />
                         </div>
                         {{-- 標題1 --}}
                         <div class="mx-auto">
@@ -149,52 +122,25 @@
                         </div>
                         {{-- 標題2 --}}
                         <div class="mx-auto">
-                            <input type="text" name="titleTwo" maxlength="10"
+                            <input type="text" name="titleOne" maxlength="10"
                                 value="{{ isset($data) ? $data->l_TitleTwo : '' }}"
-                                class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
                         </div>
-                        {{-- 標題3 4 --}}
-                        <div class="grid grid-rows-subgrid gap-4 row-span-1">
-                            {{-- 標題3 --}}
+                        {{-- 標題2 3 --}}
+                        <div class="grid grid-rows-subgrid gap-4 mb-5 row-span-1">
                             <div class="row-start-2">
-                                <input type="text" name="titleThree" maxlength="10"
+                                <input type="text" name="titleThree" maxlength="5"
                                     value="{{ isset($data) ? $data->l_TitleThree : '' }}"
                                     class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                     placeholder=" " required />
                             </div>
-                            {{-- 標題4 --}}
                             <div class="row-start-2">
-                                <input type="text" name="titleFour" maxlength="10"
-                                    value="{{ isset($data) ? $data->l_TitleFour : '' }}"
+                                <input type="text" name="titleFour" maxlength="5"
+                                    value="{{ isset($data) ? $data->titleFour : '' }}"
                                     class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                     placeholder=" " />
                             </div>
-                        </div>
-                        {{-- 標題5 6 --}}
-                        <div class="grid grid-rows-subgrid gap-4 row-span-1">
-                            {{-- 標題5 --}}
-                            <div class="row-start-2">
-                                <input type="text" name="titleFive" maxlength="10"
-                                    value="{{ isset($data) ? $data->l_TitleFive : '' }}"
-                                    class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                    placeholder=" " />
-
-                            </div>
-                            {{-- 標題6 --}}
-                            <div class="row-start-2">
-                                <input type="text" name="titleSix" maxlength="10"
-                                    value="{{ isset($data) ? $data->l_TitleSix : '' }}"
-                                    class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                    placeholder=" " />
-                            </div>
-                        </div>
-                        {{-- 標題7 --}}
-                        <div class="mx-auto w-full">
-                            <input type="text" name="titleSeven" maxlength="10"
-                                value="{{ isset($data) ? $data->l_TitleSeven : '' }}"
-                                class="block py-2.5 px-0 w-full text-lg text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                placeholder=" " />
                         </div>
                     </div>
                     <div class="text-center">
@@ -292,10 +238,10 @@
                                     var jsonEle = JSON.parse(jsonstringify);
                                     $('#' + jsonEle[2]['value']).remove();
                                 }
-                            } else if (url.indexOf("create")) {
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 1000);
+                            } else if (url.indexOf('create')) {
+                                setTimeout(function() {
+                                    window.location.href = 'label';
+                                }, 2000);
                             }
                             $('#toast-success').removeClass('hidden');
                             $('#toast-success-msg').text(response.msg);
@@ -304,7 +250,7 @@
                         complete: function() {
                             $('#Modal').addClass('hidden');
 
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 form.trigger('reset');
                                 $('#toast-success').addClass('hidden');
                             }, 3000);

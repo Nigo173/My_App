@@ -401,14 +401,14 @@
                             // 刪除tr
                             if (url.indexOf("delete") > -1) {
                                 if (response.msg.indexOf('成功') > -1) {
-                                    var jsonstringify = JSON.stringify(form.serializeArray());
-                                    var jsonEle = JSON.parse(jsonstringify);
-                                    $('#' + jsonEle[2]['value']).remove();
+                                    setTimeout(function() {
+                                        location.reload();
+                                    }, 2000);
                                 }
-                            } else if (url.indexOf("create")) {
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 1000);
+                            } else if (url.indexOf('create')) {
+                                setTimeout(function() {
+                                    window.location.href = 'list';
+                                }, 2000);
                             }
                             $('#toast-success').removeClass('hidden');
                             $('#toast-success-msg').text(response.msg);
@@ -424,7 +424,7 @@
                         complete: function() {
                             $('#Modal').addClass('hidden');
 
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 form.trigger('reset');
                                 $('#toast-success').addClass('hidden');
                             }, 3000);

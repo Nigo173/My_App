@@ -81,7 +81,7 @@ class MemberController extends Controller
         $msg = '';
 
         // 會員編號
-        $count = MemberModel::select('m_Id')->count() + 1;
+        $count = MemberModel::max('m_Id') + 1;
         $Id = sprintf('%06d', $count);
 
         if($request->isMethod('post'))
@@ -138,8 +138,6 @@ class MemberController extends Controller
                 }
 
                 // 會員編號
-                $count = MemberModel::select('m_Id')->count() + 1;
-                $Id = sprintf('%06d', $count);
                 // $id = $this->get_random_Id();
 
                 $data = MemberModel::create([

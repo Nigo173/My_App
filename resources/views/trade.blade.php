@@ -259,6 +259,7 @@
 
             function printLabel(response) {
                 var trade = JSON.parse(response.trade);
+
                 var label = JSON.parse(response.label);
                 // size: 264px 188px;
                 var printWindow = window.open('', '', 'height=1280, width=765');
@@ -272,95 +273,96 @@
                             margin: 0;
                             size: landscape;
                         }
-                        *
-                        {
+
+                        * {
                             padding: 0;
                             margin: 0;
-                            -webkit-print-color-adjust: exact !important;
+                        }
+
+                        #table {
+                            width: 265px;
+                            height: 190PX;
                             text-align: center;
+                            color: black;
+                            border-collapse: collapse;
+                            border-spacing: 0;
                         }
-                        div.row > div {
-                            display: inline-block;
-                            margin: 0.1cm;
-                            font-size: 1rem;
+
+                        tr {
+                            height: 100%;
                         }
-                        div.row {
-                            display: block;
-                            margin: 0.2cm 1cm;
-                            font-size: 0;
-                            white-space: nowrap;
+
+                        td {
+                            width: 100%;
+                            font-size: 18px;
+                            font-weight: 600;
                         }
-                        .table {
-                            transform: translate(8.5in, -100%) rotate(90deg);
-                            transform-origin: bottom left;
-                            display: block;
-                            position: absolute;
-                            text-align: center;
+
+                        #trOne {
+                            height: 40px;
                         }
-                        .titleOne {
-                            font-size: 1.5rem !important;
+
+                        #tdOne {
+                            font-size: 26px;
                             font-weight: bold;
                         }
 
-                        .table::after {
-                            right: 100px;
-                            bottom: 0;
-                            left: 0;
+                        #trTwo {
+                            height: 20px;
+                        }
+
+                        #trThree {
+                            height: 20px;
+                        }
+
+                        #trThree-left,
+                        #trFour-left {
+                            width: 65% !important;
+                        }
+
+                        #trThree-right,
+                        #trFour-right {
+                            width: 35% !important;
+                        }
+
+                        #trFour {
+                            height: 20px;
+                        }
+
+                        #trFive {
+                            height: 20px;
                         }
                     }
                     </style>
                 </head>
                 <body>
-                    <section class="table">
-                    <div class="row titleOne">
-                        <div>${label.l_Title}</div>
-                    </div>
-                    <div class="row">
-                        <div>${label.l_TitleOne}</div>
-                    </div>
-                    <div class="row">
-                        <div>${trade.t_lTitle}</div>
-                        <div>${trade.t_lId}</div>
-                    </div>
-                    <div class="row">
-                        <div>${trade.t_mCardId}</div>
-                        <div>${trade.t_mName}</div>
-                    </div>
-                    <div class="row">
-                        <div>${trade.t_No}</div>
-                    </div>
-                </section>
+                    <table id="table">
+                        <tr id="trOne">
+                            <td id="tdOne" colspan="2" nowrap>${label.l_Title}</td>
+                        </tr>
+                        <tr id="trTwo">
+                            <td colspan="2" nowrap>${label.l_TitleOne}</td>
+                        </tr>
+                        <tr id="trThree">
+                            <td id="trThree-left" nowrap>${label.l_TitleTwo}</td>
+                            <td id="trThree-right" nowrap>${label.l_TitleThree}</td>
+                        </tr>
+                        <tr id="trFour">
+                            <td id="trFour-left" nowrap>${trade.t_mId}</td>
+                            <td id="trFour-right" nowrap>${trade.t_mName}</td>
+                        </tr>
+                        <tr id="trFive">
+                            <td colspan="2" nowrap>${trade.t_No}</td>
+                        </tr>
+                    </table>
                 </body>
                 </html>
             `);
-
                 printWindow.print();
-                // setTimeout(function() {
-                //     printWindow.close();
-                // }, 10);
+                setTimeout(function() {
+                    printWindow.close();
+                }, 10);
             }
         });
-
-        // document.getElementById('myfileid').addEventListener('change', function(event) {
-        //     var preview = document.getElementById('imgView');
-
-        //     var file = event.target.files[0];
-        //     var reader = new FileReader();
-
-        //     reader.onloadend = function() {
-        //         preview.src = reader.result;
-        //         var base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-
-        //         document.querySelectorAll('input[name="mImg"]').forEach(function(element) {
-        //             element.value = base64String;
-        //         });
-        //     }
-
-        //     if (file) {
-        //         reader.readAsDataURL(file);
-        //     } else {
-        //         preview.src = "";
-        //     }
-        // });
     </script>
 </x-layout>

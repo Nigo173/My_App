@@ -100,10 +100,10 @@ class LabelController extends Controller
                     'l_TitleOne'=>$request->titleOne,
                     'l_TitleTwo'=>$request->titleTwo,
                     'l_TitleThree'=>$request->titleThree,
-                    'l_TitleFour'=>$request->titleFour,
-                    'l_TitleFive'=>$request->titleFive,
-                    'l_TitleSix'=>$request->titleSix,
-                    'l_TitleSeven'=>$request->titleSeven
+                    'l_TitleFour'=>$request->titleFour
+                    // 'l_TitleFive'=>$request->titleFive,
+                    // 'l_TitleSix'=>$request->titleSix,
+                    // 'l_TitleSeven'=>$request->titleSeven
                 ]);
 
                 if($data->save())

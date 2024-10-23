@@ -63,11 +63,10 @@
                             <tr id="{{ $members->m_Id }}"
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
                                 <td class="px-6 py-4">
-
                                     @if (strlen($members->m_Img) > 10)
-                                        {{-- <a href="http://127.0.0.1:8000/{{ $members->m_Img }}">sss</a> --}}
                                         <img src="{{ $members->m_Img }}" style="width:50px;height:50px;"
-                                            onclick="showImage(this.src)" class="cursor-pointer" />
+                                            onclick="showImage(this.src)" class="cursor-pointer"
+                                            data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
@@ -172,7 +171,7 @@
                         {{-- 姓名 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="name"
-                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Name : old('name') }}"
+                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Name : '' }}"
                                 maxlength="10" pattern="[A-Za-z\u4e00-\u9fa5]{2,10}"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
@@ -182,7 +181,7 @@
                         {{-- 身分證 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="cardId"
-                                value="{{ $action == 'member_update' && isset($data) ? $data->m_CardId : old('cardId') }}"
+                                value="{{ $action == 'member_update' && isset($data) ? $data->m_CardId : '' }}"
                                 maxlength="10" pattern="^[A-Z]{1}[0-9]{9}$"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
@@ -196,8 +195,9 @@
                             <input type="date" class="absolute bg-transparent top-0 right-0 border-0"
                                 onchange="dateChange()" />
                             <input type="text" name="birthday"
-                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Birthday : old('birthday') }}"
-                                maxlength="10"
+                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Birthday : '' }}"
+                                pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
+                                maxlength="9"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
                             <label for="birthday"
@@ -206,7 +206,7 @@
                         {{-- 電話 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="phone"
-                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Phone : old('phone') }}"
+                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Phone : '' }}"
                                 maxlength="20"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
@@ -218,7 +218,7 @@
                         {{-- 信箱 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="email"
-                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Email : old('email') }}"
+                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Email : '' }}"
                                 maxlength="30"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " />
@@ -228,7 +228,7 @@
                         {{-- 地址 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="address"
-                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Address : old('address') }}"
+                                value="{{ $action == 'member_update' && isset($data) ? $data->m_Address : '' }}"
                                 maxlength="50"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " />
@@ -239,7 +239,7 @@
                     {{-- 備註 --}}
                     <div class="relative z-0 w-full mb-5 group">
                         <input type="text" name="remark"
-                            value="{{ $action == 'member_update' && isset($data) ? $data->m_Remark : old('remark') }}"
+                            value="{{ $action == 'member_update' && isset($data) ? $data->m_Remark : '' }}"
                             maxlength="50"
                             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                             placeholder=" " />
@@ -340,7 +340,7 @@
                         processData: false,
                         success: function(response) {
                             if (response.msg.indexOf('成功') > -1) {
-                                // form.trigger("reset");
+
                             } else {
                                 $('#toast-success').toggleClass(
                                     'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
@@ -352,15 +352,14 @@
                             // 刪除tr
                             if (url.indexOf('delete') > -1) {
                                 if (response.msg.indexOf('成功') > -1) {
-
-                                    var jsonstringify = JSON.stringify(form.serializeArray());
-                                    var jsonEle = JSON.parse(jsonstringify);
-                                    $('#' + jsonEle[2]['value']).remove();
+                                    setTimeout(function() {
+                                        location.reload();
+                                    }, 2000);
                                 }
                             } else if (url.indexOf('create')) {
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 1000);
+                                setTimeout(function() {
+                                    window.location.href = 'list';
+                                }, 2000);
                             }
                             $('#toast-success').removeClass('hidden');
                             $('#toast-success-msg').text(response.msg);
@@ -378,7 +377,7 @@
                         complete: function() {
                             $('#Modal').addClass('hidden');
 
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 form.trigger('reset');
                                 $('#toast-success').addClass('hidden');
                             }, 3000);
@@ -425,8 +424,6 @@
         //         document.querySelector('input[type="date"]').showPicker();
         //     }, 250);
         // });
-
-
 
         // Modal圖片
         function showImage(url) {
