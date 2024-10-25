@@ -122,18 +122,11 @@ class MemberController extends Controller
                     }
                 }
 
-                // $q->select('m_CardId')->where('m_CardId', $request->cardId)->get();
-                // MemberModel::select('m_CardId')->where('m_CardId', $request->cardId)->get()->toArray()
-
                 $data = MemberModel::where('m_CardId', $request->cardId)->get()->first();
-                // $data = MemberModel::whereIn('m_CardId', MemberModel::select('m_CardId')->where('m_CardId', $request->cardId)->get()->toArray())->get();
 
                 if(isset($data->m_CardId))
                 {
                     $msg = "身分證號已存在";
-                    // return redirect()->back()->withInput();
-                    // return redirect()->route('member_list?msg=身分證號已存在', ['action' => 'member_create', 'msg' => $msg])->withInput();
-                    // return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
                     return response()->json(['action'=>'list','msg'=>$msg]);
                 }
 
@@ -299,9 +292,17 @@ class MemberController extends Controller
 
     private function create_Log(Request $request, string $note)
     {
-        $note = session('Account').'執行 => (會員帳號:'.$request->Id.' 會員姓名: '.$request->name.')'.$note;
-        $mac = strtok(exec('getmac'), ' ');
-        $url = $request->getRequestUri();
+        $mac = '';
+        $url = '';
+
+        try
+        {
+            $note = session('Account').'執行 => (會員帳號:'.$request->Id.' 會員姓名: '.$request->name.')'.$note;
+            $mac = strtok(exec('getmac'), ' ');
+            $url = $request->getRequestUri();
+        }
+        catch(Exception $e){}
+
         $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
         LogModel::create(['log' => $data]);
     }

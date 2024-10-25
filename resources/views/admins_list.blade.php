@@ -97,7 +97,7 @@
                                             @if ($action == 'admins_update')
                                                 <form action="" method="POST">
                                                     @csrf
-                                                    <input type="hidden" name="Id" value="{{ $admins->a_Id }}">
+                                                    <input type="hidden" name="account" value="{{ $admins->a_Id }}">
                                                     <button type="submit"
                                                         class="px-2 py-1.5 text-gray-600 bg-yellow-300 hover:bg-yellow-400 text-md text-center">
                                                         編輯
@@ -108,7 +108,7 @@
                                                 <form id="formDelete" data-action="{{ route($action) }}">
                                                     @csrf
                                                     <input type="hidden" name="delete" value="delete">
-                                                    <input type="hidden" name="Id" value="{{ $admins->a_Id }}">
+                                                    <input type="hidden" name="account" value="{{ $admins->a_Id }}">
 
                                                     <button type="submit"
                                                         class="px-2 py-1.5 text-white bg-red-700 hover:bg-red-800 text-md text-center">
@@ -126,12 +126,13 @@
                 {{-- 表單 --}}
                 <form id="formCreate" class="max-w-md mx-auto" data-action="{{ route($action) }}" method="POST">
                     @csrf
-                    <input type="hidden" name="update" value="update">
-                    <input type="hidden" name="Id"
-                        value="{{ $action == 'admins_update' && isset($data) ? $data->a_Id : '' }}">
+
+                    @if (isset($data) && $action == 'admins_update')
+                        <input type="hidden" name="update" value="update">
+                    @endif
 
                     <div class="grid md:grid-cols-2 md:gap-6">
-                        {{-- 身分證 --}}
+                        {{-- 帳號 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="account"
                                 value="{{ $action == 'admins_update' && isset($data) ? $data->a_Id : $Id }}"
@@ -143,9 +144,8 @@
                         {{-- 姓名 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="name"
-                                value="{{ $action == 'admins_update' && isset($data) ? $data->a_Name : old('name') }}"
+                                value="{{ $action == 'admins_update' && isset($data) ? $data->a_Name : '' }}"
                                 maxlength="10" pattern="[A-Za-z\u4e00-\u9fa5]{2,10}"
-                                onkeyup="this.value = this.value.replace(/[^A-Za-z\u4e00-\u9fa5]/g,'')"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
                             <label for="name"
@@ -157,7 +157,7 @@
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="text" name="password" value="" maxlength="20"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                placeholder=" " {{ $action == 'admins_create' ? 'required' : old('password') }} />
+                                placeholder=" " {{ $action == 'admins_create' ? 'required' : '' }} />
                             <label for="password"
                                 class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">密碼</label>
                         </div>
@@ -203,8 +203,8 @@
                     <div class="relative z-0 w-full mb-5 group">
                         <div class="flex flex-wrap py-4 px-0 w-full text-sm">
                             <div class="flex items-center me-4">
-                                <input id="state" type="radio" value="1" name="level"
-                                    {{ isset($data) && $data->a_Level == '1' ? 'checked' : '' }}
+                                <input id="state" type="radio" value="1" name="level" checked
+                                    {{ isset($data) && $data->a_Level == '1' && session('Level') == '2' ? 'checked' : '' }}
                                     onclick="{{ isset($data) && ($data->a_Id == session('Account') || $data->a_Level == '1') ? 'return false' : '' }}"
                                     class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="state"

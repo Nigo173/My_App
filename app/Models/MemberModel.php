@@ -17,6 +17,8 @@ class MemberModel extends Model
                             'm_Email',
                             'm_Phone',
                             'm_Img',
-                            'm_Remark'
+                            'm_Remark',
+                            'created_at',
+                            'updated_at'
                             ];
 }

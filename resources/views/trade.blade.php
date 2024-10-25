@@ -1,159 +1,162 @@
 <x-layout>
-    <div class="relative overflow-x-auto sm:rounded-lg h-lvh">
-        <div class="max-w-sm rounded overflow-hidden shadow-lg mx-auto text-xl">
-            <div class="h-full relative">
-                {{-- 照片 --}}
-                @if (isset($data))
-                    <div class="relative h-100 h-1/4 z-0 w-full mb-8 group">
-                        <div class="absolute bottom-0 top-5 w-full h-full bg-slate-300">
-                            <div class="relative">
-                                {{-- <label for="myfileid" class="cursor-pointer" title="上傳圖片"> --}}
-                                <img class="w-full h-full" id="imgView" src="{{ isset($data) ? $data->m_Img : '' }}">
-                                {{-- <div class="absolute left-0 top-0 w-10 h-10">
+    <div class="relative overflow-x-auto sm:rounded-lg">
+        <div class="max-w-sm rounded shadow-lg mx-auto">
+            {{-- 照片 --}}
+            @if (isset($data))
+                <div class="relative h-100 h-1/4 z-0 w-full mb-8 group">
+                    <div class="absolute bottom-0 top-5 w-full h-full bg-slate-300">
+                        <div class="relative">
+                            {{-- <label for="myfileid" class="cursor-pointer" title="上傳圖片"> --}}
+                            <img class="h-full w-full" id="imgView" src="{{ isset($data) ? $data->m_Img : '' }}">
+                            {{-- <div class="absolute left-0 top-0 w-10 h-10">
                                     <input type="file" id="myfileid" accept="image/png, image/gif, image/jpeg"
                                         class="text-sm w-24 text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                         required />
                                 </div> --}}
-                                {{-- </label> --}}
-                            </div>
+                            {{-- </label> --}}
                         </div>
+                    </div>
 
-                        {{-- <label for="img"
+                    {{-- <label for="img"
                         class="text-red-700 peer-focus:font-medium absolute text-sm z-10 right-0 -top-1">照片
                         *圖片小於2MB*</label> --}}
-                    </div>
-                @endif
-                {{-- <canvas id="my_canvas"></canvas>
+                </div>
+            @endif
+            {{-- <canvas id="my_canvas"></canvas>
                 <video id="my_video" poster="https://alldata.sgp1.digitaloceanspaces.com/images%2Fwebcam_hint.png"
                     playsinline autoplay muted></video> --}}
-                @if (!isset($data))
-                    <form class="w-10/12 mx-auto" action="{{ route('trade_list') }}" method="POST">
-                        @csrf
-                        <select onchange="this.form.submit()" name="searchMember"
-                            class="text-lg block py-2.5 px-0 w-full text-gray-500 bor bg-gray-200 border-0 border-b-2 border-gray-500 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                            <option value="" selected>
-                                {{ isset($member) && sizeof($member) > 0 ? '選擇清單' : '無查詢結果' }}{{ isset($member) ? sizeof($member) : '0' }}
-                            </option>
-                            @if (isset($member) && sizeof($member) > 0)
-                                @foreach ($member as $members)
-                                    <option value="{{ $members->m_Id }}">姓名:{{ $members->m_Name }}
-                                        電話:{{ $members->m_Phone }}
-                                    </option>
-                                @endforeach
-                            @endif
-                        </select>
-                    </form>
-                @endif
-
-                <form id="formUpdate" action="{{ route('trade_list') }}" method="POST">
+            @if (!isset($data))
+                <form class="w-10/12 mx-auto" action="{{ route('trade_list') }}" method="POST">
                     @csrf
-                    <div class="flex items-center mb-6 mt-5">
-                        <div class="md:w-1/3">
-                            <label class="block text-center" for="cardId">
-                                身分證:
-                            </label>
-                        </div>
-                        <div class="md:w-2/3">
-                            <input type="text" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
-                                maxlength="10"
-                                class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
-                        </div>
-                    </div>
-                    <div class="flex items-center mb-6 mt-5">
-                        <div class="md:w-1/3">
-                            <label class="block text-center" for="Id">
-                                編號:
-                            </label>
-                        </div>
-                        <div class="md:w-2/3">
-                            <input type="text" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
-                                maxlength="10"
-                                class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
-                        </div>
-                    </div>
-                    <div class="flex items-center mb-6 mt-5">
-                        <div class="md:w-1/3">
-                            <label class="block text-center" for="name">
-                                姓名:
-                            </label>
-                        </div>
-                        <div class="md:w-2/3">
-                            <input type="text" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
-                                maxlength="20"
-                                class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
-                        </div>
-                    </div>
-                    <div class="flex items-center mb-6 mt-5">
-                        <div class="md:w-1/3">
-                            <label class="block text-center" for="birthday">
-                                生日:
-                            </label>
-                        </div>
-                        <div class="md:w-2/3">
-                            <input type="text" name="birthday" value="{{ isset($data) ? $data->m_Birthday : '' }}"
-                                maxlength="10"
-                                class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
-                        </div>
-                    </div>
-                    <div class="flex items-center mb-6 mt-5">
-                        <div class="md:w-1/3">
-                            <label class="block text-center" for="phone">
-                                電話:
-                            </label>
-                        </div>
-                        <div class="md:w-2/3">
-                            <input type="text" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
-                                maxlength="20"
-                                class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
-                        </div>
-                    </div>
-                    <input type="submit" class="text-white hidden" name="search" />
+                    <select onchange="this.form.submit()" name="searchMember"
+                        class="text-lg block py-2.5 px-0 w-full text-gray-500 bor bg-gray-200 border-0 border-b-2 border-gray-500 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                        <option value="" selected>
+                            {{ isset($member) && sizeof($member) > 0 ? '選擇清單' : '無查詢結果' }}{{ isset($member) ? sizeof($member) : '0' }}
+                        </option>
+                        @if (isset($member) && sizeof($member) > 0)
+                            @foreach ($member as $members)
+                                <option value="{{ $members->m_Id }}">姓名:{{ $members->m_Name }}
+                                    電話:{{ $members->m_Phone }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
                 </form>
+            @endif
 
-                {{-- 交易紀錄 --}}
-                <div class="grid grid-cols-2 gap-1 mb-6 mt-5 text-center w-full bg-slate-300">
-                    <div class="h5 font-bold">
-                        紀錄
+            <form id="formUpdate" action="{{ route('trade_list') }}" method="POST">
+                @csrf
+                <div class="flex items-center mb-6 mt-5">
+                    <div class="w-1/3">
+                        <label class="block text-center" for="cardId">
+                            身分證:
+                        </label>
                     </div>
-                    <div class="h5 font-bold">
-                        次數
+                    <div class="w-2/3">
+                        <input type="text" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
+                            maxlength="10" pattern="^[A-Z]{1}[0-9]{9}$"
+                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
+                            placeholder="英文大寫開頭" />
                     </div>
-                    @if (isset($memberlabel))
-                        @foreach ($memberlabel as $memberlabels)
-                            <div>{{ $memberlabels->t_lTitle }}</div>
-                            <div>{{ $memberlabels->t_Count }}</div>
-                        @endforeach
-                    @endif
                 </div>
-                <span class="mx-auto">#標籤機連結</span>
+                <div class="flex items-center mb-6 mt-5">
+                    <div class="w-1/3">
+                        <label class="block text-center" for="Id">
+                            編號:
+                        </label>
+                    </div>
+                    <div class="w-2/3">
+                        <input type="text" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
+                            maxlength="10"
+                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
+                    </div>
+                </div>
+                <div class="flex items-center mb-6 mt-5">
+                    <div class="w-1/3">
+                        <label class="block text-center" for="name">
+                            姓名:
+                        </label>
+                    </div>
+                    <div class="w-2/3">
+                        <input type="text" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
+                            maxlength="20"
+                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
+                    </div>
+                </div>
+                <div class="flex items-center mb-6 mt-5">
+                    <div class="w-1/3">
+                        <label class="block text-center" for="birthday">
+                            生日:
+                        </label>
+                    </div>
+                    <div class="w-2/3">
+                        <input type="text" name="birthday" value="{{ isset($data) ? $data->m_Birthday : '' }}"
+                            pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
+                            maxlength="9"
+                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
+                            placeholder="格式xxx-xx-xx" />
+                    </div>
+                </div>
+                <div class="flex items-center mb-6 mt-5">
+                    <div class="w-1/3">
+                        <label class="block text-center" for="phone">
+                            電話:
+                        </label>
+                    </div>
+                    <div class="w-2/3">
+                        <input type="text" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
+                            maxlength="20"
+                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
+                    </div>
+                </div>
+                <input type="submit" class="text-white hidden" name="search" />
+            </form>
 
-                <div class="grid grid-cols-4 gap-1 mt-3">
-                    @if (isset($label))
-                        @foreach ($label as $labels)
-                            <form id="formCreate" data-action="{{ route('trade_create') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
-                                    required />
-                                <input type="hidden" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
-                                    required />
-                                <input type="hidden" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
-                                    required />
-                                <input type="hidden" name="birthday"
-                                    value="{{ isset($data) ? $data->m_Birthday : '' }}" required />
-                                <input type="hidden" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
-                                    required />
-                                <input type="hidden" name="mImg" value="{{ isset($data) ? $data->m_Img : '' }}"
-                                    required />
-                                <input type="hidden" name="lId" value="{{ $labels->l_Id }}" required />
-                                <input type="hidden" name="lTitle" value="{{ $labels->l_Title }}" required />
-                                <input type="{{ isset($data) ? 'submit' : 'hidden' }}"
-                                    {{ isset($data) ? '' : 'readonly' }}
-                                    class=" bg-gray-200 border-2 border-blue-800 rounded-full p-1 mx-auto text-center text-sm font-semibold text-gray-700 w-10 h-10 cursor-pointer hover:bg-blue-400"
-                                    value="{{ $labels->l_Title }}" />
-                            </form>
-                        @endforeach
-                    @endif
+            {{-- 交易紀錄 --}}
+            <div class="grid grid-cols-2 gap-1 mb-5 mt-5 text-center bg-slate-300">
+                <div class="font-bold">
+                    紀錄
                 </div>
+                <div class="font-bold">
+                    次數
+                </div>
+                @if (isset($memberlabel))
+                    @foreach ($memberlabel as $memberlabels)
+                        <div>{{ $memberlabels->t_lTitle }}</div>
+                        <div>{{ $memberlabels->t_Count }}</div>
+                    @endforeach
+                @endif
+            </div>
+
+            <p class="font-bold bg-slate-300 ps-5">標籤機連結</p>
+
+            <div class="grid grid-cols-4 gap-1 mt-3 justify-items-center">
+                @if (isset($label))
+                    @foreach ($label as $labels)
+                        <form id="formCreate" data-action="{{ route('trade_create') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
+                                required />
+                            <input type="hidden" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
+                                required />
+                            <input type="hidden" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
+                                required />
+                            <input type="hidden" name="birthday" value="{{ isset($data) ? $data->m_Birthday : '' }}"
+                                required />
+                            <input type="hidden" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
+                                required />
+                            <input type="hidden" name="mImg" value="{{ isset($data) ? $data->m_Img : '' }}"
+                                required />
+                            <input type="hidden" name="lId" value="{{ $labels->l_Id }}" required />
+                            <input type="hidden" name="lTitle" value="{{ $labels->l_Title }}" required />
+
+                            <input type="{{ isset($data) ? 'submit' : 'hidden' }}"
+                                {{ isset($data) ? '' : 'readonly' }}
+                                class="cursor-pointer text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                value="{{ $labels->l_Title }}" />
+                        </form>
+                    @endforeach
+                @endif
             </div>
         </div>
     </div>
@@ -259,10 +262,9 @@
 
             function printLabel(response) {
                 var trade = JSON.parse(response.trade);
-
                 var label = JSON.parse(response.label);
                 // size: 264px 188px;
-                var printWindow = window.open('', '', 'height=1280, width=765');
+                var printWindow = window.open('', '', 'height=1080, width=1920');
                 printWindow.document.write(`
                 <html>
                 <head>
@@ -271,60 +273,46 @@
                     @media print {
                         @page {
                             margin: 0;
-                            size: landscape;
                         }
-
                         * {
                             padding: 0;
                             margin: 0;
-                        }
-
-                        #table {
-                            width: 265px;
-                            height: 190PX;
-                            text-align: center;
                             color: black;
-                            border-collapse: collapse;
-                            border-spacing: 0;
                         }
-
+                        #table {
+                            text-align: center;
+                            width:100%;
+                            height:100%;
+                        }
                         tr {
                             height: 100%;
                         }
-
                         td {
                             width: 100%;
                             font-size: 18px;
                             font-weight: 600;
                         }
-
                         #trOne {
                             height: 40px;
                         }
-
                         #tdOne {
                             font-size: 26px;
                             font-weight: bold;
                         }
-
                         #trTwo {
                             height: 20px;
                         }
-
                         #trThree {
                             height: 20px;
                         }
-
                         #trThree-left,
                         #trFour-left {
                             width: 65% !important;
                         }
-
                         #trThree-right,
                         #trFour-right {
                             width: 35% !important;
                         }
-
                         #trFour {
                             height: 20px;
                         }
@@ -338,14 +326,14 @@
                 <body>
                     <table id="table">
                         <tr id="trOne">
-                            <td id="tdOne" colspan="2" nowrap>${label.l_Title}</td>
+                            <td id="tdOne" colspan="2" nowrap>${label.l_TitleOne}</td>
                         </tr>
                         <tr id="trTwo">
-                            <td colspan="2" nowrap>${label.l_TitleOne}</td>
+                            <td colspan="2" nowrap>${label.l_TitleTwo}</td>
                         </tr>
                         <tr id="trThree">
-                            <td id="trThree-left" nowrap>${label.l_TitleTwo}</td>
-                            <td id="trThree-right" nowrap>${label.l_TitleThree}</td>
+                            <td id="trThree-left" nowrap>${label.l_TitleThree}</td>
+                            <td id="trThree-right" nowrap>${label.l_TitleFour}</td>
                         </tr>
                         <tr id="trFour">
                             <td id="trFour-left" nowrap>${trade.t_mId}</td>
@@ -357,11 +345,11 @@
                     </table>
                 </body>
                 </html>
-            `);
+                `);
                 printWindow.print();
                 setTimeout(function() {
                     printWindow.close();
-                }, 10);
+                }, 0);
             }
         });
     </script>

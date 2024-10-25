@@ -4,12 +4,3 @@
 /* @tailwind base;
 @tailwind components;
 @tailwind utilities; */
-
-
-input[type="date"]::-webkit-inner-spin-button,
-input[type="date"]::-webkit-calendar-picker-indicator {
-    margin:0;
-}
-input[type="date"]::-webkit-datetime-edit {
-    display:none;
-}

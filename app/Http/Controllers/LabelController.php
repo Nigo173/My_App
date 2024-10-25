@@ -81,7 +81,7 @@ class LabelController extends Controller
         $msg = "建立標籤成功";
         $LabelModel = new LabelModel();
 
-        if($request->isMethod('post'))
+        if(isset($request->title) && $request->title != '' && $request->isMethod('post'))
         {
             try
             {
@@ -91,33 +91,32 @@ class LabelController extends Controller
                 {
                     $msg = "標籤數量異常";
                     $label = $LabelModel->limit(8)->reorder('updated_at', 'desc')->get();
-                    return view('label', ['label' => $label, 'msg' => $msg]);
+                    return response()->json(['action'=>'label','msg'=>$msg]);
                 }
 
+                //隨機編號
+                $lId = $this->get_random_Id();
+
                 $data = $LabelModel->create([
-                    'l_Id'=>$request->lId,
+                    'l_Id'=>$lId,
                     'l_Title'=>$request->title,
                     'l_TitleOne'=>$request->titleOne,
                     'l_TitleTwo'=>$request->titleTwo,
                     'l_TitleThree'=>$request->titleThree,
                     'l_TitleFour'=>$request->titleFour
-                    // 'l_TitleFive'=>$request->titleFive,
-                    // 'l_TitleSix'=>$request->titleSix,
-                    // 'l_TitleSeven'=>$request->titleSeven
                 ]);
 
                 if($data->save())
                 {
                     $msg = "建立標籤成功";
-                    $this->create_Log($request, $msg);
-                    return response()->json(['action'=>'list','msg'=>$msg]);
                 }
                 else
                 {
                     $msg = "建立標籤失敗";
-                    $this->create_Log($request, $msg);
-                    return response()->json(['action'=>'create','msg'=>$msg]);
                 }
+                $this->create_Log($request, $msg);
+
+                return response()->json(['action'=>'label','msg'=>$msg]);
             }
             catch(Exception $e)
             {
@@ -140,13 +139,11 @@ class LabelController extends Controller
             try
             {
                 $data = $LabelModel->where('id', $request->Id)->update([
+                    'l_Title'=>$request->title,
                     'l_TitleOne'=>$request->titleOne,
                     'l_TitleTwo'=>$request->titleTwo,
                     'l_TitleThree'=>$request->titleThree,
-                    'l_TitleFour'=>$request->titleFour,
-                    'l_TitleFive'=>$request->titleFive,
-                    'l_TitleSix'=>$request->titleSix,
-                    'l_TitleSeven'=>$request->titleSeven
+                    'l_TitleFour'=>$request->titleFour
                 ]);
 
                 $msg = '編輯標籤成功';
@@ -171,11 +168,17 @@ class LabelController extends Controller
 
     private function create_Log(Request $request, string $note)
     {
-        $note = session('Account').'執行 => '.$note;
-        // $mac = strtok(exec('getmac'), ' ');
-        // $url = $request->getRequestUri();
         $mac = '';
         $url = '';
+
+        try
+        {
+            $note = session('Account').'執行 => '.$note;
+            $mac = strtok(exec('getmac'), ' ');
+            $url = $request->getRequestUri();
+        }
+        catch(Exception $e){}
+        
         $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
         LogModel::create(['log' => $data]);
     }

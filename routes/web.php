@@ -14,18 +14,25 @@ use App\Http\Middleware\AdminsMiddleware;
 // use App\Http\Middleware\LogMiddleware;
 use App\Http\Middleware\AuthMiddleware;
 
-
 Route::get('/', function() {
     return '';
 });
 // Route::view('/', 'login');
 
 Route::prefix('/')->group(function () {
-    Route::view('/', 'login');
-    Route::get('login', [LoginController::class, 'index'])->name('login');
-    Route::post('login', [LoginController::class, 'login']);
+    Route::get('/', [LoginController::class, 'index'])->name('login');
+    Route::post('login', [LoginController::class, 'login'])->name('user_login');
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 });
+
+// Route::middleware(AdminsMiddleware::class)
+// ->prefix('/')
+// ->group(function()
+// {
+//     Route::get('/', [LoginController::class, 'index'])->name('login');
+//     Route::post('login', [LoginController::class, 'login']);
+//     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+// });
 
 // Home
 Route::middleware(AdminsMiddleware::class)

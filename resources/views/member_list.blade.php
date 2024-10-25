@@ -112,6 +112,8 @@
                                                     @csrf
                                                     <input type="hidden" name="delete" value="delete">
                                                     <input type="hidden" name="Id" value="{{ $members->m_Id }}">
+                                                    <input type="hidden" name="name"
+                                                        value="{{ $members->m_Name }}">
 
                                                     <button type="submit"
                                                         class="px-2 py-1.5 text-white bg-red-700 hover:bg-red-800 text-md text-center">
@@ -186,14 +188,15 @@
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
                             <label for="cardId"
-                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">身分證</label>
+                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">身分證
+                                <span class="text-red-800" style="font-size: 12px;">(英文大寫開頭)</span></label>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-2 md:gap-6">
                         {{-- 生日 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="date" class="absolute bg-transparent top-0 right-0 border-0"
-                                onchange="dateChange()" />
+                                onchange="dateChange()" style="width: 45px;" />
                             <input type="text" name="birthday"
                                 value="{{ $action == 'member_update' && isset($data) ? $data->m_Birthday : '' }}"
                                 pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
@@ -201,7 +204,8 @@
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
                             <label for="birthday"
-                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">生日</label>
+                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">生日<span
+                                    class="text-red-800" style="font-size: 12px;">(格式xxx-xx-xx)</span></label>
                         </div>
                         {{-- 電話 --}}
                         <div class="relative z-0 w-full mb-5 group">

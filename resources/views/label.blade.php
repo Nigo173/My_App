@@ -21,8 +21,8 @@
                                 class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">搜尋</button>
                         </div>
                     </form>
-                    @if (isset($label) > 0)
-                        @if (sizeof($label) <= 6)
+                    @if (isset($label))
+                        @if (sizeof($label) <= 7 && session('Level') == '2')
                             <form action="{{ route('label') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="create" value="create">
@@ -37,7 +37,7 @@
                     <thead class="bg-gray-200">
                         <tr>
                             <th scope="col" class="px-6 py-3">
-                                代號
+                                標籤代號
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 標題1
@@ -47,6 +47,9 @@
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 標題3
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                標題4
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 資料日期
@@ -62,10 +65,10 @@
                                 <tr
                                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
                                     <td class="px-6 py-4">
-                                        {{ $labels->l_Id }}
+                                        {{ $labels->l_Title }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ $labels->l_Title }}
+                                        {{ $labels->l_TitleOne }}
                                     </td>
                                     <td class="px-6 py-4">
                                         {{ $labels->l_TitleTwo }}
@@ -74,8 +77,10 @@
                                         {{ $labels->l_TitleThree }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ $labels->created_at }}<br>
-                                        {{ $labels->updated_at }}
+                                        {{ $labels->l_TitleFour }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ $labels->created_at }}
                                     </td>
                                     <td class="px-6 py-4">
                                         @if (session('Level') == '2')
@@ -99,8 +104,8 @@
                 <form id="formCreate" class="max-w-md mx-auto" data-action="{{ route($action) }}" method="POST">
                     @csrf
                     @if (isset($data))
+                        <input type="hidden" name="Id" value="{{ isset($data) ? $data->id : '' }}">
                         <input type="hidden" name="update">
-                        <input type="hidden" name="Id" value="{{ $data->id }}">
                     @else
                         <input type="hidden" name="create">
                     @endif
@@ -122,7 +127,7 @@
                         </div>
                         {{-- 標題2 --}}
                         <div class="mx-auto">
-                            <input type="text" name="titleOne" maxlength="10"
+                            <input type="text" name="titleTwo" maxlength="10"
                                 value="{{ isset($data) ? $data->l_TitleTwo : '' }}"
                                 class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
@@ -137,7 +142,7 @@
                             </div>
                             <div class="row-start-2">
                                 <input type="text" name="titleFour" maxlength="5"
-                                    value="{{ isset($data) ? $data->titleFour : '' }}"
+                                    value="{{ isset($data) ? $data->l_TitleFour : '' }}"
                                     class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                     placeholder=" " />
                             </div>
@@ -221,8 +226,9 @@
                         cache: false,
                         processData: false,
                         success: function(response) {
+
                             if (response.msg.indexOf('成功') > -1) {
-                                // form.trigger("reset");
+                                form.trigger("reset");
                             } else {
                                 $('#toast-success').toggleClass(
                                     'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
@@ -241,7 +247,7 @@
                             } else if (url.indexOf('create')) {
                                 setTimeout(function() {
                                     window.location.href = 'label';
-                                }, 2000);
+                                }, 1000);
                             }
                             $('#toast-success').removeClass('hidden');
                             $('#toast-success-msg').text(response.msg);

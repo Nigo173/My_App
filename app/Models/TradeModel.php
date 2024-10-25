@@ -20,7 +20,9 @@ class TradeModel extends Model
                             't_mName',
                             't_mBirthday',
                             't_mPhone',
-                            't_mImg'
+                            't_mImg',
+                            'created_at',
+                            'updated_at'
                             // 't_Content',
                             // 't_Money',
                             // 't_PayDateTime',

@@ -9,22 +9,6 @@ class LogController extends Controller
 {
     public function index(Request $request)
     {
-        // if($request->isMethod('post') && isset($request->search) && $request->search != '')
-        // {
-        //     try
-        //     {
-        //         $log = new LogModel();
-        //         $data = $log->where('log', 'like', '%'.$request->search.'%')->limit(100)->reorder('updated_at', 'desc')->get();
-        //         return view('log', ['log' => $data]);
-        //     }
-        //     catch(Exception $e)
-        //     {
-        //         return view('error');
-        //     }
-        // }
-
-        // $log = LogModel::limit(50)->reorder('updated_at', 'desc')->get();
-        // return view('log', ['log' => $log]);
         try
         {
             $LogModel = new LogModel();
@@ -32,17 +16,17 @@ class LogController extends Controller
             if($request->isMethod('get') && isset($request->search) && $request->search != '') // Like
             {
                 $log = $LogModel->where('log', 'like', '%'.$request->search.'%')
-                ->limit(100)->reorder('updated_at', 'desc')->get();
+                ->limit(50)->reorder('updated_at', 'desc')->get();
                 return view('log', ['log' => $log]);
             }
 
             // ALL
-            $log = $LogModel->limit(100)->reorder('updated_at', 'desc')->get();
+            $log = $LogModel->limit(200)->reorder('updated_at', 'desc')->get();
             return view('log', ['log' => $log]);
         }
         catch(Exception $e)
         {
-            return view('log', ['msg' => '搜尋異常錯誤']);
+            return view('error');
         }
     }
 
@@ -63,7 +47,6 @@ class LogController extends Controller
                 {
                     $msg = "刪除失敗";
                 }
-                unset($_POST);
             }
             catch(Exception $e)
             {

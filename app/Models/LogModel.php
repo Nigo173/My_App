@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class LogModel extends Model
 {
     protected $table = 'log';
-    protected $fillable = ['log'];
+    protected $fillable = [
+        'log',
+        'created_at',
+        'updated_at'
+    ];
 }

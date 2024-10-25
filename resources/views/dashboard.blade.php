@@ -50,7 +50,6 @@
                     <select name="selectYear" onchange="this.form.submit()"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="" selected>年查詢</option>
-
                         @for ($i = ((int) date('Y')) - 1913; $i < ((int) date('Y')) - 1908; $i++)
                             <option value="{{ $i }}"
                                 {{ isset($selectYear) && $selectYear == $i ? 'selected' : '' }}>{{ $i . '年' }}
@@ -86,6 +85,7 @@
                     </select>
                 </div>
             </form>
+
             {{-- 表格清單 --}}
             <table class="w-full mt-5 text-md text-center text-gray-600 border border-gray-400">
                 <thead class="bg-gray-200">
@@ -106,14 +106,17 @@
                             標籤
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            資料日期
+                            交易編號
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            上傳日期
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (isset($trade))
                         @foreach ($trade as $trades)
-                            <tr
+                            <tr onclick="labelConten({{ $trades }});"
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
                                 <td class="px-6 py-4">
                                     @if (strlen($trades->t_mImg) > 10)
@@ -129,15 +132,20 @@
                                     {{ $trades->t_mCardId }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ $trades->t_aId }}:{{ $trades->t_aName }}
-
+                                    {{ $trades->t_aId }} {{ $trades->t_aName }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ $trades->t_lTitle }}
+                                    <button type="button" data-modal-target="popup-label-modal"
+                                        data-modal-toggle="popup-label-modal"
+                                        class="text-blue-500 border-b-2 border-blue-400">
+                                        {{ $trades->t_lTitle }}
+                                    </button>
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ $trades->created_at }}<br>
-                                    {{ $trades->updated_at }}
+                                    {{ $trades->t_No }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ $trades->created_at }}
                                 </td>
                             </tr>
                         @endforeach
@@ -165,8 +173,52 @@
             </div>
         </div>
     </div>
+    {{-- Modal Content Detail --}}
+
+    <div id="popup-label-modal" tabindex="-1"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <button type="button"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-hide="popup-label-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+                <div class="p-4 md:p-5 text-center">
+                    <h5 id="label-title" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    </h5>
+                    <h6 id="label-TitleOne" class="text-lg text-gray-700 dark:text-gray-400">
+                    </h6>
+                    <div class="grid grid-cols-2">
+                        <p id="label-TitleTwo" class="text-lg text-gray-700 dark:text-gray-400"></p>
+                        <p id="label-TitleThree" class="text-lg text-gray-700 dark:text-gray-400"></p>
+                    </div>
+                    <div class="grid grid-cols-2">
+                        <p id="label-MId" class="text-lg text-gray-700 dark:text-gray-400"></p>
+                        <p id="label-MName" class="text-lg text-gray-700 dark:text-gray-400"></p>
+                    </div>
+                    <div class="grid grid-cols-1">
+                        <p id="label-No" class="text-lg text-gray-700 dark:text-gray-400"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
+        function labelConten(data) {
+            document.getElementById('label-title').innerText = data.l_Title === undefined ? '' : data.l_Title;
+            document.getElementById('label-TitleOne').innerText = data.l_TitleOne === undefined ? '' : data.l_TitleOne;
+            document.getElementById('label-TitleTwo').innerText = data.l_TitleTwo === undefined ? '' : data.l_TitleTwo;
+            document.getElementById('label-MId').innerText = data.t_mId === undefined ? '' : data.t_mId;
+            document.getElementById('label-MName').innerText = data.t_mName === undefined ? '' : data.t_mName;
+            document.getElementById('label-No').innerText = data.t_No === undefined ? '' : data.t_No;
+        }
         // Modal圖片
         function showImage(url) {
             document.getElementById('modalImg').src = url;

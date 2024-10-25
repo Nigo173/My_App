@@ -13,6 +13,10 @@ class AdminsModel extends Model
                             'a_PassWord',
                             'a_Name',
                             'a_Permissions',
-                            'a_Mac'
+                            'a_Level',
+                            'a_Mac',
+                            'a_State',
+                            'created_at',
+                            'updated_at'
                             ];
 }

@@ -26,9 +26,9 @@ class AdminsController extends Controller
         {
             $AdminsModel = new AdminsModel();
 
-            if($request->isMethod('post') && isset($request->Id) && $request->Id != '' && $msg == null) // Id
+            if($request->isMethod('post') && isset($request->account) && $request->account != '' && $msg == null) // Id
             {
-                $admins = $AdminsModel->where('a_Id', $request->Id)->get()->first();
+                $admins = $AdminsModel->where('a_Id', $request->account)->get()->first();
                 $admins = $this->add_Permissions($admins, 'update');
 
                 return view('admins_list', ['action' => $action, 'data' => $admins]);
@@ -48,7 +48,7 @@ class AdminsController extends Controller
         }
         catch(Exception $e)
         {
-            return view('admins_list', ['msg' => '搜尋異常錯誤']);
+            return view('error');
         }
     }
 
@@ -127,7 +127,7 @@ class AdminsController extends Controller
         $request->except(['msg']);
         $msg = '';
 
-        if(isset($request->Id) && $request->Id != '' && isset($request->update))
+        if(isset($request->account) && $request->account != '' && isset($request->update))
         {
             try
             {
@@ -138,7 +138,7 @@ class AdminsController extends Controller
                 {
                     $hashedpassword = md5($request->password);
 
-                    $data = AdminsModel::where('a_Id', $request->Id)->update([
+                    $data = AdminsModel::where('a_Id', $request->account)->update([
                         'a_PassWord'=>$hashedpassword,
                         'a_Name'=>$request->name,
                         'a_Mac'=>$request->mac,
@@ -149,7 +149,7 @@ class AdminsController extends Controller
                 }
                 else
                 {
-                    $data = AdminsModel::where('a_Id', $request->Id)->update([
+                    $data = AdminsModel::where('a_Id', $request->account)->update([
                         'a_Name'=>$request->name,
                         'a_Mac'=>$request->mac,
                         'a_Permissions'=>$new_Permissions,
@@ -163,12 +163,11 @@ class AdminsController extends Controller
                 if($data)
                 {
                     $msg = "編輯成功";
-                    $request->session()->put('id', $request->Id);
                 }
 
                 $this->create_Log($request, $msg);
-
-                if(session('Account') == $request->Id)
+                // 更新 session
+                if(session('Account') == $request->account)
                 {
                     $request->session()->put('Name', $request->name);
                 }
@@ -187,17 +186,16 @@ class AdminsController extends Controller
         $request->except(['msg']);
         $msg = '';
 
-        if(isset($request->Id) && $request->Id != '' && isset($request->delete))
+        if(isset($request->account) && $request->account != '' && isset($request->delete))
         {
             try
             {
-                $data = AdminsModel::where('a_Id', $request->Id)->delete();
+                $data = AdminsModel::where('a_Id', $request->account)->delete();
                 $msg = " 刪除失敗";
 
                 if($data)
                 {
                     $msg = "刪除成功";
-                    $request->session()->put('id', $request->Id);
                 }
 
                 $this->create_Log($request, $msg);
@@ -358,11 +356,17 @@ class AdminsController extends Controller
 
     private function create_Log(Request $request, string $note)
     {
-        $note = session('Account').'執行 => (會員帳號:'.$request->Id.' 會員姓名: '.$request->name.')'.$note;
-        // $mac = strtok(exec('getmac'), ' ');
-        // $url = $request->getRequestUri();
         $mac = '';
         $url = '';
+
+        try
+        {
+            $note = session('Account').'執行 => (會員帳號:'.$request->account.' 會員姓名: '.$request->name.') '.$note;
+            $mac = strtok(exec('getmac'), ' ');
+            $url = $request->getRequestUri();
+        }
+        catch(Exception $e){}
+
         $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
         LogModel::create(['log' => $data]);
     }

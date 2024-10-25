@@ -49,11 +49,10 @@ class TradeController extends Controller
                 $label = LabelModel::limit(8)->get();
                 return view('trade', ['data' => $data,'label' => $label,'memberlabel' => $memberlabel]);
             }
-            return view('trade', ['msg' => '搜尋無此人']);
         }
         catch(Exception $e)
         {
-            return view('trade', ['msg' => '搜尋異常錯誤']);
+            return view('error');
         }
         return view('trade');
     }
@@ -72,7 +71,6 @@ class TradeController extends Controller
                 if($request->mImg != '')
                 {
                     // $img = $this->get_Image($request->mImg);
-
                     // if(strlen($img) < 10)
                     // {
                     //     $msg = "圖片大於2MB、請壓縮圖片";
@@ -81,7 +79,7 @@ class TradeController extends Controller
 
                     $tId = date('Ymdhis', time()).$request->Id;
                     $tNo = date('Ymd', time()).$request->Id.' '.date('h:i', time());
-// return response()->json(['action' => $request->birthday. '='.$request->phone]);
+                    // return response()->json(['action' => $request->birthday. '='.$request->phone]);
                     // return response()->json(['action' => 'list','msg' => 'birthday ='.$request->birthday.' , t_No: '.$tNo.' , '
                     // .$request->lTitle.' , t_lId:'.$request->lId.' , t_lTitle: '.$request->lTitle.' , t_mId = '.$request->Id. ' , t_mCardId:'.$request->cardId. ', name'.$request->name]);
 
@@ -106,22 +104,24 @@ class TradeController extends Controller
                     if($data->save())
                     {
                         $tId = $data->id;
-                        $this->create_Log($request, $msg);
                     }
                     else
                     {
                         $msg = "交易失敗";
-                        $this->create_Log($request, $msg);
                     }
 
-                    $trade = '';
+                    $this->create_Log($request, $msg);
 
+                    // 帶入資料 trade
+                    $trade = '';
+                    
                     if($tId != '')
                     {
                         $trade = TradeModel::where('id', $tId)->get()->first();
                         $trade = json_encode($trade);
                     }
 
+                    // 帶入資料 label
                     $label = '';
 
                     if($request->lId != '')
@@ -161,9 +161,17 @@ class TradeController extends Controller
 
     private function create_Log(Request $request, string $note)
     {
-        $note = session('Account').'執行 => (會員帳號:'.$request->Id.' 會員姓名: '.$request->name.')'.$note;
-        $mac = strtok(exec('getmac'), ' ');
-        $url = $request->getRequestUri();
+        $mac = '';
+        $url = '';
+
+        try
+        {
+            $note = session('Account').'執行 => (會員帳號:'.$request->Id.' 會員姓名: '.$request->name.')'.$note;
+            $mac = strtok(exec('getmac'), ' ');
+            $url = $request->getRequestUri();
+        }
+        catch(Exception $e){}
+
         $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
         LogModel::create(['log' => $data]);
     }

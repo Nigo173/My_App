@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Middleware\AuthMiddleware;
 use App\Models\AdminsModel;
-use Illuminate\Support\Facades\Crypt;
-// use Illuminate\Support\Facades\Session;
 use App\Models\LogModel;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
-// use App\Models\LoginModel;
-// use Illuminate\Support\Facades\Auth;
 // use App\Http\Middleware\LogMiddleware;
 
 class LoginController extends Controller
@@ -24,9 +23,7 @@ class LoginController extends Controller
     {
         if($request->session()->has('Account'))
         {
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            $this->delete_log();
+            $request->session()->flush();
         }
 
         return view('login');
@@ -34,11 +31,8 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // Validate
-        // $fields = $request->validate([
-        //     'account' => ['required', 'min:5', 'max:10'],
-        //     'password' => ['required', 'min:3', 'max:20']
-        // ]);
+        $msg = '登入成功';
+
         try
         {
             $admins = new AdminsModel();
@@ -55,78 +49,63 @@ class LoginController extends Controller
 
                 if($data->a_State == '0')
                 {
-                    return view('login', ['err' => '帳號停權']);
+                    $msg = '帳號停權';
+                    return view('login', ['err' => $msg]);
                 }
 
-                // $mac = trim(substr(shell_exec('getmac'), 159, 20));
+                $mac = strtok(exec('getmac'), ' ');
                 $data = AdminsModel::where('a_Id', $request->account)->update([
-                    'a_Mac' => 'test234',
+                    'a_Mac' => $mac
                 ]);
-
-                if(!$data)
-                {
-                    return view('login', ['err' => '更新失敗']);
-                }
             }
             else
             {
-                return view('login', ['err' => '登入失敗']);
+                $msg = '登入失敗';
             }
+            
+            $this->create_Log($request, $msg);
+            return response()->json(['action'=>'login','msg'=>$msg]);
         }
         catch(Exception $e)
         {
             return view('error');
         }
 
-        return redirect()->route('dashboard');
-
-        // print_r($request->all());
-        // AdminsModel::create(['a_Id' => 'C12345','a_PassWord' => '123', 'a_Name' => 'Nikki']);
-
-        // $data = $request->session()->all();
-        // $data = $request->session()->only(['username', 'email']);
-        // $data = $request->session()->except(['username', 'email']);
-
-        // session(['key' => 'value']);
-
-        // Load Value
-
-        // $user =  User::create(['a_Id'=>$request->account,'email'=>'12yu32','password'=>'11223']);
-        // $data = LoginModel::create(['a_Id'=>'A12345','email'=>'A12345@yahoo.com.tw','a_PassWord'=>'12345']);
-        // dd($request->account);
-
-        // Auth::login($user);
-        // if(Auth::attempt($fields, ['Nigo'=>'ok']))
-        // {
-        //     return redirect()->intended('Home');
-        // }
-        // return redirect()->route('Home');
-        // return back()->withErrors([ // 針對error 自定義
-        //     'failed'=>'輸入錯誤...'
-        // ]);
+        return response()->json(['action'=>'dashboard','msg'=>'登入成功']);
     }
 
     public function logout(Request $request)
     {
-        // Session::flush();
-        // Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        // dd('sss');
+        $this->delete_Log();
+        $msg = '登出';
+        $this->create_Log($request, $msg);
+        $request->session()->flush();
         return redirect()->route('login');
     }
 
-    private function delete_log()
+    private function create_Log(Request $request, string $note)
+    {
+        $mac = '';
+        $url = '';
+        
+        try
+        {
+            $note = session('Account').' '.session('Name').' '.$note;
+            $mac = strtok(exec('getmac'), ' ');
+            $url = $request->getRequestUri();
+        }
+        catch(Exception $e){}
+
+        $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
+        LogModel::create(['log' => $data]);
+    }
+
+    private function delete_Log()
     {
         try
         {
-            LogModel::where('id', $request->Id)
-            ->where('created_at', '<','DATE_SUB(NOW(), INTERVAL 7 DAY')
-            ->delete();
+            LogModel::where('created_at', '<',DB::raw('DATE_SUB(NOW(), INTERVAL 14 DAY)'))->delete();
         }
-        catch(Exception $e)
-        {
-            return view('error');
-        }
+        catch(Exception $e){}
     }
 }
