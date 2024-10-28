@@ -1,25 +1,18 @@
 <x-layout>
-    @if (isset($msg) && $msg != '')
+    @if (isset($trade))
         <div id="toast-success"
-            class="absolute right-10 top-10 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+            class="absolute z-50 right-10 top-10 flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
             role="alert">
             <div
-                class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 {{ strpos($msg, '成功') ? 'text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200' : 'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200' }}  ">
-                @if (strpos($msg, '成功'))
+                class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-blue-500 bg-blue-100 rounded-lg dark:bg-blue-800 dark:text-blue-200 ">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 20 20">
                         <path
                             d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                     </svg>
-                @else
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                        viewBox="0 0 20 20">
-                        <path
-                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />
-                    </svg>
-                @endif
+
             </div>
-            <div class="ms-3 text-sm font-normal">{{ $msg }}</div>
+            <div class="ms-3 text-sm font-semibold">搜尋筆數: {{ sizeof($trade) }}</div>
             <button type="button" id="toast-success-button"
                 class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
                 data-dismiss-target="#toast-success" aria-label="Close">
@@ -33,10 +26,10 @@
         </div>
     @endif
     <div class="relative overflow-x-auto shadow-xl rounded-lg">
-        <div class="pX-2 py-5">
+        <div class="px-2 py-2">
             {{-- 搜尋 --}}
-            <form class="max-w-md mx-auto">
-                <div class="grid gap-4 grid-cols-2 p-4 bg-gray-300">
+            <form class="max-w-lg mx-auto px-5 bg-gray-300 rounded-full py-2">
+                <div class="grid gap-4 grid-cols-4">
                     <select name="selectShift" onchange="this.form.submit()"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="" selected>班查詢</option>
@@ -58,30 +51,24 @@
                     <select name="selectMonth" onchange="this.form.submit()"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="" selected>月查詢</option>
-                        <option value="1" {{ isset($selectMonth) && $selectMonth == '1' ? 'selected' : '' }}>1月
-                        </option>
-                        <option value="2" {{ isset($selectMonth) && $selectMonth == '2' ? 'selected' : '' }}>2月
-                        </option>
-                        <option value="3" {{ isset($selectMonth) && $selectMonth == '3' ? 'selected' : '' }}>3月
-                        </option>
-                        <option value="4" {{ isset($selectMonth) && $selectMonth == '4' ? 'selected' : '' }}>4月
-                        </option>
-                        <option value="5" {{ isset($selectMonth) && $selectMonth == '5' ? 'selected' : '' }}>5月
-                        </option>
-                        <option value="6" {{ isset($selectMonth) && $selectMonth == '6' ? 'selected' : '' }}>6月
-                        </option>
-                        <option value="7" {{ isset($selectMonth) && $selectMonth == '7' ? 'selected' : '' }}>7月
-                        </option>
-                        <option value="8" {{ isset($selectMonth) && $selectMonth == '8' ? 'selected' : '' }}>8月
-                        </option>
-                        <option value="9" {{ isset($selectMonth) && $selectMonth == '9' ? 'selected' : '' }}>9月
-                        </option>
-                        <option value="10" {{ isset($selectMonth) && $selectMonth == '10' ? 'selected' : '' }}>10月
-                        </option>
-                        <option value="11" {{ isset($selectMonth) && $selectMonth == '11' ? 'selected' : '' }}>11月
-                        </option>
-                        <option value="12" {{ isset($selectMonth) && $selectMonth == '12' ? 'selected' : '' }}>12月
-                        </option>
+                        @if (isset($selectYear))
+                            @for ($i = 1; $i <= 12; $i++)
+                                <option value="{{ $i }}"
+                                    {{ isset($selectMonth) && $selectMonth == $i ? 'selected' : '' }}>
+                                    {{ $i . '月' }}
+                            @endfor
+                        @endif
+                    </select>
+                    <select name="selectDay" onchange="this.form.submit()"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="" selected>日查詢</option>
+                        @if (isset($selectYear) && isset($selectMonth))
+                            @for ($i = 1; $i <= cal_days_in_month(0, $selectMonth, $selectYear); $i++)
+                                <option value="{{ $i }}"
+                                    {{ isset($selectDay) && $selectDay == $i ? 'selected' : '' }}>
+                                    {{ $i . '號' }}
+                            @endfor
+                        @endif
                     </select>
                 </div>
             </form>
@@ -90,25 +77,25 @@
             <table class="w-full mt-5 text-md text-center text-gray-600 border border-gray-400">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="py-3">
                             圖片
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col">
                             會員姓名
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col">
                             會員身分證
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col">
                             管理員
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col">
                             標籤
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col">
                             交易編號
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col">
                             上傳日期
                         </th>
                     </tr>
@@ -118,34 +105,34 @@
                         @foreach ($trade as $trades)
                             <tr onclick="labelConten({{ $trades }});"
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
-                                <td class="px-6 py-4">
+                                <td class="px-2 py-4">
                                     @if (strlen($trades->t_mImg) > 10)
                                         <img src="{{ $trades->t_mImg }}" style="width:50px;height:50px;"
                                             onclick="showImage(this.src)" class="cursor-pointer"
                                             data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $trades->t_mName }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $trades->t_mCardId }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $trades->t_aId }} {{ $trades->t_aName }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     <button type="button" data-modal-target="popup-label-modal"
                                         data-modal-toggle="popup-label-modal"
                                         class="text-blue-500 border-b-2 border-blue-400">
                                         {{ $trades->t_lTitle }}
                                     </button>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $trades->t_No }}
                                 </td>
-                                <td class="px-6 py-4">
-                                    {{ $trades->created_at }}
+                                <td>
+                                    {{ $trades->created_at.'' }}
                                 </td>
                             </tr>
                         @endforeach

@@ -53,10 +53,10 @@ class LoginController extends Controller
                     return view('login', ['err' => $msg]);
                 }
 
-                $mac = strtok(exec('getmac'), ' ');
-                $data = AdminsModel::where('a_Id', $request->account)->update([
-                    'a_Mac' => $mac
-                ]);
+                //$mac = strtok(exec('getmac'), ' ');
+               // $data = AdminsModel::where('a_Id', $request->account)->update([
+                    //'a_Mac' => ' '
+               // ]);
             }
             else
             {
@@ -91,7 +91,7 @@ class LoginController extends Controller
         try
         {
             $note = session('Account').' '.session('Name').' '.$note;
-            $mac = strtok(exec('getmac'), ' ');
+            //$mac = strtok(exec('getmac'), ' ');
             $url = $request->getRequestUri();
         }
         catch(Exception $e){}

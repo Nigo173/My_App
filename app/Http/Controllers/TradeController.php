@@ -25,7 +25,6 @@ class TradeController extends Controller
         {
             if(isset($request->search) && $request->search != '')
             {
-                // DB::enableQueryLog();
                 $m_Id = ($request->Id != "" ? " AND m_Id LIKE '".$request->Id."%'" : "");
                 $m_CardId = ($request->cardId != "" ? " AND m_CardId LIKE '".$request->cardId."%'" : "");
                 $m_Name = ($request->name != '' ? " AND m_Name LIKE '". $request->name ."%'" : "");
@@ -33,21 +32,36 @@ class TradeController extends Controller
                 $m_Phone = ($request->phone != "" ? " AND m_Phone LIKE '".$request->phone."%'" : "");
 
                 $member = DB::select("SELECT * FROM member WHERE 1=1".$m_Id.$m_CardId.$m_Name.$m_Birthday.$m_Phone." LIMIT 10");
-                // dd(DB::getQueryLog()); // Sh
 
                 return view('trade', ['member' => $member]);
             }
             else if(isset($request->searchMember) && $request->searchMember != '')
             {
+                // DB::enableQueryLog();
+
                 // $memberlabel = DB::select("SELECT COUNT(*), t_lTitle FROM (SELECT t_lTitle FROM trade WHERE t_mId = '".$request->searchMember."' LIMIT 1,5) AS a");
                 $memberlabel = TradeModel::select(TradeModel::raw('count(*) AS t_Count ,t_mId'),'t_lTitle')
                 ->where('t_mId', $request->searchMember)->groupBy('t_mId','t_lTitle')
                 ->limit(5)->reorder('updated_at', 'desc')->get();
+                // 篩選客戶交易選項
+
+                $currentlabel = DB::select("SELECT * FROM trade WHERE t_mId = '000004' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
+                                "BETWEEN IF(DATE_FORMAT(NOW(), '%H%i') < 2000,".
+                                "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20')) AND ".
+                                "IF(DATE_FORMAT(NOW(), '%H%i') > 2000, ".
+                                "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20'))");
+
+
+// DB::select("SELECT * FROM `trade` WHERE t_mId ='000004' AND DATE_FORMAT(DATE_ADD(created_at, INTERVAL -1 DAY), '%Y%m%d%H%i')  IF(DATE_FORMAT(NOW(), '%H%i') < 2000,
+// CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20'))")->pluck('t_lId');
+// dd(DB::getQueryLog()); // Sh
+
+                // return response()->json(['currentlabel_Id' => $currentlabel_Id]);
 
                 $data = MemberModel::Where('m_Id', $request->searchMember)->get()->first();
 
                 $label = LabelModel::limit(8)->get();
-                return view('trade', ['data' => $data,'label' => $label,'memberlabel' => $memberlabel]);
+                return view('trade', ['data' => $data,'label' => $label,'memberlabel' => $memberlabel,'currentlabel' => $currentlabel]);
             }
         }
         catch(Exception $e)
@@ -104,6 +118,16 @@ class TradeController extends Controller
                     if($data->save())
                     {
                         $tId = $data->id;
+
+                        // 更新會員備註
+                        $member = MemberModel::where('m_Id', $request->Id)->update([
+                            'm_Remark'=>$request->remark
+                        ]);
+
+                        if(isset($member->m_Remark))
+                        {
+                            $msg .= ' 會員備註:'.$request->remark;
+                        }
                     }
                     else
                     {
@@ -114,7 +138,7 @@ class TradeController extends Controller
 
                     // 帶入資料 trade
                     $trade = '';
-                    
+
                     if($tId != '')
                     {
                         $trade = TradeModel::where('id', $tId)->get()->first();
@@ -167,7 +191,7 @@ class TradeController extends Controller
         try
         {
             $note = session('Account').'執行 => (會員帳號:'.$request->Id.' 會員姓名: '.$request->name.')'.$note;
-            $mac = strtok(exec('getmac'), ' ');
+            //$mac = strtok(exec('getmac'), ' ');
             $url = $request->getRequestUri();
         }
         catch(Exception $e){}

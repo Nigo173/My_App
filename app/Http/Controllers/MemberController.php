@@ -49,201 +49,225 @@ class MemberController extends Controller
 
     public function list(Request $request, string $action = 'member_list', $msg = null)
     {
-        try
-        {
-            $MemberModel = new MemberModel();
+        $permissions = $this->get_Permissions();
 
-            if($request->isMethod('post') && isset($request->Id) && $request->Id != '' && $msg == null) // Id
-            {
-                $member = $MemberModel->where('m_Id', $request->Id)->get()->first();
-                return view('member_list', ['action' => $action, 'data' => $member]);
-            }
-            else if($request->isMethod('get') && isset($request->search) && $request->search != '' && $msg == null) // Like
-            {
-                $member = $MemberModel->where('m_CardId', 'like', '%'.$request->search.'%')
-                ->orWhere('m_Name', 'like', '%'.$request->search.'%')
-                ->limit(100)->reorder('updated_at', 'desc')->get();
-                return view('member_list', ['action' => 'member_list', 'member' => $member]);
-            }
-            // ALL
-            $member = $MemberModel->limit(50)->reorder('updated_at', 'desc')->get();
-            return view('member_list', ['action' => $action, 'member' => $member, 'msg' => $msg]);
-        }
-        catch(Exception $e)
+        if(strpos($permissions, 'r') > -1)
         {
-            return view('member_list', ['msg' => '搜尋異常錯誤']);
+            try
+            {
+                $MemberModel = new MemberModel();
+
+                if($request->isMethod('post') && isset($request->Id) && $request->Id != '' && $msg == null) // Id
+                {
+                    $member = $MemberModel->where('m_Id', $request->Id)->get()->first();
+                    return view('member_list', ['action' => $action, 'data' => $member]);
+                }
+                else if($request->isMethod('get') && isset($request->search) && $request->search != '' && $msg == null) // Like
+                {
+                    $member = $MemberModel->where('m_CardId', 'like', '%'.$request->search.'%')
+                    ->orWhere('m_Name', 'like', '%'.$request->search.'%')
+                    ->limit(10)->reorder('updated_at', 'desc')->get();
+                    return view('member_list', ['action' => 'member_list', 'member' => $member]);
+                }
+                // ALL
+                $member = $MemberModel->limit(25)->reorder('updated_at', 'desc')->get();
+                return view('member_list', ['action' => $action, 'member' => $member, 'msg' => $msg]);
+            }
+            catch(Exception $e)
+            {
+                return view('member_list', ['msg' => '搜尋異常錯誤']);
+            }
         }
+        return redirect()->route('logout');
     }
 
     public function create(Request $request)
     {
-        $request->except(['msg']);
-        $msg = '';
+        $permissions = $this->get_Permissions();
 
-        // 會員編號
-        $count = MemberModel::max('m_Id') + 1;
-        $Id = sprintf('%06d', $count);
-
-        if($request->isMethod('post'))
+        if(strpos($permissions, 'c') > -1)
         {
-            try
+            $request->except(['msg']);
+            $msg = '';
+
+            // 會員編號
+            $count = MemberModel::max('m_Id') + 1;
+            $Id = sprintf('%06d', $count);
+
+            if($request->isMethod('post'))
             {
-                $img = '';
-
-                if($request->file('img') != null)
+                try
                 {
-                    // $image_size = $_FILES["inputfilename"]["size"];
-                    // /*Not From Form*/
-                    // $img_size = getimagesize("imagepath");
+                    $img = '';
 
-                    // $img_size = getimagesizefromstring(file_get_contents($request->file('img')->path()));
-                    // dd($img_size);
-                    // $encode_Img = base64_encode(file_get_contents($request->file('img')->path()));
-
-                    // $size_in_bytes = (int) (strlen(rtrim($encode_Img, '=')) * 3 / 4);
-                    // $size_in_kb    = $size_in_bytes / 1024;
-                    // $size_in_mb    = round(($size_in_kb / 1024),1);
-
-                    // if($size_in_mb > 2)
-                    // {
-                    //     return view('member_list', ['action' => 'member_create', 'msg' => '圖片大於2MB、請壓縮圖片']);
-                    // }
-
-                    // $img = "data:image/png;base64,". $encode_Img;
-
-                    $img = $this->get_Image($request->file('img')->path());
-
-                    if(strlen($img) < 10)
+                    if($request->file('img') != null)
                     {
-                        $msg = "圖片大於2MB、請壓縮圖片";
+                        // $image_size = $_FILES["inputfilename"]["size"];
+                        // /*Not From Form*/
+                        // $img_size = getimagesize("imagepath");
 
-                        // return view('member_list', ['action' => 'member_create', 'msg' => '圖片大於2MB、請壓縮圖片']);
+                        // $img_size = getimagesizefromstring(file_get_contents($request->file('img')->path()));
+                        // dd($img_size);
+                        // $encode_Img = base64_encode(file_get_contents($request->file('img')->path()));
+
+                        // $size_in_bytes = (int) (strlen(rtrim($encode_Img, '=')) * 3 / 4);
+                        // $size_in_kb    = $size_in_bytes / 1024;
+                        // $size_in_mb    = round(($size_in_kb / 1024),1);
+
+                        // if($size_in_mb > 2)
+                        // {
+                        //     return view('member_list', ['action' => 'member_create', 'msg' => '圖片大於2MB、請壓縮圖片']);
+                        // }
+
+                        // $img = "data:image/png;base64,". $encode_Img;
+
+                        $img = $this->get_Image($request->file('img')->path());
+
+                        if(strlen($img) < 10)
+                        {
+                            $msg = "圖片大於2MB、請壓縮圖片";
+
+                            // return view('member_list', ['action' => 'member_create', 'msg' => '圖片大於2MB、請壓縮圖片']);
+                            return response()->json(['action'=>'list','msg'=>$msg]);
+                        }
+                    }
+
+                    $data = MemberModel::where('m_CardId', $request->cardId)->get()->first();
+
+                    if(isset($data->m_CardId))
+                    {
+                        $msg = "身分證號已存在";
                         return response()->json(['action'=>'list','msg'=>$msg]);
                     }
+
+                    // 會員編號
+                    // $id = $this->get_random_Id();
+
+                    $data = MemberModel::create([
+                        'm_Id'=>$Id,
+                        'm_CardId'=>$request->cardId,
+                        'm_Name'=>$request->name,
+                        'm_Birthday'=>$request->birthday,
+                        'm_Address'=>$request->address,
+                        'm_Email'=>$request->email,
+                        'm_Phone'=>$request->phone,
+                        'm_Img'=>$img,
+                        'm_Remark'=>$request->remark
+                    ]);
+
+                    if($data->save())
+                    {
+                        $msg = "新增成功";
+                        $this->create_Log($request, $msg);
+                        // return $this->list($request, 'member_list', $msg);
+                        return response()->json(['action'=>'list','msg'=>$msg]);
+                    }
+                    else
+                    {
+                        $msg = "新增失敗";
+                        $this->create_Log($request, $msg);
+                        // return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
+                        return response()->json(['action'=>'create','msg'=>$msg]);
+                    }
                 }
-
-                $data = MemberModel::where('m_CardId', $request->cardId)->get()->first();
-
-                if(isset($data->m_CardId))
+                catch(Exception $e)
                 {
-                    $msg = "身分證號已存在";
-                    return response()->json(['action'=>'list','msg'=>$msg]);
-                }
-
-                // 會員編號
-                // $id = $this->get_random_Id();
-
-                $data = MemberModel::create([
-                    'm_Id'=>$Id,
-                    'm_CardId'=>$request->cardId,
-                    'm_Name'=>$request->name,
-                    'm_Birthday'=>$request->birthday,
-                    'm_Address'=>$request->address,
-                    'm_Email'=>$request->email,
-                    'm_Phone'=>$request->phone,
-                    'm_Img'=>$img,
-                    'm_Remark'=>$request->remark
-                ]);
-
-                if($data->save())
-                {
-                    $msg = "新增成功";
-                    $this->create_Log($request, $msg);
-                    // return $this->list($request, 'member_list', $msg);
-                    return response()->json(['action'=>'list','msg'=>$msg]);
-                }
-                else
-                {
-                    $msg = "新增失敗";
-                    $this->create_Log($request, $msg);
-                    // return view('member_list', ['action' => 'member_create', 'msg' => $msg]);
-                    return response()->json(['action'=>'create','msg'=>$msg]);
+                    return view('error');
                 }
             }
-            catch(Exception $e)
-            {
-                return view('error');
-            }
+            return view('member_list', ['action' => 'member_create', 'Id' => $Id]);
         }
-        return view('member_list', ['action' => 'member_create', 'Id' => $Id]);
+        return redirect()->route('logout');
     }
 
     public function update(Request $request)
     {
-        $request->except(['msg']);
-        $msg = '';
+        $permissions = $this->get_Permissions();
 
-        if(isset($request->Id) && $request->Id != '' && isset($request->update))
+        if(strpos($permissions, 'u') > -1)
         {
-            try
+            $request->except(['msg']);
+            $msg = '';
+
+            if(isset($request->Id) && $request->Id != '' && isset($request->update))
             {
-                $img = $request->oldImg;
-
-                if($request->file('img') != null)
+                try
                 {
-                    $img = $this->get_Image($request->file('img')->path());
+                    $img = $request->oldImg;
 
-                    if(strlen($img) < 10)
+                    if($request->file('img') != null)
                     {
-                        return view('member_list', ['action' => 'member_update', 'msg' => '圖片大於2MB、請壓縮圖片']);
+                        $img = $this->get_Image($request->file('img')->path());
+
+                        if(strlen($img) < 10)
+                        {
+                            return view('member_list', ['action' => 'member_update', 'msg' => '圖片大於2MB、請壓縮圖片']);
+                        }
                     }
+
+                    $data = MemberModel::where('m_Id', $request->Id)->update([
+                        'm_CardId'=>$request->cardId,
+                        'm_Name'=>$request->name,
+                        'm_Birthday'=>$request->birthday,
+                        'm_Address'=>$request->address,
+                        'm_Email'=>$request->email,
+                        'm_Phone'=>$request->phone,
+                        'm_Img'=>$img,
+                        'm_Remark'=>$request->remark
+                    ]);
+
+                    $msg = "編輯成功";
+
+                    if(!$data)
+                    {
+                        $msg = "編輯失敗";
+                    }
+                    $this->create_Log($request, $msg);
                 }
-
-                $data = MemberModel::where('m_Id', $request->Id)->update([
-                    'm_CardId'=>$request->cardId,
-                    'm_Name'=>$request->name,
-                    'm_Birthday'=>$request->birthday,
-                    'm_Address'=>$request->address,
-                    'm_Email'=>$request->email,
-                    'm_Phone'=>$request->phone,
-                    'm_Img'=>$img,
-                    'm_Remark'=>$request->remark
-                ]);
-
-                $msg = "編輯成功";
-
-                if(!$data)
+                catch(Exception $e)
                 {
-                    $msg = "編輯失敗";
+                    return view('error');
                 }
-                $this->create_Log($request, $msg);
+                return response()->json(['action'=>'update','msg'=>$msg]);
             }
-            catch(Exception $e)
-            {
-                return view('error');
-            }
-            return response()->json(['action'=>'update','msg'=>$msg]);
+            return $this->list($request, 'member_update', $msg);
         }
-        return $this->list($request, 'member_update', $msg);
+        return redirect()->route('logout');
     }
 
     public function delete(Request $request)
     {
-        $request->except(['msg']);
-        $msg = '';
+        $permissions = $this->get_Permissions();
 
-        if(isset($request->Id) && $request->Id != '' && isset($request->delete))
+        if(strpos($permissions, 'd') > -1)
         {
-            try
-            {
-                $data = MemberModel::where('m_Id', $request->Id)->delete();
-                $msg = "刪除失敗";
+            $request->except(['msg']);
+            $msg = '';
 
-                if($data)
+            if(isset($request->Id) && $request->Id != '' && isset($request->delete))
+            {
+                try
                 {
-                    $msg = "刪除成功";
-                    $request->session()->put('id', $request->Id);
-                }
+                    $data = MemberModel::where('m_Id', $request->Id)->delete();
+                    $msg = "刪除失敗";
 
-                $this->create_Log($request, $msg);
+                    if($data)
+                    {
+                        $msg = "刪除成功";
+                        $request->session()->put('id', $request->Id);
+                    }
+
+                    $this->create_Log($request, $msg);
+                }
+                catch(Exception $e)
+                {
+                    return view('error');
+                }
+                return response()->json(['action'=>'delete','msg'=>$msg]);
             }
-            catch(Exception $e)
-            {
-                return view('error');
-            }
-            return response()->json(['action'=>'delete','msg'=>$msg]);
+            return $this->list($request, 'member_delete', $msg);
         }
-        return $this->list($request, 'member_delete', $msg);
+        return redirect()->route('logout');
     }
 
     private function get_Permissions(): string
@@ -271,7 +295,7 @@ class MemberController extends Controller
             }
             return $permissions;
         }
-        return redirect()->route('login');
+        return '';
     }
 
     private function get_Image(string $img): string
@@ -298,7 +322,7 @@ class MemberController extends Controller
         try
         {
             $note = session('Account').'執行 => (會員帳號:'.$request->Id.' 會員姓名: '.$request->name.')'.$note;
-            $mac = strtok(exec('getmac'), ' ');
+            //$mac = strtok(exec('getmac'), ' ');
             $url = $request->getRequestUri();
         }
         catch(Exception $e){}

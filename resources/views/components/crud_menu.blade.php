@@ -65,7 +65,7 @@
                     管理員權限限制才能使用此功能
                 </div>
 
-                <a href="{{ isset($permissions) && strpos($permissions, 'c') > -1 ? route($action.'_update') : '#' }}"
+                <a href="{{ isset($permissions) && strpos($permissions, 'u') > -1 ? route($action.'_update') : '#' }}"
                     class="text-yellow-300 bg-transparent border border-yellow-300 font-medium rounded-lg text-sm px-3 py-2 inline-flex text-center hover:bg-yellow-300 hover:text-gray-600 focus:ring-white">
                     <svg class="me-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 20 14">
@@ -90,7 +90,7 @@
                     管理員權限限制才能使用此功能
                 </div>
 
-                <a href="{{ isset($permissions) && strpos($permissions, 'c') > -1 ? route($action.'_delete') : '#' }}"
+                <a href="{{ isset($permissions) && strpos($permissions, 'd') > -1 ? route($action.'_delete') : '#' }}"
                     class="text-red-500 bg-transparent border border-red-500 font-medium rounded-lg text-sm px-3 py-2 inline-flex text-center hover:bg-red-500 hover:text-white focus:ring-white">
                     <svg class="me-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 20 14">

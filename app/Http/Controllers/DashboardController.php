@@ -15,11 +15,10 @@ class DashboardController extends Controller
     {
         try
         {
-            $msg = '';
             $TradeModel = new TradeModel();
             $trade = null;
 
-            if($request->isMethod('get') && (isset($request->selectShift) && $request->selectShift != '') || 
+            if($request->isMethod('get') && (isset($request->selectShift) && $request->selectShift != '') ||
             (isset($request->selectMonth) && $request->selectMonth != '') || (isset($request->selectYear) && $request->selectYear != '')) // Like
             {
                 $from = '0000';
@@ -36,50 +35,88 @@ class DashboardController extends Controller
                     $to = '2400';
                 }
 
-                if($request->selectShift != '' && $request->selectMonth == '' && $request->selectYear == '')
+                if($request->selectShift != '' && $request->selectMonth == '' && $request->selectYear == '' && $request->selectDay == '')
                 {
-                    $trade = $TradeModel->whereBetween(DB::raw('DATE_FORMAT(created_at, "%H%i")'), [$from, $to])
-                    ->reorder('created_at', 'desc')->get();
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereBetween(DB::raw('DATE_FORMAT(trade.created_at, "%H%i")'), [$from, $to])
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
                 }
-                else if($request->selectShift == '' && $request->selectMonth != '' && $request->selectYear == '')
+                else if($request->selectShift == '' && $request->selectMonth != '' && $request->selectYear == '' && $request->selectDay == '')
                 {
-                    $trade = $TradeModel->whereMonth('created_at', $request->selectMonth)->reorder('created_at', 'desc')->get();
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereMonth('trade.created_at', $request->selectMonth)
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
                 }
-                else if($request->selectShift == '' && $request->selectMonth == '' && $request->selectYear != '')
+                else if($request->selectShift == '' && $request->selectMonth == '' && $request->selectYear != '' && $request->selectDay == '')
                 {
-                    $trade = $TradeModel->whereYear('created_at', ((int)$request->selectYear) + 1911)->reorder('created_at', 'desc')->get();
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereYear('trade.created_at', ((int)$request->selectYear) + 1911)
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
                 }
-                else if($request->selectShift != '' && $request->selectMonth != '' && $request->selectYear != '')
+                else if($request->selectShift != '' && $request->selectMonth != '' && $request->selectYear != '' && $request->selectDay == '')
                 {
-                    $trade = $TradeModel->whereBetween(DB::raw('DATE_FORMAT(created_at, "%H%i")'), [$from, $to])
-                    ->whereMonth('created_at', $request->selectMonth)
-                    ->reorder('created_at', 'desc')->get();
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereBetween(DB::raw('DATE_FORMAT(trade.created_at, "%H%i")'), [$from, $to])
+                    ->whereMonth('trade.created_at', $request->selectMonth)
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
                 }
-                else if($request->selectShift != '' && $request->selectMonth == '' && $request->selectYear != '')
+                else if($request->selectShift != '' && $request->selectMonth == '' && $request->selectYear != '' && $request->selectDay == '')
                 {
-                    $trade = $TradeModel->whereBetween(DB::raw('DATE_FORMAT(created_at, "%H%i")'), [$from, $to])
-                    ->whereYear('created_at', ((int)$request->selectYear) + 1911)
-                    ->reorder('created_at', 'desc')->get();
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereBetween(DB::raw('DATE_FORMAT(trade.created_at, "%H%i")'), [$from, $to])
+                    ->whereYear('trade.created_at', ((int)$request->selectYear) + 1911)
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
                 }
-                else if($request->selectShift != '' && $request->selectMonth != '' && $request->selectYear != '')
+                else if($request->selectShift != '' && $request->selectMonth != '' && $request->selectYear != '' && $request->selectDay == '')
                 {
-                    $trade = $TradeModel->whereBetween(DB::raw('DATE_FORMAT(created_at, "%H%i")'), [$from, $to])
-                    ->whereMonth('created_at', $request->selectMonth)
-                    ->whereYear('created_at', ((int)$request->selectYear) + 1911)
-                    ->reorder('created_at', 'desc')->get();
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereBetween(DB::raw('DATE_FORMAT(trade.created_at, "%H%i")'), [$from, $to])
+                    ->whereMonth('trade.created_at', $request->selectMonth)
+                    ->whereYear('trade.created_at', ((int)$request->selectYear) + 1911)
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
                 }
-                else if($request->selectShift == '' && $request->selectMonth != '' && $request->selectYear != '')
+                else if($request->selectShift == '' && $request->selectMonth != '' && $request->selectYear != '' && $request->selectDay == '')
                 {
-                    $trade = $TradeModel->whereMonth('created_at', $request->selectMonth)
-                    ->whereYear('created_at', ((int)$request->selectYear) + 1911)
-                    ->reorder('created_at', 'desc')->get();
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereMonth('trade.created_at', $request->selectMonth)
+                    ->whereYear('trade.created_at', ((int)$request->selectYear) + 1911)
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
+                }
+                else if($request->selectShift == '' && $request->selectMonth != '' && $request->selectYear != '' && $request->selectDay != '')
+                {
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereDay('trade.created_at', $request->selectDay)
+                    ->whereMonth('trade.created_at', $request->selectMonth)
+                    ->whereYear('trade.created_at', ((int)$request->selectYear) + 1911)
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
+                }
+                else if($request->selectShift != '' && $request->selectMonth != '' && $request->selectYear != '' && $request->selectDay != '')
+                {
+                    $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                    ->whereBetween(DB::raw('DATE_FORMAT(trade.created_at, "%H%i")'), [$from, $to])
+                    ->whereDay('trade.created_at', $request->selectDay)
+                    ->whereMonth('trade.created_at', $request->selectMonth)
+                    ->whereYear('trade.created_at', ((int)$request->selectYear) + 1911)
+                    ->limit(1000)->reorder('trade.created_at', 'desc')->get();
                 }
 
-                return view('dashboard', ['trade' => $trade, 'selectShift' => $request->selectShift , 'selectMonth' => $request->selectMonth,'selectYear' => $request->selectYear]);
+                return view('dashboard', ['trade' => $trade,'selectShift' => $request->selectShift , 'selectMonth' => $request->selectMonth,'selectYear' => $request->selectYear,'selectDay' => $request->selectDay]);
             }
             // ALL
-            $trade = $TradeModel->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')->get();
-            return view('dashboard', ['trade' => $trade, 'msg' => $msg]);
+            $trade = $TradeModel->select('trade.*', 'label.l_TitleFour')
+            ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+            ->limit(25)->reorder('created_at', 'desc')->get();
+
+            return view('dashboard', ['trade' => $trade]);
         }
         catch(Exception $e)
         {

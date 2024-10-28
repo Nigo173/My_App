@@ -103,7 +103,8 @@ class LabelController extends Controller
                     'l_TitleOne'=>$request->titleOne,
                     'l_TitleTwo'=>$request->titleTwo,
                     'l_TitleThree'=>$request->titleThree,
-                    'l_TitleFour'=>$request->titleFour
+                    'l_TitleFour'=>$request->titleFour,
+                    'l_Current'=>$request->current
                 ]);
 
                 if($data->save())
@@ -143,7 +144,8 @@ class LabelController extends Controller
                     'l_TitleOne'=>$request->titleOne,
                     'l_TitleTwo'=>$request->titleTwo,
                     'l_TitleThree'=>$request->titleThree,
-                    'l_TitleFour'=>$request->titleFour
+                    'l_TitleFour'=>$request->titleFour,
+                    'l_Current'=>$request->current
                 ]);
 
                 $msg = '編輯標籤成功';
@@ -174,11 +176,11 @@ class LabelController extends Controller
         try
         {
             $note = session('Account').'執行 => '.$note;
-            $mac = strtok(exec('getmac'), ' ');
+            //$mac = strtok(exec('getmac'), ' ');
             $url = $request->getRequestUri();
         }
         catch(Exception $e){}
-        
+
         $data = 'MAC: '.$mac.' URL: '.$url.' NOTE: '.$note;
         LogModel::create(['log' => $data]);
     }

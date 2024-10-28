@@ -1,7 +1,7 @@
 <x-layout>
     <div
         class="relative {{ !isset($member) ? 'max-w-lg bg-slate-200 mx-auto' : '' }} overflow-x-auto shadow-xl rounded-lg">
-        <div class="pX-2 py-5">
+        <div class="px-2 py-2">
             @if (isset($member))
                 {{-- 表單 --}}
                 <form class="max-w-md mx-auto">
@@ -24,31 +24,31 @@
                 <table class="w-full mt-5 text-md text-center text-gray-600 border border-gray-400">
                     <thead class="bg-gray-200">
                         <tr>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 圖片
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 編號
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 身分證
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 姓名
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 生日
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 地址
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 電話
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 備註
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 資料日期
                             </th>
                             @if ($action == 'member_update' || $action == 'member_delete')
@@ -62,35 +62,35 @@
                         @foreach ($member as $members)
                             <tr id="{{ $members->m_Id }}"
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
-                                <td class="px-6 py-4">
+                                <td class="px-2 py-4">
                                     @if (strlen($members->m_Img) > 10)
                                         <img src="{{ $members->m_Img }}" style="width:50px;height:50px;"
                                             onclick="showImage(this.src)" class="cursor-pointer"
                                             data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $members->m_Id }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $members->m_CardId }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $members->m_Name }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $members->m_Birthday }}
                                 </td>
-                                <td class="px-6 py-4 text-ellipsis overflow-hidden">
+                                <td>
                                     {{ $members->m_Address }}
                                 </td>
-                                <td class="px-6 py-4 text-ellipsis overflow-hidden">
+                                <td>
                                     {{ $members->m_Phone }}
                                 </td>
-                                <td class="px-6 py-4 text-ellipsis overflow-hidden">
-                                    {{ $members->m_Remark }}
+                                <td>
+                                    {{ strlen($members->m_Remark) > 25 ? substr($members->m_Remark, 0, 25) . '...' : $members->m_Remark }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $members->created_at }}<br>
                                     {{ $members->updated_at }}
                                 </td>
@@ -199,7 +199,7 @@
                                 onchange="dateChange()" style="width: 45px;" />
                             <input type="text" name="birthday"
                                 value="{{ $action == 'member_update' && isset($data) ? $data->m_Birthday : '' }}"
-                                pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
+                                pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1-2]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
                                 maxlength="9"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
@@ -358,12 +358,12 @@
                                 if (response.msg.indexOf('成功') > -1) {
                                     setTimeout(function() {
                                         location.reload();
-                                    }, 2000);
+                                    }, 1000);
                                 }
                             } else if (url.indexOf('create')) {
                                 setTimeout(function() {
                                     window.location.href = 'list';
-                                }, 2000);
+                                }, 1000);
                             }
                             $('#toast-success').removeClass('hidden');
                             $('#toast-success-msg').text(response.msg);
@@ -384,7 +384,7 @@
                             setTimeout(function() {
                                 form.trigger('reset');
                                 $('#toast-success').addClass('hidden');
-                            }, 3000);
+                            }, 2000);
                         }
                     });
                 }
@@ -421,14 +421,6 @@
                 preview.src = "";
             }
         });
-
-        // 日期選擇
-        // document.querySelector('input[name="birthday"]').addEventListener("click", function(e) {
-        //     setTimeout(function() {
-        //         document.querySelector('input[type="date"]').showPicker();
-        //     }, 250);
-        // });
-
         // Modal圖片
         function showImage(url) {
             document.getElementById('modalImg').src = url;

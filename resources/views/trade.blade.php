@@ -29,7 +29,7 @@
                 <form class="w-10/12 mx-auto" action="{{ route('trade_list') }}" method="POST">
                     @csrf
                     <select onchange="this.form.submit()" name="searchMember"
-                        class="text-lg block py-2.5 px-0 w-full text-gray-500 bor bg-gray-200 border-0 border-b-2 border-gray-500 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                        class="text-base block py-1.5 w-full text-gray-500 bor bg-gray-200 border-0 border-b-2 border-gray-500 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                         <option value="" selected>
                             {{ isset($member) && sizeof($member) > 0 ? '選擇清單' : '無查詢結果' }}{{ isset($member) ? sizeof($member) : '0' }}
                         </option>
@@ -46,74 +46,56 @@
 
             <form id="formUpdate" action="{{ route('trade_list') }}" method="POST">
                 @csrf
-                <div class="flex items-center mb-6 mt-5">
-                    <div class="w-1/3">
-                        <label class="block text-center" for="cardId">
-                            身分證:
-                        </label>
-                    </div>
-                    <div class="w-2/3">
-                        <input type="text" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
-                            maxlength="10" pattern="^[A-Z]{1}[0-9]{9}$"
-                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
-                            placeholder="英文大寫開頭" />
-                    </div>
+                <div class="flex justify-center items-center mb-6 mt-5">
+                    <label class="font-bold text-center w-1/6" for="cardId">
+                        身分證:
+                    </label>
+                    <input type="text" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
+                        maxlength="10" pattern="^[A-Z]{1}[0-9]{9}$"
+                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
+                        placeholder="英文大寫開頭" />
                 </div>
-                <div class="flex items-center mb-6 mt-5">
-                    <div class="w-1/3">
-                        <label class="block text-center" for="Id">
-                            編號:
-                        </label>
-                    </div>
-                    <div class="w-2/3">
-                        <input type="text" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
-                            maxlength="10"
-                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
-                    </div>
+                <div class="flex justify-center items-center mb-6 mt-5">
+                    <label class="font-bold text-center w-1/6" for="Id">
+                        編號:
+                    </label>
+
+                    <input type="text" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}" maxlength="10"
+                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
                 </div>
-                <div class="flex items-center mb-6 mt-5">
-                    <div class="w-1/3">
-                        <label class="block text-center" for="name">
-                            姓名:
-                        </label>
-                    </div>
-                    <div class="w-2/3">
-                        <input type="text" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
-                            maxlength="20"
-                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
-                    </div>
+                <div class="flex justify-center items-center mb-6 mt-5">
+                    <label class="font-bold text-center w-1/6" for="name">
+                        姓名:
+                    </label>
+
+                    <input type="text" name="name" value="{{ isset($data) ? $data->m_Name : '' }}" maxlength="20"
+                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
                 </div>
-                <div class="flex items-center mb-6 mt-5">
-                    <div class="w-1/3">
-                        <label class="block text-center" for="birthday">
-                            生日:
-                        </label>
-                    </div>
-                    <div class="w-2/3">
-                        <input type="text" name="birthday" value="{{ isset($data) ? $data->m_Birthday : '' }}"
-                            pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
-                            maxlength="9"
-                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
-                            placeholder="格式xxx-xx-xx" />
-                    </div>
+                <div class="flex justify-center items-center mb-6 mt-5">
+                    <label class="font-bold text-center w-1/6" for="birthday">
+                        生日:
+                    </label>
+
+                    <input type="text" name="birthday" value="{{ isset($data) ? $data->m_Birthday : '' }}"
+                        pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1-2]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
+                        maxlength="9"
+                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
+                        placeholder="格式xxx-xx-xx" />
                 </div>
-                <div class="flex items-center mb-6 mt-5">
-                    <div class="w-1/3">
-                        <label class="block text-center" for="phone">
-                            電話:
-                        </label>
-                    </div>
-                    <div class="w-2/3">
-                        <input type="text" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
-                            maxlength="20"
-                            class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
-                    </div>
+                <div class="flex justify-center items-center mb-3 mt-5">
+                    <label class="font-bold text-center w-1/6" for="phone">
+                        電話:
+                    </label>
+
+                    <input type="text" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
+                        maxlength="20"
+                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
                 </div>
                 <input type="submit" class="text-white hidden" name="search" />
             </form>
 
             {{-- 交易紀錄 --}}
-            <div class="grid grid-cols-2 gap-1 mb-5 mt-5 text-center bg-slate-300">
+            <div class="grid grid-cols-2 gap-1 mb-1 text-center bg-slate-300">
                 <div class="font-bold">
                     紀錄
                 </div>
@@ -128,11 +110,58 @@
                 @endif
             </div>
 
-            <p class="font-bold bg-slate-300 ps-5">標籤機連結</p>
+            <p class="font-bold bg-gray-300 text-center">標籤機連結</p>
 
-            <div class="grid grid-cols-4 gap-1 mt-3 justify-items-center">
+            <div class="bg-gray-300 grid grid-cols-4 pt-2 justify-items-center">
                 @if (isset($label))
                     @foreach ($label as $labels)
+                    @php
+
+                        $dayArray = [];
+                        $ShiftArray = [];
+
+                        if (isset($currentlabel)) {
+                            foreach ($currentlabel as $currentlabels) {
+                                if ($currentlabels->t_lId == $labels->l_Id && $labels->l_Current == 'day') {
+                                    array_push($dayArray, $labels->l_Id);
+                                } elseif (
+                                    $currentlabels->t_lId == $labels->l_Id &&
+                                    $labels->l_Current == 'shift'
+                                ) {
+                                    $hr_Sub = substr(
+                                        str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
+                                        9,
+                                        2,
+                                    );
+
+                                    $ms_Sub = substr(
+                                        str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
+                                        11,
+                                        4,
+                                    );
+
+                                    if ($hr_Sub == '00')
+                                    {
+                                        $hr_Int = '24';
+                                    }
+
+                                    $ShiftTime = intval($hr_Sub . '' . $ms_Sub);
+
+                                    if ($ShiftTime >= 80000 && $ShiftTime < 160000) {
+                                        // 早班
+                                        // array_push($ShiftArray, $labels->l_Id);
+                                    } elseif ($ShiftTime > 160000 && $ShiftTime < 240000) {
+                                        // 中班
+                                        array_push($ShiftArray, $labels->l_Id);
+                                    } else {
+                                        // 晚班
+                                        array_push($ShiftArray, $labels->l_Id);
+                                    }
+                                }
+                            }
+                        }
+                    @endphp
+
                         <form id="formCreate" data-action="{{ route('trade_create') }}" method="POST">
                             @csrf
                             <input type="hidden" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
@@ -150,13 +179,44 @@
                             <input type="hidden" name="lId" value="{{ $labels->l_Id }}" required />
                             <input type="hidden" name="lTitle" value="{{ $labels->l_Title }}" required />
 
-                            <input type="{{ isset($data) ? 'submit' : 'hidden' }}"
-                                {{ isset($data) ? '' : 'readonly' }}
-                                class="cursor-pointer text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                value="{{ $labels->l_Title }}" />
+                            @if ($labels->l_Current == 'day')
+                                @if (in_array($labels->l_Id, $dayArray))
+                                    <input type="button"
+                                        class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        value="{{ $labels->l_Title }}" disabled />
+                                @else
+                                    <input type="submit"
+                                        class="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        value="{{ $labels->l_Title }}" />
+                                @endif
+                            @elseif($labels->l_Current == 'shift')
+                                @if (in_array($labels->l_Id, $ShiftArray))
+                                    <input type="submit"
+                                        class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        value="{{ $labels->l_Title }}" />
+                                @else
+                                    <input type="submit"
+                                        class="cursor-pointer text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        value="{{ $labels->l_Title }}" />
+                                @endif
+                            @else
+                                <input type="submit"
+                                    class="cursor-pointer text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                    value="{{ $labels->l_Title }}" />
+                            @endif
                         </form>
                     @endforeach
                 @endif
+            </div>
+
+            <div class="flex justify-center items-center mb-8 py-8">
+                <label class="font-bold text-center" for="name">
+                    備註
+                </label>
+
+                <input type="text" name="remark" value="{{ isset($data) ? $data->m_Remark : '' }}" maxlength=50"
+                    class="w-5/6 py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
+                    placeholder="會員備註" />
             </div>
         </div>
     </div>
@@ -212,10 +272,13 @@
                     $('#Modal').removeClass('hidden');
                     var url = $(this).attr('data-action');
 
+                    var formData = new FormData(this);
+                    formData.append('remark', $('input[name="remark"]').val());
+
                     $.ajax({
                         url: url,
                         method: 'POST',
-                        data: new FormData(this),
+                        data: formData,
                         dataType: 'JSON',
                         contentType: false,
                         cache: false,
@@ -252,9 +315,9 @@
                             $('#Modal').addClass('hidden');
 
                             setTimeout(() => {
-                                form.trigger('reset');
                                 $('#toast-success').addClass('hidden');
-                            }, 3000);
+                                location.reload();
+                            }, 2000);
                         }
                     });
                 }

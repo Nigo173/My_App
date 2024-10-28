@@ -12,8 +12,6 @@ use Exception;
 
 class AdminsController extends Controller
 {
-    private $a_Permissions = '';
-
     public function index()
     {
         $permissions = $this->get_Permissions();
@@ -22,79 +20,91 @@ class AdminsController extends Controller
 
     public function list(Request $request, string $action = 'admins_list', $msg = null)
     {
-        try
-        {
-            $AdminsModel = new AdminsModel();
+        $permissions = $this->get_Permissions();
 
-            if($request->isMethod('post') && isset($request->account) && $request->account != '' && $msg == null) // Id
-            {
-                $admins = $AdminsModel->where('a_Id', $request->account)->get()->first();
-                $admins = $this->add_Permissions($admins, 'update');
-
-                return view('admins_list', ['action' => $action, 'data' => $admins]);
-            }
-            else if($request->isMethod('get') && isset($request->search) && $request->search != '' && $msg == null) // Like
-            {
-                $admins = $AdminsModel->where('a_Id', 'like', '%'.$request->search.'%')
-                ->orWhere('a_Name', 'like', '%'.$request->search.'%')
-                ->limit(100)->reorder('updated_at', 'desc')->get();
-                return view('admins_list', ['action' => 'admins_list', 'admin' => $admins]);
-            }
-            // ALL
-            $admins = $AdminsModel->limit(100)->reorder('updated_at', 'desc')->get();
-            $admins = $this->add_Permissions($admins, 'all');
-
-            return view('admins_list', ['action' => $action, 'admin' => $admins, 'msg' => $msg]);
-        }
-        catch(Exception $e)
-        {
-            return view('error');
-        }
-    }
-
-    public function create(Request $request)
-    {
-        $request->except(['msg']);
-        $msg = '';
-
-        if($request->isMethod('post'))
+        if(strpos($permissions, 'r') > -1)
         {
             try
             {
-                $hashedpassword = md5($request->password);
-                $new_Permissions = $this->concat_Permissions($request->admins_Permissions, $request->member_Permissions);
+                $AdminsModel = new AdminsModel();
 
-                $data = AdminsModel::create([
-                    'a_Id'=>$request->account,
-                    'a_PassWord'=>$hashedpassword,
-                    'a_Name'=>$request->name,
-                    'a_Mac'=>$request->mac,
-                    'a_Permissions'=>$new_Permissions,
-                    'a_Level'=>$request->level,
-                    'a_State'=>$request->state,
-                ]);
+                if($request->isMethod('post') && isset($request->account) && $request->account != '' && $msg == null) // Id
+                {
+                    $admins = $AdminsModel->where('a_Id', $request->account)->get()->first();
+                    $admins = $this->add_Permissions($admins, 'update');
 
-                if($data->save())
-                {
-                    $msg = "新增成功";
-                    $this->create_Log($request, $msg);
-                    return response()->json(['action'=>'list','msg'=>$msg]);
-                    // return $this->list($request, 'admins_list', $msg);
+                    return view('admins_list', ['action' => $action, 'data' => $admins]);
                 }
-                else
+                else if($request->isMethod('get') && isset($request->search) && $request->search != '' && $msg == null) // Like
                 {
-                    $msg = "新增失敗";
-                    $this->create_Log($request, $msg);
-                    return response()->json(['action'=>'create','msg'=>$msg]);
-                    // return view('admins_list', ['action' => 'admins_create', 'msg' => $msg]);
+                    $admins = $AdminsModel->where('a_Id', 'like', '%'.$request->search.'%')
+                    ->orWhere('a_Name', 'like', '%'.$request->search.'%')
+                    ->limit(50)->reorder('updated_at', 'desc')->get();
+                    return view('admins_list', ['action' => 'admins_list', 'admin' => $admins]);
                 }
+                // ALL
+                $admins = $AdminsModel->limit(50)->reorder('updated_at', 'desc')->get();
+                $admins = $this->add_Permissions($admins, 'all');
+
+                return view('admins_list', ['action' => $action, 'admin' => $admins, 'msg' => $msg]);
             }
             catch(Exception $e)
             {
                 return view('error');
             }
         }
-        return view('admins_list', ['action' => 'admins_create', 'Id' => $this->get_random_Id()]);
+        return redirect()->route('logout');
+    }
+
+    public function create(Request $request)
+    {
+        $permissions = $this->get_Permissions();
+
+        if(strpos($permissions, 'c') > -1)
+        {
+            $request->except(['msg']);
+            $msg = '';
+
+            if($request->isMethod('post'))
+            {
+                try
+                {
+                    $hashedpassword = md5($request->password);
+                    $new_Permissions = $this->concat_Permissions($request->admins_Permissions, $request->member_Permissions);
+
+                    $data = AdminsModel::create([
+                        'a_Id'=>$request->account,
+                        'a_PassWord'=>$hashedpassword,
+                        'a_Name'=>$request->name,
+                        'a_Mac'=>$request->mac,
+                        'a_Permissions'=>$new_Permissions,
+                        'a_Level'=>$request->level,
+                        'a_State'=>$request->state,
+                    ]);
+
+                    if($data->save())
+                    {
+                        $msg = "新增成功";
+                        $this->create_Log($request, $msg);
+                        return response()->json(['action'=>'list','msg'=>$msg]);
+                        // return $this->list($request, 'admins_list', $msg);
+                    }
+                    else
+                    {
+                        $msg = "新增失敗";
+                        $this->create_Log($request, $msg);
+                        return response()->json(['action'=>'create','msg'=>$msg]);
+                        // return view('admins_list', ['action' => 'admins_create', 'msg' => $msg]);
+                    }
+                }
+                catch(Exception $e)
+                {
+                    return view('error');
+                }
+            }
+            return view('admins_list', ['action' => 'admins_create', 'Id' => $this->get_random_Id()]);
+        }
+        return '';
     }
 
     private function get_random_Id(): string
@@ -124,89 +134,101 @@ class AdminsController extends Controller
 
     public function update(Request $request)
     {
-        $request->except(['msg']);
-        $msg = '';
+        $permissions = $this->get_Permissions();
 
-        if(isset($request->account) && $request->account != '' && isset($request->update))
+        if(strpos($permissions, 'u') > -1)
         {
-            try
+            $request->except(['msg']);
+            $msg = '';
+
+            if(isset($request->account) && $request->account != '' && isset($request->update))
             {
-                $new_Permissions = $this->concat_Permissions($request->admins_Permissions, $request->member_Permissions);
-                $data = false;
-
-                if(strlen($request->password) > 2)
+                try
                 {
-                    $hashedpassword = md5($request->password);
+                    $new_Permissions = $this->concat_Permissions($request->admins_Permissions, $request->member_Permissions);
+                    $data = false;
 
-                    $data = AdminsModel::where('a_Id', $request->account)->update([
-                        'a_PassWord'=>$hashedpassword,
-                        'a_Name'=>$request->name,
-                        'a_Mac'=>$request->mac,
-                        'a_Permissions'=>$new_Permissions,
-                        'a_Level'=>$request->level,
-                        'a_State'=>$request->state,
-                    ]);
+                    if(strlen($request->password) > 2)
+                    {
+                        $hashedpassword = md5($request->password);
+
+                        $data = AdminsModel::where('a_Id', $request->account)->update([
+                            'a_PassWord'=>$hashedpassword,
+                            'a_Name'=>$request->name,
+                            'a_Mac'=>$request->mac,
+                            'a_Permissions'=>$new_Permissions,
+                            'a_Level'=>$request->level,
+                            'a_State'=>$request->state,
+                        ]);
+                    }
+                    else
+                    {
+                        $data = AdminsModel::where('a_Id', $request->account)->update([
+                            'a_Name'=>$request->name,
+                            'a_Mac'=>$request->mac,
+                            'a_Permissions'=>$new_Permissions,
+                            'a_Level'=>$request->level,
+                            'a_State'=>$request->state,
+                        ]);
+                    }
+
+                    $msg = "編輯失敗";
+
+                    if($data)
+                    {
+                        $msg = "編輯成功";
+                    }
+
+                    $this->create_Log($request, $msg);
+                    // 更新 session
+                    if(session('Account') == $request->account)
+                    {
+                        $request->session()->put('Name', $request->name);
+                    }
                 }
-                else
+                catch(Exception $e)
                 {
-                    $data = AdminsModel::where('a_Id', $request->account)->update([
-                        'a_Name'=>$request->name,
-                        'a_Mac'=>$request->mac,
-                        'a_Permissions'=>$new_Permissions,
-                        'a_Level'=>$request->level,
-                        'a_State'=>$request->state,
-                    ]);
+                    return view('error');
                 }
-
-                $msg = "編輯失敗";
-
-                if($data)
-                {
-                    $msg = "編輯成功";
-                }
-
-                $this->create_Log($request, $msg);
-                // 更新 session
-                if(session('Account') == $request->account)
-                {
-                    $request->session()->put('Name', $request->name);
-                }
+                return response()->json(['action'=>'update','msg'=>$msg]);
             }
-            catch(Exception $e)
-            {
-                return view('error');
-            }
-            return response()->json(['action'=>'update','msg'=>$msg]);
+            return $this->list($request, 'admins_update', $msg);
         }
-        return $this->list($request, 'admins_update', $msg);
+        return redirect()->route('logout');
     }
 
     public function delete(Request $request)
     {
-        $request->except(['msg']);
-        $msg = '';
+        $permissions = $this->get_Permissions();
 
-        if(isset($request->account) && $request->account != '' && isset($request->delete))
+        if(strpos($permissions, 'd') > -1)
         {
-            try
-            {
-                $data = AdminsModel::where('a_Id', $request->account)->delete();
-                $msg = " 刪除失敗";
+            $request->except(['msg']);
+            $msg = '';
 
-                if($data)
+            if(isset($request->account) && $request->account != '' && isset($request->delete))
+            {
+                try
                 {
-                    $msg = "刪除成功";
-                }
+                    $data = AdminsModel::where('a_Id', $request->account)->delete();
+                    $msg = " 刪除失敗";
 
-                $this->create_Log($request, $msg);
+                    if($data)
+                    {
+                        $msg = "刪除成功";
+                    }
+
+                    $this->create_Log($request, $msg);
+                }
+                catch(Exception $e)
+                {
+                    return view('error');
+                }
+                return response()->json(['action'=>'delete','msg'=>$msg]);
             }
-            catch(Exception $e)
-            {
-                return view('error');
-            }
-            return response()->json(['action'=>'delete','msg'=>$msg]);
+            return $this->list($request, 'admins_delete', $msg);
         }
-        return $this->list($request, 'admins_delete', $msg);
+        return redirect()->route('logout');
     }
 
     private function get_Permissions(): string
@@ -362,7 +384,7 @@ class AdminsController extends Controller
         try
         {
             $note = session('Account').'執行 => (會員帳號:'.$request->account.' 會員姓名: '.$request->name.') '.$note;
-            $mac = strtok(exec('getmac'), ' ');
+            //$mac = strtok(exec('getmac'), ' ');
             $url = $request->getRequestUri();
         }
         catch(Exception $e){}

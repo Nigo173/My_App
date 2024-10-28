@@ -34,26 +34,36 @@ Route::prefix('/')->group(function () {
 //     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 // });
 
-// Home
 Route::middleware(AdminsMiddleware::class)
-->prefix('dashboard')
-->group(function()
-{
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    ->prefix('member')
+    ->group(function()
+    {
+    Route::get('/', [MemberController::class, 'index'])->name('member');
+    Route::any('list', [MemberController::class, 'list'])->name('member_list');
+    Route::any('create', [MemberController::class, 'create'])->name('member_create');
+    Route::any('update', [MemberController::class, 'update'])->name('member_update');
+    Route::any('delete', [MemberController::class, 'delete'])->name('member_delete');
+});
 
-    Route::prefix('trade')->group(function () {
-        Route::get('/', [TradeController::class, 'index'])->name('trade');
-        Route::post('list', [TradeController::class, 'list'])->name('trade_list');
-        Route::post('create', [TradeController::class, 'create'])->name('trade_create');
-    });
 
-    Route::prefix('member')->group(function () {
-        Route::get('/', [MemberController::class, 'index'])->name('member');
-        Route::any('list', [MemberController::class, 'list'])->name('member_list');
-        Route::any('create', [MemberController::class, 'create'])->name('member_create');
-        Route::any('update', [MemberController::class, 'update'])->name('member_update');
-        Route::any('delete', [MemberController::class, 'delete'])->name('member_delete');
-    });
+Route::middleware(AdminsMiddleware::class)
+    ->prefix('trade')
+    ->group(function()
+    {
+    Route::get('/', [TradeController::class, 'index'])->name('trade');
+    Route::post('list', [TradeController::class, 'list'])->name('trade_list');
+    Route::post('create', [TradeController::class, 'create'])->name('trade_create');
+});
+
+Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+Route::middleware(AdminsMiddleware::class)
+    ->prefix('settings')
+    ->group(function()
+    {
+
+    Route::get('/', [SettingsController::class, 'index'])->name('settings');
 
     Route::prefix('admins')->group(function () {
         Route::get('/', [AdminsController::class, 'index'])->name('admins');
@@ -63,11 +73,8 @@ Route::middleware(AdminsMiddleware::class)
         Route::any('delete', [AdminsController::class, 'delete'])->name('admins_delete');
     });
 
-    Route::get('settings', [SettingsController::class, 'index'])->name('settings');
-
     Route::prefix('log')->group(function () {
         Route::any('/', [LogController::class, 'index'])->name('log');
-        Route::post('/', [LogController::class, 'delete'])->name('delete');
     });
 
     Route::prefix('label')->group(function () {

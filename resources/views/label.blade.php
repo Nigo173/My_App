@@ -1,7 +1,7 @@
 <x-layout>
     <div
         class="relative {{ !isset($label) ? 'max-w-lg bg-slate-200 mx-auto' : '' }} overflow-x-auto shadow-xl rounded-lg">
-        <div class="pX-2 py-5">
+        <div class="pX-2 py-2">
             @if (isset($label) && !isset($data))
                 {{-- 表單 --}}
                 <div class="flex justify-center mx-auto w-100 items-center gap-2">
@@ -36,27 +36,32 @@
                 <table class="w-full mt-5 text-md text-center text-gray-600 border border-gray-400">
                     <thead class="bg-gray-200">
                         <tr>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="py-3">
                                 標籤代號
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 標題1
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 標題2
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 標題3
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 標題4
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
+                                格式
+                            </th>
+                            <th scope="col">
                                 資料日期
                             </th>
-                            <th scope="col" class="px-6 py-3">
-                                編輯
-                            </th>
+                            @if (session('Level') == '2')
+                                <th scope="col">
+                                    編輯
+                                </th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -67,23 +72,26 @@
                                     <td class="px-6 py-4">
                                         {{ $labels->l_Title }}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td>
                                         {{ $labels->l_TitleOne }}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td>
                                         {{ $labels->l_TitleTwo }}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td>
                                         {{ $labels->l_TitleThree }}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td>
                                         {{ $labels->l_TitleFour }}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td>
+                                        {{ $labels->l_Current }}
+                                    </td>
+                                    <td>
                                         {{ $labels->created_at }}
                                     </td>
-                                    <td class="px-6 py-4">
-                                        @if (session('Level') == '2')
+                                    @if (session('Level') == '2')
+                                        <td>
                                             <form action="{{ route('label') }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="Id" value="{{ $labels->id }}">
@@ -92,8 +100,8 @@
                                                     編輯
                                                 </button>
                                             </form>
-                                        @endif
-                                    </td>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         @endif
@@ -145,6 +153,27 @@
                                     value="{{ isset($data) ? $data->l_TitleFour : '' }}"
                                     class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                     placeholder=" " />
+                            </div>
+                        </div>
+                        {{-- 格式篩選 --}}
+                        <div class="flex justify-around py-4 px-0 w-full text-sm">
+                            <div class="flex items-center me-4">
+                                <input id="state" type="radio" value="all" name="current" {{ isset($data) && $data->l_Current == 'all' ? 'checked' : '' }}
+                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="state"
+                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">無限制</label>
+                            </div>
+                            <div class="flex items-center me-4">
+                                <input id="state" type="radio" value="shift" name="current" {{ isset($data) && $data->l_Current == 'shift' ? 'checked' : '' }}
+                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="state"
+                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">班次限制</label>
+                            </div>
+                            <div class="flex items-center me-4">
+                                <input id="state" type="radio" value="day" name="current" {{ isset($data) && $data->l_Current == 'day' ? 'checked' : '' }}
+                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="level"
+                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">整日限一次</label>
                             </div>
                         </div>
                     </div>
@@ -259,7 +288,7 @@
                             setTimeout(function() {
                                 form.trigger('reset');
                                 $('#toast-success').addClass('hidden');
-                            }, 3000);
+                            }, 2000);
                         }
                     });
                 }

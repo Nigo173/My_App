@@ -1,7 +1,7 @@
 <x-layout>
     <div
         class="relative {{ !isset($admin) ? 'max-w-lg bg-slate-200 mx-auto' : '' }} overflow-x-auto shadow-xl rounded-lg">
-        <div class="pX-2 py-5">
+        <div class="px-2 py-2">
             @if (isset($admin))
                 {{-- 表單 --}}
                 <form class="max-w-md mx-auto">
@@ -24,29 +24,29 @@
                 <table class="w-full mt-5 text-md text-center text-gray-600 border border-gray-400">
                     <thead class="bg-gray-200">
                         <tr>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="py-3">
                                 帳號
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 姓名
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 權限
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 電腦
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 狀態
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 管理員身分
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col">
                                 資料日期
                             </th>
                             @if ($action == 'admins_update' || $action == 'admins_delete')
-                                <th scope="col" class="px-6 py-3">
+                                <th scope="col">
                                     {{ $action == 'admins_update' ? '編輯' : '刪除' }}
                                 </th>
                             @endif
@@ -56,29 +56,29 @@
                         @foreach ($admin as $admins)
                             <tr id="{{ $admins->a_Id }}"
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $admins->a_Id }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $admins->a_Name }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $admins->member_Permissions }}
                                     @if (strlen($admins->admins_Permissions) > 10)
                                         <br> {{ $admins->admins_Permissions }}
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $admins->a_Mac }}
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     @if ($admins->a_State == '1')
                                         正常
                                     @else
                                         停權
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     @if ($admins->a_Level == '1')
                                         一般管理員
                                     @elseif($admins->a_Level == '2')
@@ -87,7 +87,7 @@
                                         最高權限管理員
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     {{ $admins->created_at }}<br>
                                     {{ $admins->updated_at }}
                                 </td>
@@ -163,8 +163,7 @@
                         </div>
                         {{-- 電腦 --}}
                         <div class="relative z-0 w-full mb-5 group">
-                            <input type="text" name="mac" value="{{ strtok(exec('getmac'), ' ') }}"
-                                maxlength="20"
+                            <input type="text" name="mac" value="" maxlength="20"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required readonly />
                             <label for="mac"
@@ -249,7 +248,7 @@
                                 <input id="inline-checkbox" type="checkbox" name="member_Permissions[]"
                                     value="u"
                                     @if (isset($action) && $action == 'admins_update' && isset($data)) onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
-                                    {{ explode('_', $data->member_Permissions)[0] == 'member' && strpos(explode('_', $data->member_Permissions)[1], 'd') > -1 ? 'checked' : '' }}
+                                    {{ explode('_', $data->member_Permissions)[0] == 'member' && strpos(explode('_', $data->member_Permissions)[1], 'u') > -1 ? 'checked' : '' }}
                                     onclick="return false" @endif
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="inline-checkbox"
@@ -282,7 +281,7 @@
                                         <input id="inline-checkbox" type="checkbox" name="admins_Permissions[]"
                                             value="c"
                                             onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
-                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }} @endif
+                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'c') > -1 ? 'checked' : '' }} @endif
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="inline-checkbox"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">新增</label>
@@ -291,7 +290,7 @@
                                         <input id="inline-checkbox" type="checkbox" name="admins_Permissions[]"
                                             value="r"
                                             onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
-                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }} @endif
+                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'r') > -1 ? 'checked' : '' }} @endif
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="inline-checkbox"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">查詢</label>
@@ -300,7 +299,7 @@
                                         <input id="inline-checkbox" type="checkbox" name="admins_Permissions[]"
                                             value="u"
                                             onclick="{{ isset($data) && $data->a_Level == '2' ? 'return false' : '' }}"
-                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'd') > -1 ? 'checked' : '' }} @endif
+                                            @if (isset($data)) {{ explode('_', $data->admins_Permissions)[0] == 'admins' && strpos(explode('_', $data->admins_Permissions)[1], 'u') > -1 ? 'checked' : '' }} @endif
                                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="inline-checkbox"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">編輯</label>
@@ -403,12 +402,12 @@
                                 if (response.msg.indexOf('成功') > -1) {
                                     setTimeout(function() {
                                         location.reload();
-                                    }, 2000);
+                                    }, 1000);
                                 }
                             } else if (url.indexOf('create')) {
                                 setTimeout(function() {
                                     window.location.href = 'list';
-                                }, 2000);
+                                }, 1000);
                             }
                             $('#toast-success').removeClass('hidden');
                             $('#toast-success-msg').text(response.msg);
@@ -427,7 +426,7 @@
                             setTimeout(function() {
                                 form.trigger('reset');
                                 $('#toast-success').addClass('hidden');
-                            }, 3000);
+                            }, 2000);
                         }
                     });
                 }

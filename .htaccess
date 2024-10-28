@@ -1,6 +1,6 @@
-<VirtualHost laravel.local:80>
-    DocumentRoot "D:\xampp\My_App\public"
-    <Directory "D:\xampp\My_App\public">
+<VirtualHost app.local:80>
+    DocumentRoot "public"
+    <Directory "public">
         Options All
         AllowOverride All
         Require all granted
