@@ -11,6 +11,7 @@ class TradeModel extends Model
     protected $fillable = [
                             't_Id',
                             't_No',
+                            't_Print',
                             't_aId',
                             't_aName',
                             't_lId',

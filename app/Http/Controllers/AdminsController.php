@@ -211,11 +211,11 @@ class AdminsController extends Controller
                 try
                 {
                     $data = AdminsModel::where('a_Id', $request->account)->delete();
-                    $msg = " 刪除失敗";
+                    $msg = '刪除失敗';
 
                     if($data)
                     {
-                        $msg = "刪除成功";
+                        $msg = '刪除成功';
                     }
 
                     $this->create_Log($request, $msg);

@@ -85,7 +85,24 @@
                                         {{ $labels->l_TitleFour }}
                                     </td>
                                     <td>
-                                        {{ $labels->l_Current }}
+                                        <div class="flex justify-center items-center">
+                                            @if ($labels->l_Current == 'day')
+                                                <div
+                                                    class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2">
+                                                </div>
+                                                整日限一次
+                                            @elseif($labels->l_Current == 'shift')
+                                                <div
+                                                    class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-green-500 border-2 border-white rounded-full -top-2 -end-2">
+                                                </div>
+                                                班次限制
+                                            @elseif($labels->l_Current == 'all')
+                                                <div
+                                                    class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full -top-2 -end-2">
+                                                </div>
+                                                無限制
+                                            @endif
+                                        </div>
                                     </td>
                                     <td>
                                         {{ $labels->created_at }}
@@ -158,19 +175,22 @@
                         {{-- 格式篩選 --}}
                         <div class="flex justify-around py-4 px-0 w-full text-sm">
                             <div class="flex items-center me-4">
-                                <input id="state" type="radio" value="all" name="current" {{ isset($data) && $data->l_Current == 'all' ? 'checked' : '' }}
+                                <input id="state" type="radio" value="all" name="current"
+                                    {{ isset($data) && $data->l_Current == 'all' ? 'checked' : 'checked' }}
                                     class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="state"
                                     class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">無限制</label>
                             </div>
                             <div class="flex items-center me-4">
-                                <input id="state" type="radio" value="shift" name="current" {{ isset($data) && $data->l_Current == 'shift' ? 'checked' : '' }}
+                                <input id="state" type="radio" value="shift" name="current"
+                                    {{ isset($data) && $data->l_Current == 'shift' ? 'checked' : '' }}
                                     class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="state"
                                     class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">班次限制</label>
                             </div>
                             <div class="flex items-center me-4">
-                                <input id="state" type="radio" value="day" name="current" {{ isset($data) && $data->l_Current == 'day' ? 'checked' : '' }}
+                                <input id="state" type="radio" value="day" name="current"
+                                    {{ isset($data) && $data->l_Current == 'day' ? 'checked' : '' }}
                                     class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="level"
                                     class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">整日限一次</label>

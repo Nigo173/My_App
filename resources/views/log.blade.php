@@ -72,8 +72,7 @@
                                     {{ $logs->log }}
                                 </td>
                                 <td>
-                                    {{ $logs->created_at }}<br>
-                                    {{ $logs->updated_at }}
+                                    {{ $logs->created_at }}
                                 </td>
                             </tr>
                         @endforeach

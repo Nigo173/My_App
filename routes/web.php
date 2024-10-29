@@ -17,7 +17,6 @@ use App\Http\Middleware\AuthMiddleware;
 Route::get('/', function() {
     return '';
 });
-// Route::view('/', 'login');
 
 Route::prefix('/')->group(function () {
     Route::get('/', [LoginController::class, 'index'])->name('login');
@@ -45,7 +44,6 @@ Route::middleware(AdminsMiddleware::class)
     Route::any('delete', [MemberController::class, 'delete'])->name('member_delete');
 });
 
-
 Route::middleware(AdminsMiddleware::class)
     ->prefix('trade')
     ->group(function()
@@ -55,8 +53,12 @@ Route::middleware(AdminsMiddleware::class)
     Route::post('create', [TradeController::class, 'create'])->name('trade_create');
 });
 
-Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+Route::prefix('dashboard')
+    ->group(function()
+    {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('update', [DashboardController::class, 'update'])->name('trade_update');
+});
 
 Route::middleware(AdminsMiddleware::class)
     ->prefix('settings')

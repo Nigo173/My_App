@@ -46,7 +46,7 @@
 
             <form id="formUpdate" action="{{ route('trade_list') }}" method="POST">
                 @csrf
-                <div class="flex justify-center items-center mb-6 mt-5">
+                <div class="flex justify-center items-center mt-3">
                     <label class="font-bold text-center w-1/6" for="cardId">
                         身分證:
                     </label>
@@ -55,7 +55,7 @@
                         class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
                         placeholder="英文大寫開頭" />
                 </div>
-                <div class="flex justify-center items-center mb-6 mt-5">
+                <div class="flex justify-center items-center mt-5">
                     <label class="font-bold text-center w-1/6" for="Id">
                         編號:
                     </label>
@@ -63,7 +63,7 @@
                     <input type="text" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}" maxlength="10"
                         class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
                 </div>
-                <div class="flex justify-center items-center mb-6 mt-5">
+                <div class="flex justify-center items-center mt-5">
                     <label class="font-bold text-center w-1/6" for="name">
                         姓名:
                     </label>
@@ -71,7 +71,7 @@
                     <input type="text" name="name" value="{{ isset($data) ? $data->m_Name : '' }}" maxlength="20"
                         class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
                 </div>
-                <div class="flex justify-center items-center mb-6 mt-5">
+                <div class="flex justify-center items-center mt-5">
                     <label class="font-bold text-center w-1/6" for="birthday">
                         生日:
                     </label>
@@ -115,52 +115,55 @@
             <div class="bg-gray-300 grid grid-cols-4 pt-2 justify-items-center">
                 @if (isset($label))
                     @foreach ($label as $labels)
-                    @php
+                        @php
+                            $dayArray = [];
+                            $ShiftArray = [];
 
-                        $dayArray = [];
-                        $ShiftArray = [];
+                            if (isset($currentlabel)) {
+                                foreach ($currentlabel as $currentlabels) {
+                                    if (
+                                        $currentlabels->t_lId == $labels->l_Id &&
+                                        $labels->l_Current == 'day' &&
+                                        $currentlabels->t_Print == 1
+                                    ) {
+                                        array_push($dayArray, $labels->l_Id);
+                                    } elseif (
+                                        $currentlabels->t_lId == $labels->l_Id &&
+                                        $labels->l_Current == 'shift' &&
+                                        $currentlabels->t_Print == 1
+                                    ) {
+                                        $hr_Sub = substr(
+                                            str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
+                                            9,
+                                            2,
+                                        );
 
-                        if (isset($currentlabel)) {
-                            foreach ($currentlabel as $currentlabels) {
-                                if ($currentlabels->t_lId == $labels->l_Id && $labels->l_Current == 'day') {
-                                    array_push($dayArray, $labels->l_Id);
-                                } elseif (
-                                    $currentlabels->t_lId == $labels->l_Id &&
-                                    $labels->l_Current == 'shift'
-                                ) {
-                                    $hr_Sub = substr(
-                                        str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
-                                        9,
-                                        2,
-                                    );
+                                        $ms_Sub = substr(
+                                            str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
+                                            11,
+                                            4,
+                                        );
 
-                                    $ms_Sub = substr(
-                                        str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
-                                        11,
-                                        4,
-                                    );
+                                        if ($hr_Sub == '00') {
+                                            $hr_Int = '24';
+                                        }
 
-                                    if ($hr_Sub == '00')
-                                    {
-                                        $hr_Int = '24';
-                                    }
+                                        $ShiftTime = intval($hr_Sub . '' . $ms_Sub);
 
-                                    $ShiftTime = intval($hr_Sub . '' . $ms_Sub);
-
-                                    if ($ShiftTime >= 80000 && $ShiftTime < 160000) {
-                                        // 早班
-                                        // array_push($ShiftArray, $labels->l_Id);
-                                    } elseif ($ShiftTime > 160000 && $ShiftTime < 240000) {
-                                        // 中班
-                                        array_push($ShiftArray, $labels->l_Id);
-                                    } else {
-                                        // 晚班
-                                        array_push($ShiftArray, $labels->l_Id);
+                                        if ($ShiftTime >= 80000 && $ShiftTime < 160000) {
+                                            // 早班
+                                            // array_push($ShiftArray, $labels->l_Id);
+                                        } elseif ($ShiftTime > 160000 && $ShiftTime < 240000) {
+                                            // 中班
+                                            array_push($ShiftArray, $labels->l_Id);
+                                        } else {
+                                            // 晚班
+                                            array_push($ShiftArray, $labels->l_Id);
+                                        }
                                     }
                                 }
                             }
-                        }
-                    @endphp
+                        @endphp
 
                         <form id="formCreate" data-action="{{ route('trade_create') }}" method="POST">
                             @csrf
@@ -182,26 +185,28 @@
                             @if ($labels->l_Current == 'day')
                                 @if (in_array($labels->l_Id, $dayArray))
                                     <input type="button"
-                                        class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                        value="{{ $labels->l_Title }}" disabled />
+                                        class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        value="{{ $labels->l_Title }}" onclick="labelConten({{ $labels }})"
+                                        data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
                                 @else
                                     <input type="submit"
-                                        class="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        class="cursor-pointer text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                         value="{{ $labels->l_Title }}" />
                                 @endif
                             @elseif($labels->l_Current == 'shift')
                                 @if (in_array($labels->l_Id, $ShiftArray))
-                                    <input type="submit"
-                                        class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                        value="{{ $labels->l_Title }}" />
+                                    <input type="button"
+                                        class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        value="{{ $labels->l_Title }}" onclick="labelConten({{ $labels }})"
+                                        data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
                                 @else
                                     <input type="submit"
-                                        class="cursor-pointer text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        class="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                         value="{{ $labels->l_Title }}" />
                                 @endif
                             @else
                                 <input type="submit"
-                                    class="cursor-pointer text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                    class="cursor-pointer text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                     value="{{ $labels->l_Title }}" />
                             @endif
                         </form>
@@ -256,6 +261,36 @@
                 d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
                 fill="currentFill" />
         </svg>
+    </div>
+    {{-- Modal Content Detail --}}
+    <div id="popup-modal" tabindex="-1"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <button type="button"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-hide="popup-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+                <div class="p-4 md:p-5 text-center">
+                    <svg class="mx-auto mb-4 text-red-400 w-10 h-10" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <div class="grid grid-cols-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        <p id="label-title"></p>
+                        <p id="label-TitleOne"></p>
+                        <p id="label-Current"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -415,5 +450,21 @@
                 }, 0);
             }
         });
+
+        function labelConten(data) {
+            document.getElementById('label-title').innerText = data.l_Title === undefined ? '' : data.l_Title;
+            document.getElementById('label-TitleOne').innerText = data.l_TitleOne === undefined ? '' : data.l_TitleOne;
+            var l_Current = '';
+            if (data.l_Current !== undefined) {
+                if (data.l_Current == 'day') {
+                    l_Current = '整日限一次';
+                } else if (data.l_Current == 'shift') {
+                    l_Current = '班次限制';
+                } else if (data.l_Current == 'shift') {
+                    l_Current = '無限制';
+                }
+            }
+            document.getElementById('label-Current').innerText = l_Current;
+        }
     </script>
 </x-layout>

@@ -4,8 +4,13 @@
         <div class="px-2 py-2">
             @if (isset($member))
                 {{-- 表單 --}}
-                <form class="max-w-md mx-auto">
-                    <div class="relative">
+                <form class="max-w-2xl mx-auto flex justify-center items-center gap-1">
+                    @if (isset($member))
+                        <div class="px-3 py-3 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm">
+                            搜尋筆數: {{ sizeof($member) }}
+                        </div>
+                    @endif
+                    <div class="relative w-96">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 20 20">
@@ -24,7 +29,7 @@
                 <table class="w-full mt-5 text-md text-center text-gray-600 border border-gray-400">
                     <thead class="bg-gray-200">
                         <tr>
-                            <th scope="col">
+                            <th scope="col" class="py-3">
                                 圖片
                             </th>
                             <th scope="col">

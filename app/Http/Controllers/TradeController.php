@@ -37,26 +37,27 @@ class TradeController extends Controller
             }
             else if(isset($request->searchMember) && $request->searchMember != '')
             {
-                // DB::enableQueryLog();
+                //  DB::enableQueryLog();
 
                 // $memberlabel = DB::select("SELECT COUNT(*), t_lTitle FROM (SELECT t_lTitle FROM trade WHERE t_mId = '".$request->searchMember."' LIMIT 1,5) AS a");
-                $memberlabel = TradeModel::select(TradeModel::raw('count(*) AS t_Count ,t_mId'),'t_lTitle')
-                ->where('t_mId', $request->searchMember)->groupBy('t_mId','t_lTitle')
-                ->limit(5)->reorder('updated_at', 'desc')->get();
+                // $memberlabel = TradeModel::select(TradeModel::raw('count(*) AS t_Count ,t_mId'),'t_lTitle')
+                // ->where('t_mId', $request->searchMember)->groupBy('t_mId','t_lTitle')
+                // ->limit(2)->reorder('created_at', 'desc')->get();
+
+                $memberlabel = TradeModel::select('t_Print AS t_Count','t_mId','t_lTitle')
+                ->where('t_mId', $request->searchMember)
+                ->limit(5)->reorder('created_at', 'desc')->get();
+
+
                 // 篩選客戶交易選項
 
-                $currentlabel = DB::select("SELECT * FROM trade WHERE t_mId = '000004' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
-                                "BETWEEN IF(DATE_FORMAT(NOW(), '%H%i') < 2000,".
+                $currentlabel = DB::select("SELECT * FROM trade WHERE t_mId = '".$request->searchMember."' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
+                                "BETWEEN IF(DATE_FORMAT(NOW(), '%H%i') < 2000, ".
                                 "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20')) AND ".
                                 "IF(DATE_FORMAT(NOW(), '%H%i') > 2000, ".
                                 "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20'))");
 
-
-// DB::select("SELECT * FROM `trade` WHERE t_mId ='000004' AND DATE_FORMAT(DATE_ADD(created_at, INTERVAL -1 DAY), '%Y%m%d%H%i')  IF(DATE_FORMAT(NOW(), '%H%i') < 2000,
-// CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20'))")->pluck('t_lId');
-// dd(DB::getQueryLog()); // Sh
-
-                // return response()->json(['currentlabel_Id' => $currentlabel_Id]);
+                //  dd(DB::getQueryLog()); // Sh
 
                 $data = MemberModel::Where('m_Id', $request->searchMember)->get()->first();
 
@@ -100,6 +101,7 @@ class TradeController extends Controller
                     $data = TradeModel::create([
                         't_Id'=>$tId,
                         't_No'=>$tNo,
+                        't_Print'=>1,
                         't_aId'=>$request->session()->get('Account'),
                         't_aName'=>$request->session()->get('Name'),
                         't_lId'=>$request->lId,

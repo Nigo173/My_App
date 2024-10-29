@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('l_TitleTwo', 10)->default('')->comment('標籤2')->nullable();
             $table->string('l_TitleThree', 10)->default('')->comment('標籤3')->nullable();
             $table->string('l_TitleFour', 10)->default('')->comment('標籤4')->nullable();
+            $table->string('l_Current', 10)->default('all')->comment('標籤類型')->nullable();
             $table->timestamps();
         });
     }

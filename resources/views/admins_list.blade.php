@@ -4,8 +4,13 @@
         <div class="px-2 py-2">
             @if (isset($admin))
                 {{-- 表單 --}}
-                <form class="max-w-md mx-auto">
-                    <div class="relative">
+                <form class="max-w-2xl mx-auto flex justify-center items-center gap-1">
+                    @if (isset($admin))
+                        <div class="px-3 py-3 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm">
+                            搜尋筆數: {{ sizeof($admin) }}
+                        </div>
+                    @endif
+                    <div class="w-96 relative">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 20 20">
@@ -92,7 +97,7 @@
                                     {{ $admins->updated_at }}
                                 </td>
                                 @if ($action != 'admins_list')
-                                    <td class="px-6 py-4 text-ellipsis overflow-hidden">
+                                    <td>
                                         @if (intval(session('Level')) > 0)
                                             @if ($action == 'admins_update')
                                                 <form action="" method="POST">

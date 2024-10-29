@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('t_Id', 25)->comment('交易編號');
             $table->string('t_No', 25)->comment('交易標籤流水號');
+            $table->bigInteger('t_Print', 1)->default(0)->comment('交易標籤列印次數')->nullable();
             $table->string('t_aId', 10)->comment('管理員編號');
             $table->string('t_aName', 10)->comment('管理員姓名');
             $table->string('t_lId', 20)->comment('標籤編號');

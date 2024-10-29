@@ -24,7 +24,7 @@
 
                         if ($hr_Sub >= 8 && $hr_Sub < 16) {
                             echo '早班';
-                        } elseif ($hr_Sub > 16 && $hr_Sub < 24) {
+                        } elseif ($hr_Sub >= 16 && $hr_Sub < 24) {
                             echo '中班';
                         } else {
                             echo '晚班';
@@ -44,11 +44,9 @@
                     </button>
 
                     <!-- Dropdown menu -->
-                    <div id="dropdownDivider"
-                        class="z-10 hidden bg-blue-600 px-4">
+                    <div id="dropdownDivider" class="z-10 hidden bg-blue-600 px-4">
                         <div class="py-2">
-                            <a href="{{ route('logout') }}"
-                                class="block text-center text-sm hover:text-whit"
+                            <a href="{{ route('logout') }}" class="block text-center text-sm hover:text-whit"
                                 data-modal-target="Modal" data-modal-toggle="Modal">登 出</a>
                         </div>
                     </div>
