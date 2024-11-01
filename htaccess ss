@@ -1,0 +1,12 @@
+php_value display_errors On
+php_value mbstring.http_input auto
+php_value date.timezone Asia/Taipei
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ /My_App/public/$1 [L]
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ /Laravel/public/$1 [L]
+</IfModule>

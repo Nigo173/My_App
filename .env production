@@ -1,11 +1,9 @@
-APP_NAME="My App"
-
+APP_NAME="點餐系統"
 APP_ENV=production
-APP_KEY=base64:McQNu2BldHm/t3hPBb7vhteqn3XtnNDBlbyef9QccAg=
-APP_DEBUG=false
-APP_TIMEZONE=UTC
-APP_URL=http://localhost
-
+APP_KEY=base64:Ofo9RePGieVdtFAD/pK9AadgYYvHrXtU2+pMhys0ghc=
+APP_DEBUG=true
+APP_TIMEZONE=Asia/Taipei
+APP_URL=http://laravelapp.rf.gd
 
 APP_LOCALE=en
 APP_FALLBACK_LOCALE=en

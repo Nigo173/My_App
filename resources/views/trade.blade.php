@@ -132,6 +132,12 @@
                                         $labels->l_Current == 'shift' &&
                                         $currentlabels->t_Print == 1
                                     ) {
+                                        $date_Sub = substr(
+                                            str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
+                                            0,
+                                            8,
+                                        );
+
                                         $hr_Sub = substr(
                                             str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
                                             9,
@@ -148,16 +154,34 @@
                                             $hr_Int = '24';
                                         }
 
-                                        $ShiftTime = intval($hr_Sub . '' . $ms_Sub);
+                                        $startTime = intval($date_Sub . '' . $hr_Sub . '' . $ms_Sub);
+                                        $nowDate = date('Ymd');
+                                        $nowDateTime = date('YmdHis');
 
-                                        if ($ShiftTime >= 80000 && $ShiftTime < 160000) {
-                                            // 早班
-                                            // array_push($ShiftArray, $labels->l_Id);
-                                        } elseif ($ShiftTime > 160000 && $ShiftTime < 240000) {
-                                            // 中班
+                                        $start_EvenTime = intval($nowDate . '080000');
+                                        $end_EvenTime = intval($nowDate . '160000');
+                                        $start_AfterTime = intval($nowDate . '160000');
+                                        $end_AfterTime = intval($nowDate . '240000');
+                                        $start_NightTime = intval($nowDate . '080000');
+                                        $end_NightTime = intval($nowDate . '240000');
+
+                                        if (
+                                            $startTime >= $start_EvenTime &&
+                                            $startTime < $end_EvenTime &&
+                                            ($nowDateTime > $start_EvenTime && $nowDateTime < $end_EvenTime)
+                                        ) {
                                             array_push($ShiftArray, $labels->l_Id);
-                                        } else {
-                                            // 晚班
+                                        } elseif (
+                                            $startTime > $start_AfterTime &&
+                                            $startTime < $end_AfterTime &&
+                                            ($nowDateTime > $start_AfterTime && $nowDateTime < $end_AfterTime)
+                                        ) {
+                                            array_push($ShiftArray, $labels->l_Id);
+                                        } elseif (
+                                            $startTime > $end_NightTime &&
+                                            $startTime < $start_NightTime &&
+                                            ($nowDateTime > $end_NightTime && $nowDateTime < $start_NightTime)
+                                        ) {
                                             array_push($ShiftArray, $labels->l_Id);
                                         }
                                     }
