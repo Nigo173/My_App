@@ -54,24 +54,6 @@ class TradeController extends Controller
                                 "IF(DATE_FORMAT(NOW(), '%H%i') > 2000, ".
                                 "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20'))");
 
-                // $currentlabel = DB::select("SELECT * FROM trade WHERE t_mId = '".$request->searchMember."' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
-                //                 "BETWEEN IF(DATE_FORMAT(NOW(), '%H%i') < 2000, ".
-                //                 "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20')) AND ".
-                //                 "IF(DATE_FORMAT(NOW(), '%H%i') > 2000, ".
-                //                 "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20'))");
-
-
-
-                                // $currentlabel = DB::select("SELECT * FROM trade WHERE t_mId = '".$request->searchMember."' AND DATE_FORMAT(created_at, '%Y%m%d%H%i') ".
-                                // "BETWEEN IF(DATE_FORMAT(NOW(), '%H%i') < 2000, ".
-                                // "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'2000'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'2000')) AND ".
-                                // "IF(DATE_FORMAT(NOW(), '%H%i') > 2000, ".
-                                // "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'2000'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'2000'))");
-
-
-
-
-
                 //  dd(DB::getQueryLog()); // Sh
                 $data = MemberModel::Where('m_Id', $request->searchMember)->get()->first();
                 $label = LabelModel::limit(8)->get();
