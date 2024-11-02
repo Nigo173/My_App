@@ -38,9 +38,9 @@
                             <th scope="col">
                                 權限
                             </th>
-                            <th scope="col">
+                            {{-- <th scope="col">
                                 電腦
-                            </th>
+                            </th> --}}
                             <th scope="col">
                                 狀態
                             </th>
@@ -73,9 +73,9 @@
                                         <br> {{ $admins->admins_Permissions }}
                                     @endif
                                 </td>
-                                <td>
+                                {{-- <td>
                                     {{ $admins->a_Mac }}
-                                </td>
+                                </td> --}}
                                 <td>
                                     @if ($admins->a_State == '1')
                                         正常
@@ -104,7 +104,7 @@
                                                     @csrf
                                                     <input type="hidden" name="account" value="{{ $admins->a_Id }}">
                                                     <button type="submit"
-                                                        class="px-2 py-1.5 text-gray-600 bg-yellow-300 hover:bg-yellow-400 text-md text-center">
+                                                        class="px-2 py-1.5 mt-3 text-gray-600 bg-yellow-300 hover:bg-yellow-400 text-md text-center">
                                                         編輯
                                                     </button>
                                             @endif
@@ -116,7 +116,7 @@
                                                     <input type="hidden" name="account" value="{{ $admins->a_Id }}">
 
                                                     <button type="submit"
-                                                        class="px-2 py-1.5 text-white bg-red-700 hover:bg-red-800 text-md text-center">
+                                                        class="px-2 py-1.5 mt-3 text-white bg-red-700 hover:bg-red-800 text-md text-center">
                                                         刪除</button>
                                             @endif
                                             </form>
@@ -167,7 +167,7 @@
                                 class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">密碼</label>
                         </div>
                         {{-- 電腦 --}}
-                        <div class="relative z-0 w-full mb-5 group">
+                        <div class="relative z-0 w-full mb-5 group hidden">
                             <input type="text" name="mac" value="" maxlength="20"
                                 class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required readonly />
@@ -341,7 +341,7 @@
     </div>
     {{-- Toast --}}
     <div id="toast-success"
-        class="hidden absolute right-10 top-10 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+        class="hidden fixed right-10 top-20 z-40 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
         role="alert">
         <div
             class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200 ">
@@ -365,7 +365,7 @@
     </div>
     {{-- Modal Loading --}}
     <div id="Modal" data-modal-backdrop="static" tabindex="-1"
-        class="hidden absolute left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
+        class="hidden fixed left-0 top-0 z-30 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
         <svg aria-hidden="true" class="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -399,16 +399,20 @@
                         cache: false,
                         processData: false,
                         success: function(response) {
-                            // if (response.msg.indexOf("成功") > -1) {
-                            //     form.trigger("reset");
-                            // }
+                            if (response.msg.indexOf('成功') > -1) {
+
+                            } else {
+                                $('#toast-success').toggleClass(
+                                    'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
+                                );
+                                $('#toast-success').find('path').attr('d',
+                                    'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
+                                );
+                            }
+
                             // 刪除tr
                             if (url.indexOf("delete") > -1) {
-                                if (response.msg.indexOf('成功') > -1) {
-                                    setTimeout(function() {
-                                        location.reload();
-                                    }, 1000);
-                                }
+                                if (response.msg.indexOf('成功') > -1) {}
                             } else if (url.indexOf('create')) {
                                 setTimeout(function() {
                                     window.location.href = 'list';
@@ -426,11 +430,8 @@
                             );
                         },
                         complete: function() {
-                            $('#Modal').addClass('hidden');
-
                             setTimeout(function() {
-                                form.trigger('reset');
-                                $('#toast-success').addClass('hidden');
+                                location.reload();
                             }, 2000);
                         }
                     });

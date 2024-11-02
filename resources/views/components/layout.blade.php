@@ -11,20 +11,16 @@
 </head>
 
 <body class="bg-slate-200">
-    <header class="bg-slate-800 shadow-xl text-lg font-bold">
+    <header class="bg-slate-800 shadow-xl text-lg font-bold fixed w-full z-40">
         <nav class="font-semibold text-white">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <span class="px-2 rtl:space-x-reverse border-2 border-white text-white">
                     @php
                         $hr_Sub = date('H');
 
-                        if ($hr_Sub == '00') {
-                            $hr_Sub = '24';
-                        }
-
                         if ($hr_Sub >= 8 && $hr_Sub < 16) {
                             echo '早班';
-                        } elseif ($hr_Sub >= 16 && $hr_Sub < 24) {
+                        } elseif ($hr_Sub >= 16) {
                             echo '中班';
                         } else {
                             echo '晚班';
@@ -87,13 +83,13 @@
         </nav>
     </header>
 
-    <main class="relative py-8 mx-auto px-2 max-w-screen-2xl text-slate-900 h-screen">
+    <main class="relative py-8 mx-auto px-2 max-w-screen-2xl text-slate-900 h-screen pt-24">
         {{ $slot }}
     </main>
 
     {{-- Modal Loading --}}
     <div id="Modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true"
-        class="hidden absolute left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
+        class="hidden fixed left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
         <svg aria-hidden="true" class="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

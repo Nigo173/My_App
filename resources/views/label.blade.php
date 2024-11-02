@@ -113,7 +113,7 @@
                                                 @csrf
                                                 <input type="hidden" name="Id" value="{{ $labels->id }}">
                                                 <button type="submit"
-                                                    class="px-2 py-1.5 text-gray-600 bg-yellow-300 hover:bg-yellow-400 text-md text-center">
+                                                    class="px-2 py-1.5 mt-3 text-gray-600 bg-yellow-300 hover:bg-yellow-400 text-md text-center">
                                                     編輯
                                                 </button>
                                             </form>
@@ -216,7 +216,7 @@
     </div>
     {{-- Toast --}}
     <div id="toast-success"
-        class="hidden absolute right-10 top-10 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+        class="hidden fixed right-10 top-20 z-40 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
         role="alert">
         <div
             class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200 ">
@@ -240,7 +240,7 @@
     </div>
     {{-- Modal Loading --}}
     <div id="Modal" data-modal-backdrop="static" tabindex="-1"
-        class="hidden absolute left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
+        class="hidden fixed left-0 top-0 z-30 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
         <svg aria-hidden="true" class="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -275,9 +275,7 @@
                         cache: false,
                         processData: false,
                         success: function(response) {
-
                             if (response.msg.indexOf('成功') > -1) {
-                                form.trigger("reset");
                             } else {
                                 $('#toast-success').toggleClass(
                                     'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
@@ -303,11 +301,8 @@
                         },
                         error: function(response) {},
                         complete: function() {
-                            $('#Modal').addClass('hidden');
-
                             setTimeout(function() {
-                                form.trigger('reset');
-                                $('#toast-success').addClass('hidden');
+                                location.reload();
                             }, 2000);
                         }
                     });

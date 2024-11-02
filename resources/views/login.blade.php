@@ -84,7 +84,7 @@
     </div>
     {{-- Modal Loading --}}
     <div id="Modal" data-modal-backdrop="static" tabindex="-1"
-        class="hidden absolute left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
+        class="hidden fixed left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
         <svg aria-hidden="true" class="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

@@ -150,10 +150,6 @@
                                             4,
                                         );
 
-                                        // if ($hr_Sub == '00') {
-                                        //     $hr_Sub = '24';
-                                        // }
-
                                         $startTime = intval($date_Sub . '' . $hr_Sub . '' . $ms_Sub);
                                         $nowDate = date('Ymd');
                                         $nowDateTime = date('YmdHis');
@@ -164,7 +160,7 @@
                                         $end_AfterTime = intval($nowDate . '240000');
                                         $start_NightTime = intval($nowDate . '000000');
                                         $end_NightTime = intval($nowDate . '080000');
-                                        echo $startTime;
+
                                         if (
                                             $startTime >= $start_EvenTime &&
                                             $startTime < $end_EvenTime &&
@@ -275,7 +271,7 @@
     </div>
     {{-- Modal Loading --}}
     <div id="Modal" data-modal-backdrop="static" tabindex="-1"
-        class="hidden absolute left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
+        class="hidden fixed left-0 top-0 z-30 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
         <svg aria-hidden="true" class="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -288,7 +284,7 @@
     </div>
     {{-- Modal Content Detail --}}
     <div id="popup-modal" tabindex="-1"
-        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        class="hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <button type="button"
@@ -371,10 +367,7 @@
                             );
                         },
                         complete: function() {
-                            $('#Modal').addClass('hidden');
-
-                            setTimeout(() => {
-                                $('#toast-success').addClass('hidden');
+                            setTimeout(function() {
                                 location.reload();
                             }, 2000);
                         }

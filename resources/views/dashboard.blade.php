@@ -162,7 +162,7 @@
     </div>
     {{-- Toast --}}
     <div id="toast-success"
-        class="hidden absolute right-10 top-10 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+        class="hidden fixed right-10 top-20 z-40 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
         role="alert">
         <div
             class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200 ">
@@ -186,7 +186,7 @@
     </div>
     {{-- Modal Loading --}}
     <div id="Modal" data-modal-backdrop="static" tabindex="-1"
-        class="hidden absolute left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
+        class="hidden fixed left-0 top-0 z-30 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
         <svg aria-hidden="true" class="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -216,10 +216,9 @@
             </div>
         </div>
     </div>
-
     {{-- Modal Content Detail --}}
     <div id="popup-label-modal" tabindex="-1"
-        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        class="hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <button type="button"
@@ -278,7 +277,6 @@
                         cache: false,
                         processData: false,
                         success: function(response) {
-
                             if (response.msg.indexOf('成功') > -1) {
 
                             } else {
@@ -290,11 +288,6 @@
                                 );
                             }
 
-                            if (url.indexOf('update')) {
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 1200);
-                            }
                             $('#toast-success').removeClass('hidden');
                             $('#toast-success-msg').text(response.msg);
                         },
@@ -309,7 +302,9 @@
                             );
                         },
                         complete: function() {
-                            $('#Modal').addClass('hidden');
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000);
                         }
                     });
                 }
@@ -352,7 +347,7 @@
 
             if (year != '' && month != '') {
                 var last = new Date(year + '-' + month + '-01');
-                last.setMonth(last.getMonth() + 1); // This is the wrong way to do it.
+                last.setMonth(last.getMonth() + 1);
                 last.setDate(0);
 
                 for (var i = 1; i <= last.getDate(); i++) {
