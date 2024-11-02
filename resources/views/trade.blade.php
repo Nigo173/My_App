@@ -150,9 +150,9 @@
                                             4,
                                         );
 
-                                        if ($hr_Sub == '00') {
-                                            $hr_Int = '24';
-                                        }
+                                        // if ($hr_Sub == '00') {
+                                        //     $hr_Sub = '24';
+                                        // }
 
                                         $startTime = intval($date_Sub . '' . $hr_Sub . '' . $ms_Sub);
                                         $nowDate = date('Ymd');
@@ -162,9 +162,9 @@
                                         $end_EvenTime = intval($nowDate . '160000');
                                         $start_AfterTime = intval($nowDate . '160000');
                                         $end_AfterTime = intval($nowDate . '240000');
-                                        $start_NightTime = intval($nowDate . '080000');
-                                        $end_NightTime = intval($nowDate . '240000');
-
+                                        $start_NightTime = intval($nowDate . '000000');
+                                        $end_NightTime = intval($nowDate . '080000');
+                                        echo $startTime;
                                         if (
                                             $startTime >= $start_EvenTime &&
                                             $startTime < $end_EvenTime &&
@@ -178,9 +178,9 @@
                                         ) {
                                             array_push($ShiftArray, $labels->l_Id);
                                         } elseif (
-                                            $startTime > $end_NightTime &&
-                                            $startTime < $start_NightTime &&
-                                            ($nowDateTime > $end_NightTime && $nowDateTime < $start_NightTime)
+                                            $startTime > $start_NightTime &&
+                                            $startTime < $end_NightTime &&
+                                            ($nowDateTime > $start_NightTime && $nowDateTime < $end_NightTime)
                                         ) {
                                             array_push($ShiftArray, $labels->l_Id);
                                         }
