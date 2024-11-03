@@ -7,7 +7,7 @@
     <title>{{ env('APP_NAME') }}</title>
     <link rel="icon" href="{{ url('images/favicon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="{{ asset('assets/jquery.min.js') }}"></script>
+    <script src="{{ url('assets/jquery.min.js') }}"></script>
 
     <script>
         setTimeout(function() => {
@@ -84,7 +84,7 @@
     </div>
     {{-- Modal Loading --}}
     <div id="Modal" data-modal-backdrop="static" tabindex="-1"
-        class="hidden fixed left-0 top-0 z-50 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
+        class="hidden fixed left-0 top-0 z-30 flex items-center justify-center w-full h-full bg-gray-400/50 mx-auto">
         <svg aria-hidden="true" class="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -120,7 +120,7 @@
                             if (response.msg.indexOf('成功') > -1) {
                                 setTimeout(function() {
                                     window.location.href = 'dashboard';
-                                }, 1000);
+                                }, 500);
                             } else {
                                 $('#toast-success').toggleClass(
                                     'text-red-700 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200'
@@ -129,6 +129,7 @@
                                     'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
                                 );
                             }
+
                             $('#toast-success').removeClass('hidden');
                             $('#toast-success-msg').text(response.msg);
                         },
@@ -144,10 +145,8 @@
                         },
                         complete: function() {
                             setTimeout(function() {
-                                $('#Modal').addClass('hidden');
-                                form.trigger('reset');
-                                $('#toast-success').addClass('hidden');
-                            }, 800);
+                                location.reload();
+                            }, 2000);
                         }
                     });
                 }

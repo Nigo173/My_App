@@ -258,7 +258,7 @@
             var form = $('#formUpdate');
 
             $(document).on('submit', '#formUpdate', function(event) {
-                // $(form).on('submit', function(event) {
+
                 event.preventDefault();
 
                 // 驗證表單
@@ -310,7 +310,7 @@
                 }
             });
 
-            // 生日 * 民國年
+            // 生日(民國年)
             setTimeout(function() {
                 dateChange();
             }, 1000);
