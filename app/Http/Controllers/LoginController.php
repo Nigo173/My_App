@@ -62,7 +62,7 @@ class LoginController extends Controller
             {
                 $msg = '登入失敗';
             }
-            
+
             $this->create_Log($request, $msg);
             return response()->json(['action'=>'login','msg'=>$msg]);
         }
@@ -87,7 +87,7 @@ class LoginController extends Controller
     {
         $mac = '';
         $url = '';
-        
+
         try
         {
             $note = session('Account').' '.session('Name').' '.$note;

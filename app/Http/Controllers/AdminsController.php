@@ -136,7 +136,7 @@ class AdminsController extends Controller
     {
         $permissions = $this->get_Permissions();
 
-        if(strpos($permissions, 'u') > -1)
+        if(strpos($permissions, 'u') > -1 || ($request->account == session('Account')))
         {
             $request->except(['msg']);
             $msg = '';
