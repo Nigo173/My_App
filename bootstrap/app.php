@@ -20,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($response->getStatusCode() === 500) {
                     return response()->view('error');
             }
+            else if ($response->getStatusCode() === 419)
+            {
+                return redirect()->route('login');
+            }
             return $response;
         });
     })->create();
