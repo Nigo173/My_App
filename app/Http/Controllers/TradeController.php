@@ -44,18 +44,18 @@ class TradeController extends Controller
                 // ->limit(2)->reorder('created_at', 'desc')->get();
 
                 $memberlabel = TradeModel::select('t_Print AS t_Count','t_mId','t_lTitle')
-                ->where('t_mId', $request->searchMember)
+                ->where('t_mCardId', $request->searchMember)
                 ->limit(5)->reorder('created_at', 'desc')->get();
 
                 // 篩選客戶交易選項
-                $currentlabel = DB::select("SELECT * FROM trade WHERE t_mId = '".$request->searchMember."' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
+                $currentlabel = DB::select("SELECT * FROM trade WHERE t_mCardId = '".$request->searchMember."' AND DATE_FORMAT(NOW(), '%Y%m%d%H') ".
                                 "BETWEEN IF(DATE_FORMAT(NOW(), '%H%i') < 2000, ".
                                 "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20')) AND ".
                                 "IF(DATE_FORMAT(NOW(), '%H%i') > 2000, ".
                                 "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20'), CONCAT(DATE_FORMAT(NOW(), '%Y%m%d'),'20'))");
 
                 //  dd(DB::getQueryLog()); // Sh
-                $data = MemberModel::Where('m_Id', $request->searchMember)->get()->first();
+                $data = MemberModel::Where('m_CardId', $request->searchMember)->get()->first();
                 $label = LabelModel::limit(8)->get();
                 return view('trade', ['data' => $data,'label' => $label,'memberlabel' => $memberlabel,'currentlabel' => $currentlabel]);
             }

@@ -66,11 +66,11 @@ class MemberController extends Controller
                 {
                     $member = $MemberModel->where('m_CardId', 'like', '%'.$request->search.'%')
                     ->orWhere('m_Name', 'like', '%'.$request->search.'%')
-                    ->limit(10)->reorder('updated_at', 'desc')->get();
-                    return view('member_list', ['action' => 'member_list', 'member' => $member]);
+                    ->limit(10)->reorder('m_Id', 'asc')->get();
+                    return view('member_list', ['action' => $action, 'member' => $member]);
                 }
                 // ALL
-                $member = $MemberModel->reorder('updated_at', 'desc')->get();
+                $member = $MemberModel->reorder('m_Id', 'asc')->get();
                 return view('member_list', ['action' => $action, 'member' => $member, 'msg' => $msg]);
             }
             catch(Exception $e)

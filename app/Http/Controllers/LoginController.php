@@ -35,9 +35,8 @@ class LoginController extends Controller
 
         try
         {
-            $admins = new AdminsModel();
             $hashedpassword = md5($request->password);
-            $data = $admins->where('a_Id', $request->account)->where('a_PassWord', $hashedpassword)->get()->first();
+            $data = AdminsModel::where('a_Id', $request->account)->where('a_PassWord', $hashedpassword)->get()->first();
 
             if(isset($data->a_Id))
             {
@@ -57,21 +56,21 @@ class LoginController extends Controller
                // $data = AdminsModel::where('a_Id', $request->account)->update([
                     //'a_Mac' => ' '
                // ]);
+               $this->create_Log($request, $msg);
             }
             else
             {
                 $msg = '登入失敗';
             }
 
-            $this->create_Log($request, $msg);
-            return response()->json(['action'=>'login','msg'=>$msg]);
+            return response()->json(['action'=>'dashboard','msg'=>$msg]);
         }
         catch(Exception $e)
         {
             return view('error');
         }
 
-        return response()->json(['action'=>'dashboard','msg'=>'登入成功']);
+        return view('login');
     }
 
     public function logout(Request $request)
@@ -90,7 +89,14 @@ class LoginController extends Controller
 
         try
         {
-            $note = session('Account').' '.session('Name').' '.$note;
+            if($request->session()->exists('Account'))
+            {
+                $note = session('Account').' '.session('Name').' '.$note;
+            }
+            else
+            {
+                $note = $request->account.' '.$note;
+            }
             //$mac = strtok(exec('getmac'), ' ');
             $url = $request->getRequestUri();
         }
