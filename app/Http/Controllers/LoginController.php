@@ -56,13 +56,13 @@ class LoginController extends Controller
                // $data = AdminsModel::where('a_Id', $request->account)->update([
                     //'a_Mac' => ' '
                // ]);
+               $this->create_Log($request, $msg);
             }
             else
             {
                 $msg = '登入失敗';
             }
 
-            $this->create_Log($request, $msg);
             return response()->json(['action'=>'dashboard','msg'=>$msg]);
         }
         catch(Exception $e)
