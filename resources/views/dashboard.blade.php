@@ -2,13 +2,19 @@
     <div class="relative overflow-x-auto shadow-xl rounded-lg">
         <div class="px-2 py-2">
             {{-- 搜尋 --}}
-            <form class="max-w-3xl mx-auto px-2 py-2 flex justify-center items-center gap-1" method="GET">
+            <form class="max-w-4xl mx-auto px-2 py-2 flex justify-center items-center gap-1" method="GET">
                 @if (isset($trade))
-                    <div class="px-3 py-2.5 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm">
+                    <div class="px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm">
                         搜尋筆數: {{ sizeof($trade) }}
                     </div>
                 @endif
+
+                <input type="search" name="cardId"
+                    class="w-32 ms-2 me-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                    value="{{ isset($_GET['cardId']) ? $_GET['cardId'] : '' }}" placeholder="身分證" />
+
                 <div class="w-100 grid gap-4 grid-cols-5">
+
                     <select name="selectShift"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="" selected>班查詢</option>
@@ -221,7 +227,6 @@
 
     <script>
         $(function() {
-
             var form = $('#formUpdate');
 
             $(document).on('submit', '#formUpdate', function(event) {
@@ -274,21 +279,6 @@
                     });
                 }
             });
-
-            // 生日(民國年)
-            setTimeout(function() {
-                dateChange();
-            }, 1000);
-
-            function dateChange() {
-                document.querySelector('input[type="date"]').addEventListener('change', function(
-                    event) {
-                    var selectDate = document.querySelector('input[type="date"]').value;
-                    var year = (parseInt(selectDate.substring(0, 4), 10) - 1911).toString();
-                    var newVal = year + '' + selectDate.substring(4, 10);
-                    document.querySelector('input[name="birthday"]').value = newVal;
-                });
-            }
         });
 
         function labelConten(data) {
@@ -309,20 +299,29 @@
         function setLastDate() {
             var year = document.getElementsByName('selectYear')[0].value;
             var month = document.getElementsByName('selectMonth')[0].value;
+            var day = document.getElementsByName('selectDay')[0];
+
+            for (var i = day.length; i > 0; i--) {
+                day.remove(i);
+            }
 
             if (year != '' && month != '') {
                 var last = new Date(year + '-' + month + '-01');
                 last.setMonth(last.getMonth() + 1);
                 last.setDate(0);
 
-                for (var i = 1; i <= last.getDate(); i++) {
+                setTimeout(function() {
+                    for (var i = 1; i <= last.getDate(); i++) {
 
-                    var opt1 = document.createElement("option");
-                    opt1.value = i;
-                    opt1.text = i.toString() + '號';
-                    opt1.selected = false;
-                    document.getElementsByName('selectDay')[0].add(opt1, null);
-                }
+                        var opt1 = document.createElement('option');
+                        opt1.value = i.toString();
+                        opt1.text = i.toString() + '號';
+                        opt1.selected = false;
+                        day.add(opt1, null);
+                    }
+                }, 250);
+            } else if (month == '') {
+                day.value = '';
             }
         }
 

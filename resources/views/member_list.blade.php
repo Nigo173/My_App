@@ -327,8 +327,7 @@
                             }
                             // 刪除tr
                             if (url.indexOf('delete') > -1) {
-                                if (response.msg.indexOf('成功') > -1) {
-                                }
+                                if (response.msg.indexOf('成功') > -1) {}
                             } else if (url.indexOf('create')) {
                                 setTimeout(function() {
                                     window.location.href = 'list';
@@ -366,9 +365,8 @@
                     var selectDate = document.querySelector('input[type="date"]').value;
                     var year = (parseInt(selectDate.substring(0, 4), 10) - 1911).toString();
 
-                    if(parseInt(year, 10) < 100)
-                    {
-                        year = '0'+ year;
+                    if (parseInt(year, 10) < 100) {
+                        year = '0' + year;
                     }
 
                     var newVal = year + '' + selectDate.substring(4, 10);
