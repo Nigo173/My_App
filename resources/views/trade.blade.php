@@ -35,7 +35,7 @@
                         </option>
                         @if (isset($member) && sizeof($member) > 0)
                             @foreach ($member as $members)
-                                <option value="{{ $members->m_Id }}">姓名:{{ $members->m_Name }}
+                                <option value="{{ $members->m_CardId }}">姓名:{{ $members->m_Name }}
                                     電話:{{ $members->m_Phone }}
                                 </option>
                             @endforeach
