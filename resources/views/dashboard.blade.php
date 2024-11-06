@@ -69,27 +69,27 @@
                         }
                     }
 
-                    echo '<div class="max-w-lg mx-auto px-1 flex justify-center items-center gap-5">';
+                    echo '<div class="max-w-lg mx-auto flex justify-around items-center">';
 
                     $keys = array_keys($titleArray);
                     foreach ($CurrentArray as $key => $value) {
                         if ($key == 'day') {
                             echo '<div class="text-center border-b-2 border-gray-600"><div
-                        class="text-white py-1 px-2 bg-red-500">' .
+                        class="text-white py-1 px-3 bg-red-500">' .
                                 $value .
                                 '</div>' .
                                 $titleArray[$key] .
                                 '</div>';
                         } elseif ($key == 'shift') {
                             echo '<div class="text-center border-b-2 border-gray-600"><div
-                        class="text-white py-1 px-2 bg-green-500">' .
+                        class="text-white py-1 px-3 bg-green-500">' .
                                 $value .
                                 '</div>' .
                                 $titleArray[$key] .
                                 '</div>';
                         } elseif ($key == 'all') {
                             echo '<div class="text-center border-b-2 border-gray-600"><div
-                        class="text-white py-1 px-2 bg-blue-500">' .
+                        class="text-white py-1 px-3 bg-blue-500">' .
                                 $value .
                                 '</div>' .
                                 $titleArray[$key] .

@@ -143,7 +143,6 @@ class TradeController extends Controller
                     }
 
                     return response()->json(['action' => 'list','msg' => $msg,'trade' => $trade,'label' => $label]);
-                    // return view('trade', ['msg' => $msg, 'trade' => $trade]);
                 }
                 return response()->json(['action' => 'list','msg' => '圖片異常']);
             }
