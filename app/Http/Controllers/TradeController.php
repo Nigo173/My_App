@@ -42,7 +42,7 @@ class TradeController extends Controller
                 ->limit(5)->reorder('created_at', 'desc')->get();
 
                 // 篩選客戶交易選項
-                $currentlabel = DB::select("SELECT * FROM trade WHERE t_mId = '".$request->searchMember."' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
+                $currentlabel = DB::select("SELECT * FROM trade WHERE t_mCardId= '".$request->searchMember."' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
                                 "BETWEEN CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20') AND ".
                                 "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20') ORDER BY created_at DESC");
 

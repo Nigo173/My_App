@@ -269,6 +269,17 @@
             </div>
         </div>
     </div>
+    <!-- Back to top button -->
+    <button type="button" data-twe-ripple-init data-twe-ripple-color="light"
+        class="!fixed bottom-10 right-44 hidden opacity-75 rounded-full bg-slate-500 p-3 font-medium text-white shadow-xl transition duration-150 ease-in-out hover:bg-slate-700"
+        id="btn-back-to-top" onclick="backToTop()">
+        <span class="[&>svg]:w-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+            </svg>
+        </span>
+    </button>
 
     <script>
         $(function() {
@@ -379,5 +390,27 @@
         if (selectDay != null && selectDay != '') {
             document.getElementsByName('selectDay')[0].value = selectDay;
         }
+
+        // Go Top
+        window.addEventListener('scroll', function() {
+
+            var mybutton = document.getElementById('btn-back-to-top');
+
+            if (
+                document.body.scrollTop > 20 ||
+                document.documentElement.scrollTop > 20
+            ) {
+                mybutton.classList.remove("hidden");
+            } else {
+                mybutton.classList.add("hidden");
+            }
+        });
+
+        function backToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
     </script>
 </x-layout>

@@ -148,7 +148,7 @@
                                     <img class="w-full h-full" id="imgView"
                                         src="{{ $action == 'member_update' && isset($data) ? $data->m_Img : '' }}">
                                     <div class="absolute left-0 top-0 w-10 h-10">
-                                        <input type="file" name="img" id="myfileid"
+                                        <input type="file" name="img" id="myfileid" onchange="getImage()"
                                             accept="image/png, image/gif, image/jpeg"
                                             class="text-sm w-24 text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                             {{ $action == 'member_update' && isset($data) ? $data->m_Img : 'required' }} />
@@ -292,7 +292,17 @@
             </div>
         </div>
     </div>
-
+    <!-- Back to top button -->
+    <button type="button" data-twe-ripple-init data-twe-ripple-color="light"
+        class="fixed bottom-10 right-44 hidden opacity-75 rounded-full bg-slate-500 p-3 font-medium text-white shadow-xl transition duration-150 ease-in-out hover:bg-slate-700"
+        id="btn-back-to-top" onclick="backToTop()">
+        <span class="[&>svg]:w-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+            </svg>
+        </span>
+    </button>
     <script>
         $(function() {
             var form = $('#formCreate,#formDelete');
@@ -375,7 +385,9 @@
             }
         });
 
-        document.getElementById('myfileid').addEventListener('change', function(event) {
+
+        function getImage() {
+
             var preview = document.getElementById('imgView');
             var file = event.target.files[0];
             var reader = new FileReader();
@@ -389,10 +401,47 @@
             } else {
                 preview.src = "";
             }
-        });
+        }
+        // document.getElementById('myfileid').addEventListener('change', function(event) {
+        //     var preview = document.getElementById('imgView');
+        //     var file = event.target.files[0];
+        //     var reader = new FileReader();
+
+        //     reader.onloadend = function() {
+        //         preview.src = reader.result;
+        //     }
+
+        //     if (file) {
+        //         reader.readAsDataURL(file);
+        //     } else {
+        //         preview.src = "";
+        //     }
+        // });
         // Modal圖片
         function showImage(url) {
             document.getElementById('modalImg').src = url;
         }
+
+        // Go Top
+        window.addEventListener('scroll', function() {
+
+            var mybutton = document.getElementById('btn-back-to-top');
+
+            if (
+                document.body.scrollTop > 20 ||
+                document.documentElement.scrollTop > 20
+            ) {
+                mybutton.classList.remove("hidden");
+            } else {
+                mybutton.classList.add("hidden");
+            }
+        });
+
+        function backToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
     </script>
 </x-layout>
