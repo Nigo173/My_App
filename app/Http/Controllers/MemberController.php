@@ -201,7 +201,7 @@ class MemberController extends Controller
 
                         if(strlen($img) < 10)
                         {
-                            return view('member_list', ['action' => 'member_update', 'msg' => '圖片大於2MB、請壓縮圖片']);
+                            return response()->json(['action'=>'update','msg'=>'圖片大於2MB、請壓縮圖片']);
                         }
                     }
 

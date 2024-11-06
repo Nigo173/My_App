@@ -148,7 +148,7 @@
                                     <img class="w-full h-full" id="imgView"
                                         src="{{ $action == 'member_update' && isset($data) ? $data->m_Img : '' }}">
                                     <div class="absolute left-0 top-0 w-10 h-10">
-                                        <input type="file" name="img" id="myfileid" onchange="getImage()"
+                                        <input type="file" name="img" id="myfileid" onchange="getImage(this)"
                                             accept="image/png, image/gif, image/jpeg"
                                             class="text-sm w-24 text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                             {{ $action == 'member_update' && isset($data) ? $data->m_Img : 'required' }} />
@@ -201,7 +201,7 @@
                         {{-- 生日 --}}
                         <div class="relative z-0 w-full mb-5 group">
                             <input type="date" class="absolute bg-transparent top-0 right-0 border-0"
-                                onchange="dateChange()" style="width: 45px;" />
+                                onchange="dateChange(this.value)" style="width: 45px;" />
                             <input type="text" name="birthday"
                                 value="{{ $action == 'member_update' && isset($data) ? $data->m_Birthday : '' }}"
                                 pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1-2]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
@@ -335,12 +335,22 @@
                                     'M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z'
                                 );
                             }
+
                             // 刪除tr
                             if (url.indexOf('delete') > -1) {
-                                if (response.msg.indexOf('成功') > -1) {}
-                            } else if (url.indexOf('create')) {
+                                if (response.msg.indexOf('成功') > -1) {
+                                    setTimeout(function() {
+                                        window.location.href = 'delete';
+                                    }, 1000);
+                                }
+                            } else if (url.indexOf('create') > -1) {
                                 setTimeout(function() {
                                     window.location.href = 'list';
+                                }, 1000);
+
+                            } else if (url.indexOf('update') > -1) {
+                                setTimeout(function() {
+                                    window.location.href = 'update';
                                 }, 1000);
                             }
                             $('#toast-success-msg').text(response.msg);
@@ -363,33 +373,24 @@
                     });
                 }
             });
-
-            // 生日 * 民國年
-            setTimeout(function() {
-                dateChange();
-            }, 1000);
-
-            function dateChange() {
-                document.querySelector('input[type="date"]').addEventListener('change', function(
-                    event) {
-                    var selectDate = document.querySelector('input[type="date"]').value;
-                    var year = (parseInt(selectDate.substring(0, 4), 10) - 1911).toString();
-
-                    if (parseInt(year, 10) < 100) {
-                        year = '0' + year;
-                    }
-
-                    var newVal = year + '' + selectDate.substring(4, 10);
-                    document.querySelector('input[name="birthday"]').value = newVal;
-                });
-            }
         });
 
+        function dateChange(selectDate) {
 
-        function getImage() {
+            var year = (parseInt(selectDate.substring(0, 4), 10) - 1911).toString();
+
+            if (parseInt(year, 10) < 100) {
+                year = '0' + year;
+            }
+
+            var newVal = year + '' + selectDate.substring(4, 10);
+            document.querySelector('input[name="birthday"]').value = newVal;
+        }
+
+        function getImage(event) {
 
             var preview = document.getElementById('imgView');
-            var file = event.target.files[0];
+            var file = event.files[0];
             var reader = new FileReader();
 
             reader.onloadend = function() {
@@ -402,21 +403,6 @@
                 preview.src = "";
             }
         }
-        // document.getElementById('myfileid').addEventListener('change', function(event) {
-        //     var preview = document.getElementById('imgView');
-        //     var file = event.target.files[0];
-        //     var reader = new FileReader();
-
-        //     reader.onloadend = function() {
-        //         preview.src = reader.result;
-        //     }
-
-        //     if (file) {
-        //         reader.readAsDataURL(file);
-        //     } else {
-        //         preview.src = "";
-        //     }
-        // });
         // Modal圖片
         function showImage(url) {
             document.getElementById('modalImg').src = url;
