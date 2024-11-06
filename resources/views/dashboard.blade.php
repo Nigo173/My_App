@@ -55,6 +55,50 @@
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm">搜尋</button>
                 </div>
             </form>
+            @php
+                if (isset($trade)) {
+                    $CurrentArray = [];
+                    $titleArray = [];
+
+                    foreach ($trade as $trades) {
+                        if (!array_key_exists($trades->l_Current, $CurrentArray)) {
+                            $CurrentArray[$trades->l_Current] = 1;
+                            $titleArray[$trades->l_Current] = $trades->t_lTitle;
+                        } elseif (array_key_exists($trades->l_Current, $CurrentArray)) {
+                            $CurrentArray[$trades->l_Current] += 1;
+                        }
+                    }
+
+                    echo '<div class="max-w-lg mx-auto px-1 flex justify-center items-center gap-5">';
+
+                    $keys = array_keys($titleArray);
+                    foreach ($CurrentArray as $key => $value) {
+                        if ($key == 'day') {
+                            echo '<div class="text-center border-b-2 border-gray-600"><div
+                        class="text-white py-1 px-2 bg-red-500">' .
+                                $value .
+                                '</div>' .
+                                $titleArray[$key] .
+                                '</div>';
+                        } elseif ($key == 'shift') {
+                            echo '<div class="text-center border-b-2 border-gray-600"><div
+                        class="text-white py-1 px-2 bg-green-500">' .
+                                $value .
+                                '</div>' .
+                                $titleArray[$key] .
+                                '</div>';
+                        } elseif ($key == 'all') {
+                            echo '<div class="text-center border-b-2 border-gray-600"><div
+                        class="text-white py-1 px-2 bg-blue-500">' .
+                                $value .
+                                '</div>' .
+                                $titleArray[$key] .
+                                '</div>';
+                        }
+                    }
+                    echo '</div>';
+                }
+            @endphp
 
             {{-- 表格清單 --}}
             <table class="w-full mt-5 text-md text-center text-gray-600 border border-gray-400">
@@ -94,7 +138,7 @@
                 <tbody>
                     @if (isset($trade))
                         @foreach ($trade as $trades)
-                            <tr onclick="labelConten({{ $trades }});"
+                            <tr
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
                                 <td class="px-2 py-4">
                                     @if (strlen($trades->t_mImg) > 10)
@@ -130,6 +174,7 @@
                                         @endif
                                         <button type="button" data-modal-target="popup-label-modal"
                                             data-modal-toggle="popup-label-modal"
+                                            onclick="labelConten({{ $trades }});"
                                             class="text-blue-500 border-b-2 border-blue-400">
                                             {{ $trades->t_lTitle }}
                                         </button>
