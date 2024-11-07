@@ -16,7 +16,7 @@
                 <div class="w-100 grid gap-4 grid-cols-5">
 
                     <select name="selectShift"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block">
                         <option value="" selected>班查詢</option>
                         <option value="早班"
                             {{ isset($_GET['selectShift']) && $_GET['selectShift'] == '早班' ? 'selected' : '' }}>早班
@@ -138,8 +138,7 @@
                 <tbody>
                     @if (isset($trade))
                         @foreach ($trade as $trades)
-                            <tr
-                                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
+                            <tr class="bg-white border-b hover:bg-gray-200">
                                 <td class="px-2 py-4">
                                     @if (strlen($trades->t_mImg) > 10)
                                         <img src="{{ $trades->t_mImg }}" style="width:50px;height:50px;"
@@ -187,20 +186,22 @@
                                     {{ $trades->t_Print }}
                                 </td>
                                 <td>
-                                    {{ $trades->created_at . '' }}
+                                    {{ $trades->created_at }}
                                 </td>
                                 <td>
                                     @if (session('Level') == '2')
                                         @if ($trades->l_Current != 'all')
-                                            <form id="formUpdate" data-action="{{ route('trade_update') }}"
+                                            {{-- <form id="formUpdate" data-action="{{ route('trade_update') }}"
                                                 method="POST">
                                                 @csrf
-                                                <input type="hidden" name="tId" value="{{ $trades->t_Id }}">
-                                                <button type="submit"
-                                                    class="px-2 py-1.5 text-gray-600 bg-yellow-300 hover:bg-yellow-400 text-md text-center">
-                                                    重置
-                                                </button>
-                                            </form>
+                                                <input type="hidden" name="tId" value="{{ $trades->t_Id }}"> --}}
+                                            <button type="button" onclick="confirm_modal({{ $trades }})"
+                                                data-modal-target="popup-modal-confirm"
+                                                data-modal-toggle="popup-modal-confirm"
+                                                class="px-2 py-1.5 text-gray-600 bg-yellow-300 hover:bg-yellow-400 text-md text-center">
+                                                重置
+                                            </button>
+                                            {{-- </form> --}}
                                         @endif
                                     @endif
                                 </td>
@@ -265,6 +266,48 @@
                     <div class="grid grid-cols-1">
                         <p id="label-No" class="text-lg text-gray-700 dark:text-gray-400"></p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Modal Confirm Detail --}}
+    <div id="popup-modal-confirm" tabindex="-1"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <button type="button"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-hide="popup-modal-confirm">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+                <div class="p-4 md:p-5 text-center">
+                    <svg class="mx-auto mb-4 text-red-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <h3 class="mb-5 text-lg font-bold text-gray-500" id="confirm-label">
+                    </h3>
+                    <h3 class="mb-2 text-lg font-normal text-gray-500" id="confirm-member"></h3>
+                    <p class="mb-5 text-md font-normal text-gray-500" id="confirm-created"></p>
+
+                    <form id="formUpdate" data-action="{{ route('trade_update') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="tId" id="confirm-tId" value="">
+                        <button data-modal-hide="popup-modal-confirm" type="submit"
+                            class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-7 py-2 text-center">
+                            確認
+                        </button>
+
+                        <button data-modal-hide="popup-modal-confirm" type="button"
+                            class="py-2 px-7 ms-10 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100">
+                            取消</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -352,6 +395,7 @@
             document.getElementById('modalImg').src = url;
         }
 
+        // 搜尋日期
         function setLastDate() {
             var year = document.getElementsByName('selectYear')[0].value;
             var month = document.getElementsByName('selectMonth')[0].value;
@@ -412,5 +456,18 @@
                 behavior: 'smooth'
             });
         };
+        // 重置確認視窗
+        function confirm_modal(data) {
+            document.getElementById('confirm-tId').value = data.t_Id;
+            document.getElementById('confirm-label').innerText = '標籤(' + data.t_lTitle + ')重置';
+            document.getElementById('confirm-member').innerText = data.t_mName + ' ' + data.t_mCardId;
+
+            var createdDate = new Date(data.created_at);
+            createdDate = createdDate.getFullYear() + '-' + (createdDate.getMonth() + 1) + '-' + createdDate.getDate() +
+                ' ' +
+                ('0' + createdDate.getHours()).slice(-2) + ':' + ('0' + createdDate.getMinutes()).slice(-2) + ':' + ('0' +
+                    createdDate.getSeconds()).slice(-2);
+            document.getElementById('confirm-created').innerText = '日期:' + createdDate;
+        }
     </script>
 </x-layout>

@@ -44,7 +44,8 @@ class TradeController extends Controller
                 // 篩選客戶交易選項
                 $currentlabel = DB::select("SELECT * FROM trade WHERE t_mCardId= '".$request->searchMember."' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
                                 "BETWEEN CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20') AND ".
-                                "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20') ORDER BY created_at DESC");
+                                "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20') ".
+                                "ORDER BY created_at DESC");
 
                 $data = MemberModel::Where('m_CardId', $request->searchMember)->get()->first();
                 $label = LabelModel::limit(8)->get();
