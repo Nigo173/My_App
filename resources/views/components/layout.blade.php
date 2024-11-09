@@ -55,7 +55,7 @@
                             @endif
                             <li>
                                 <a href="{{ route('logout') }}" class="block px-4 py-3 hover:bg-gray-200"
-                                    title="登 出">登 出</a>
+                                    data-modal-target="Modal" data-modal-toggle="Modal" title="登 出">登 出</a>
                             </li>
                         </ul>
                     </div>
@@ -100,6 +100,8 @@
         {{ $slot }}
     </main>
 
+    {{-- Toast --}}
+    <x-success-layout />
     {{-- Modal Loading --}}
     <x-loading-layout />
 </body>

@@ -22,7 +22,9 @@
                             class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="關鍵字 帳號 或 姓名" />
                         <button type="submit"
-                            class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">搜尋</button>
+                            class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
+                            data-modal-target="Modal"
+                            data-modal-toggle="Modal">搜尋</button>
                     </div>
                 </form>
                 {{-- 表格清單 --}}
@@ -269,10 +271,6 @@
             @endif
         </div>
     </div>
-    {{-- Toast --}}
-    <x-success-layout />
-    {{-- Modal Loading --}}
-    <x-loading-layout />
     {{-- Modal Image --}}
     <div id="popup-modal" tabindex="-1"
         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">

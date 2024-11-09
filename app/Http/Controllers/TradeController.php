@@ -42,10 +42,31 @@ class TradeController extends Controller
                 ->limit(5)->reorder('created_at', 'desc')->get();
 
                 // 篩選客戶交易選項
-                $currentlabel = DB::select("SELECT * FROM trade WHERE t_mCardId= '".$request->searchMember."' AND DATE_FORMAT(created_at, '%Y%m%d%H') ".
-                                "BETWEEN CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d'),'20') AND ".
-                                "CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY), '%Y%m%d'),'20') ".
-                                "ORDER BY created_at DESC");
+                $currentlabel = DB::select("SELECT trade.*,".
+                "(CASE WHEN IFNULL(label.l_Current,'') = 'day' THEN ".
+                "   CASE WHEN DATE_FORMAT(NOW(), '%H') < 20 AND DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
+                "       CONVERT(DATE_FORMAT(TIMEDIFF(CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY) , '%Y-%m-%d'),' 08:00:00'), NOW()), '%H.%i'), DECIMAL(4, 2)) ".
+                "   ELSE ".
+                "       CONVERT(DATE_FORMAT(TIMEDIFF(CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY) , '%Y-%m-%d'),' 20:00:00'), NOW()), '%H.%i'), DECIMAL(4, 2)) ".
+                "   END ".
+                "WHEN IFNULL(label.l_Current,'') = 'shift' THEN ".
+                "   CASE WHEN DATE_FORMAT(trade.created_at, '%H') >= 0 AND DATE_FORMAT(trade.created_at, '%H') < 8 THEN ".
+                "       IF(LOCATE('-',CONVERT(DATE_FORMAT(TIMEDIFF('16:00:00', DATE_FORMAT(NOW(), '%H:%i:%s')), '%H.%i'), DECIMAL(4, 2))) > 0,0, ".
+                "       CONVERT(DATE_FORMAT(TIMEDIFF('08:00:00', DATE_FORMAT(NOW(), '%H:%i:%s')), '%H.%i'), DECIMAL(4, 2))) ".
+                "   WHEN DATE_FORMAT(trade.created_at, '%H') >= 8 AND DATE_FORMAT(trade.created_at, '%H') < 16 THEN ".
+                "       IF(LOCATE('-',CONVERT(DATE_FORMAT(TIMEDIFF('08:00:00', DATE_FORMAT(NOW(), '%H:%i:%s')), '%H.%i'), DECIMAL(4, 2))) > 0,0, ".
+                "       CONVERT(DATE_FORMAT(TIMEDIFF('16:00:00', DATE_FORMAT(NOW(), '%H:%i:%s')), '%H.%i'), DECIMAL(4, 2))) ".
+                "   WHEN DATE_FORMAT(trade.created_at, '%H') >= 16 AND DATE_FORMAT(trade.created_at, '%H') < 24 THEN ".
+                "       IF(LOCATE('-',CONVERT(DATE_FORMAT(TIMEDIFF('23:59:59', DATE_FORMAT(NOW(), '%H:%i:%s')), '%H.%i'), DECIMAL(4, 2))) > 0,0, ".
+                "       CONVERT(DATE_FORMAT(TIMEDIFF('23:59:59', DATE_FORMAT(NOW(), '%H:%i:%s')), '%H.%i'), DECIMAL(4, 2))) ".
+                "END ".
+                "END) AS 'countdownTime' ".
+                "FROM trade trade ".
+                "LEFT JOIN label label ON label.l_Id = trade.t_lId ".
+                "WHERE trade.t_mCardId = '".$request->searchMember."' ".
+                "and trade.t_Print = 1 ".
+                "and IFNULL(label.l_Current,'') IN ('day','shift')  ".
+                "and DATE_FORMAT(trade.created_at, '%Y%m%d%H') > DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H')");
 
                 $data = MemberModel::Where('m_CardId', $request->searchMember)->get()->first();
                 $label = LabelModel::limit(8)->get();

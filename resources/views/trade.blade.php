@@ -116,70 +116,17 @@
                 @if (isset($label))
                     @foreach ($label as $labels)
                         @php
-                            $dayArray = [];
-                            $ShiftArray = [];
+                            $CountdownTimeArray = [];
+                            $CountdownTimeArrayFormat = [];
 
                             if (isset($currentlabel)) {
                                 foreach ($currentlabel as $currentlabels) {
-                                    if (
-                                        $currentlabels->t_lId == $labels->l_Id &&
-                                        $labels->l_Current == 'day' &&
-                                        $currentlabels->t_Print == 1
-                                    ) {
-                                        array_push($dayArray, $labels->l_Id);
-                                    } elseif (
-                                        $currentlabels->t_lId == $labels->l_Id &&
-                                        $labels->l_Current == 'shift' &&
-                                        $currentlabels->t_Print == 1
-                                    ) {
-                                        $date_Sub = substr(
-                                            str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
+                                    if ($currentlabels->t_lId == $labels->l_Id) {
+                                        $CountdownTimeArray[$labels->l_Id] = $currentlabels->countdownTime;
+                                        $CountdownTimeArrayFormat[$labels->l_Id] = intval(
+                                            str_replace('.', '', $currentlabels->countdownTime),
                                             0,
-                                            8,
                                         );
-
-                                        $hr_Sub = substr(
-                                            str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
-                                            9,
-                                            2,
-                                        );
-
-                                        $ms_Sub = substr(
-                                            str_ireplace(':', '', str_ireplace('-', '', $currentlabels->created_at)),
-                                            11,
-                                            4,
-                                        );
-
-                                        $startTime = intval($date_Sub . '' . $hr_Sub . '' . $ms_Sub);
-                                        $nowDate = date('Ymd');
-                                        $nowDateTime = date('YmdHis');
-
-                                        $start_EvenTime = intval($nowDate . '080000');
-                                        $end_EvenTime = intval($nowDate . '160000');
-                                        $start_AfterTime = intval($nowDate . '160000');
-                                        $end_AfterTime = intval($nowDate . '240000');
-                                        $start_NightTime = intval($nowDate . '000000');
-                                        $end_NightTime = intval($nowDate . '080000');
-
-                                        if (
-                                            $startTime >= $start_EvenTime &&
-                                            $startTime < $end_EvenTime &&
-                                            ($nowDateTime > $start_EvenTime && $nowDateTime < $end_EvenTime)
-                                        ) {
-                                            array_push($ShiftArray, $labels->l_Id);
-                                        } elseif (
-                                            $startTime > $start_AfterTime &&
-                                            $startTime < $end_AfterTime &&
-                                            ($nowDateTime > $start_AfterTime && $nowDateTime < $end_AfterTime)
-                                        ) {
-                                            array_push($ShiftArray, $labels->l_Id);
-                                        } elseif (
-                                            $startTime > $start_NightTime &&
-                                            $startTime < $end_NightTime &&
-                                            ($nowDateTime > $start_NightTime && $nowDateTime < $end_NightTime)
-                                        ) {
-                                            array_push($ShiftArray, $labels->l_Id);
-                                        }
                                     }
                                 }
                             }
@@ -203,27 +150,39 @@
                             <input type="hidden" name="lTitle" value="{{ $labels->l_Title }}" required />
 
                             @if ($labels->l_Current == 'day')
-                                @if (in_array($labels->l_Id, $dayArray))
-                                    <input type="button"
-                                        class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                        value="{{ $labels->l_Title }}" onclick="labelConten({{ $labels }})"
-                                        data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
-                                @else
-                                    <input type="submit"
-                                        class="cursor-pointer text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                        value="{{ $labels->l_Title }}" />
-                                @endif
+                                <div class="relative">
+                                    @if (array_key_exists($labels->l_Id, $CountdownTimeArrayFormat) && $CountdownTimeArrayFormat[$labels->l_Id] > 0)
+                                        <input type="button"
+                                            class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                            value="{{ $labels->l_Title }}"
+                                            onclick="labelConten({{ $labels }})"
+                                            data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
+                                        <div
+                                            class="absolute inline-flex items-center justify-center w-9 h-5 text-xs font-bold text-white bg-yellow-400 rounded -bottom-2 -end-2">
+                                            {{ $CountdownTimeArray[$labels->l_Id] }}</div>
+                                    @else
+                                        <input type="submit"
+                                            class="cursor-pointer text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                            value="{{ $labels->l_Title }}" />
+                                    @endif
+                                </div>
                             @elseif($labels->l_Current == 'shift')
-                                @if (in_array($labels->l_Id, $ShiftArray))
-                                    <input type="button"
-                                        class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                        value="{{ $labels->l_Title }}" onclick="labelConten({{ $labels }})"
-                                        data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
-                                @else
-                                    <input type="submit"
-                                        class="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                        value="{{ $labels->l_Title }}" />
-                                @endif
+                                <div class="relative">
+                                    @if (array_key_exists($labels->l_Id, $CountdownTimeArrayFormat) == true && $CountdownTimeArrayFormat[$labels->l_Id] > 0)
+                                        <input type="button"
+                                            class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                            value="{{ $labels->l_Title }}"
+                                            onclick="labelConten({{ $labels }})"
+                                            data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
+                                        <div
+                                            class="absolute inline-flex items-center justify-center w-9 h-5 text-xs font-bold text-white bg-yellow-400 rounded -bottom-2 -end-2">
+                                            {{ $CountdownTimeArray[$labels->l_Id] }}</div>
+                                    @else
+                                        <input type="submit"
+                                            class="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                            value="{{ $labels->l_Title }}" />
+                                    @endif
+                                </div>
                             @else
                                 <input type="submit"
                                     class="cursor-pointer text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
@@ -245,10 +204,6 @@
             </div>
         </div>
     </div>
-    {{-- Toast --}}
-    <x-success-layout />
-    {{-- Modal Loading --}}
-    <x-loading-layout />
     {{-- Modal Content Detail --}}
     <div id="popup-modal" tabindex="-1"
         class="hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
