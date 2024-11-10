@@ -76,29 +76,10 @@ class DashboardController extends Controller
 
             if($trade != null)
             {
-                // // trade count
-                // $tradeCount = DB::table('trade')->count();
-                // // limit
-                // $end = 5;
-                // $pages = ceil($tradeCount / $end);
-                // // start page
-                $page = 15;
-                //     // page limit
-                if(isset($request->page)) $page = intval($request->page);
-                // // list Data
-                // $start = ($page-1) * $end;
-                // // query
-                // $repost_data = $this->news_model->get_repost_data($_GET['id'], $start, $end);
-
-                // $trade
-
-
-
-                $trade = $trade->reorder('trade.created_at', 'desc')->paginate($page);
+                $trade = $trade->reorder('trade.created_at', 'desc')->paginate(25)->withQueryString();
             }
             else
             {
-
                 $trade = $TradeModel->select('trade.*','label.l_Title','label.l_TitleOne','label.l_TitleTwo','label.l_TitleThree','label.l_Current',
                 DB::raw("(SELECT trades.id ".
                         "FROM trade trades ".
@@ -110,12 +91,7 @@ class DashboardController extends Controller
                         "DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H') ".
                         "ORDER BY trades.created_at DESC) AS 'resetId'"))
                 ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
-                ->limit(25)->reorder('trade.created_at', 'desc')->get();
-
-
-                // $trade = $TradeModel->select('trade.*','label.l_Title','label.l_TitleOne','label.l_TitleTwo','label.l_TitleThree','label.l_Current')
-                // ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
-                // ->limit(25)->reorder('trade.created_at', 'desc')->get();
+                ->limit(25)->reorder('trade.created_at', 'desc')->cursorPaginate(25);
             }
 
             return view('dashboard', ['trade'=>$trade]);

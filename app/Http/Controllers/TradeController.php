@@ -45,15 +45,33 @@ class TradeController extends Controller
                 $currentlabel = DB::select("SELECT trade.*,".
                 "(CASE WHEN IFNULL(label.l_Current,'') = 'day' THEN ".
                 " CASE WHEN DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
-                "   CONVERT(DATE_FORMAT(TIMEDIFF(CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL +1 DAY) , '%Y-%m-%d'),' 08:00:00'), NOW()), '%H.%i'), DECIMAL(4, 2)) ".
+                "   DATE_FORMAT(TIMEDIFF(CONCAT(DATE_FORMAT(NOW() , '%Y-%m-%d'),' 20:00:00'), NOW()), '%H.%i') ".
                 " ELSE ".
-                "   CONVERT(DATE_FORMAT(TIMEDIFF(CONCAT(DATE_FORMAT(DATE_ADD(trade.created_at, INTERVAL +1 DAY) , '%Y-%m-%d'),' 20:00:00'), NOW()), '%H.%i'), DECIMAL(4, 2)) ".
+                "   DATE_FORMAT(TIMEDIFF(CONCAT(DATE_FORMAT(DATE_ADD(trade.created_at, INTERVAL +1 DAY) , '%Y-%m-%d'),' 20:00:00'), NOW()), '%H.%i') ".
                 " END ".
                 "WHEN IFNULL(label.l_Current,'') = 'shift' THEN ".
-                " CASE WHEN trade.t_Print = 1 THEN ".
-                "   IF(DATE_FORMAT(TIMEDIFF(NOW(), trade.created_at), '%H') > 6,0, ".
-                "   DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), trade.created_at), INTERVAL 1 MINUTE), '%H.%i')) ".
-                " ELSE 0 END ".
+                "CASE WHEN DATE_FORMAT(trade.created_at, '%H') >= 8 AND DATE_FORMAT(trade.created_at, '%H') < 16 THEN ".
+                "    CASE WHEN DATE_FORMAT(NOW(), '%H') >= 8 AND DATE_FORMAT(NOW(), '%H') < 16 THEN ".
+                "         CASE WHEN trade.t_Print = 1 THEN ".
+                "             IF(DATE_FORMAT(TIMEDIFF(NOW(), trade.created_at), '%H') > 6,0, ".
+                "                DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), trade.created_at), INTERVAL 1 MINUTE), '%H.%i')) ".
+                "        ELSE 0 END ".
+                "	ELSE 0 END ".
+                "WHEN DATE_FORMAT(trade.created_at, '%H') >= 16 AND DATE_FORMAT(trade.created_at, '%H') < 24 THEN ".
+                "    CASE WHEN DATE_FORMAT(NOW(), '%H') >= 16 AND DATE_FORMAT(NOW(), '%H') < 24 THEN ".
+                "         CASE WHEN trade.t_Print = 1 THEN ".
+                "             IF(DATE_FORMAT(TIMEDIFF(NOW(), trade.created_at), '%H') > 6,0, ".
+                "                DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), trade.created_at), INTERVAL 1 MINUTE), '%H.%i')) ".
+                "        ELSE 0 END ".
+                "	ELSE 0 END ".
+                "WHEN DATE_FORMAT(trade.created_at, '%H') >= 0 AND DATE_FORMAT(trade.created_at, '%H') < 8 THEN ".
+                "    CASE WHEN DATE_FORMAT(NOW(), '%H') >= 0 AND DATE_FORMAT(NOW(), '%H') < 8 THEN ".
+                "         CASE WHEN trade.t_Print = 1 THEN ".
+                "             IF(DATE_FORMAT(TIMEDIFF(NOW(), trade.created_at), '%H') > 6,0, ".
+                "                DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), trade.created_at), INTERVAL 1 MINUTE), '%H.%i')) ".
+                "        ELSE 0 END ".
+                "	ELSE 0 END ".
+                "END ".
                 "END) AS 'countdownTime' ".
                 "FROM trade trade ".
                 "LEFT JOIN label label ON label.l_Id = trade.t_lId ".
