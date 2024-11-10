@@ -49,7 +49,7 @@ class LoginController extends Controller
                 if($data->a_State == '0')
                 {
                     $msg = '帳號停權';
-                    return view('login', ['err' => $msg]);
+                    return response()->json(['action'=>'login','msg'=>$msg]);
                 }
 
                 //$mac = strtok(exec('getmac'), ' ');
@@ -61,6 +61,7 @@ class LoginController extends Controller
             else
             {
                 $msg = '登入失敗';
+                return response()->json(['action'=>'login','msg'=>$msg]);
             }
 
             return response()->json(['action'=>'dashboard','msg'=>$msg]);

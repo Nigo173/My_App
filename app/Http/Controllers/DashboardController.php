@@ -36,8 +36,17 @@ class DashboardController extends Controller
                     $to = '2400';
                 }
 
-                $trade = $TradeModel->select('trade.*','label.l_Title','label.l_TitleOne','label.l_TitleTwo','label.l_TitleThree','label.l_Current')
-                ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId');
+                $trade = $TradeModel->select('trade.*','label.l_Title','label.l_TitleOne','label.l_TitleTwo','label.l_TitleThree','label.l_Current',
+                                    DB::raw("(SELECT trades.id ".
+                                            "FROM trade trades ".
+                                            "LEFT JOIN label labels ON labels.l_Id = trades.t_lId ".
+                                            "WHERE IFNULL(labels.l_Current,'') IN ('day','shift') ".
+                                            "and trades.t_Print = 1 ".
+                                            "and trades.id = trade.id ".
+                                            "and DATE_FORMAT(trades.created_at, '%Y%m%d%H') > ".
+                                            "DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H') ".
+                                            "ORDER BY trades.created_at DESC) AS 'resetId'"))
+                                    ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId');
 
                 if($request->cardId != '')
                 {
@@ -64,16 +73,49 @@ class DashboardController extends Controller
                     $trade = $trade->whereDay('trade.created_at', $request->selectDay);
                 }
             }
-        
+
             if($trade != null)
             {
-                $trade = $trade->reorder('trade.created_at', 'desc')->get();
+                // // trade count
+                // $tradeCount = DB::table('trade')->count();
+                // // limit
+                // $end = 5;
+                // $pages = ceil($tradeCount / $end);
+                // // start page
+                $page = 15;
+                //     // page limit
+                if(isset($request->page)) $page = intval($request->page);
+                // // list Data
+                // $start = ($page-1) * $end;
+                // // query
+                // $repost_data = $this->news_model->get_repost_data($_GET['id'], $start, $end);
+
+                // $trade
+
+
+
+                $trade = $trade->reorder('trade.created_at', 'desc')->paginate($page);
             }
             else
             {
-                $trade = $TradeModel->select('trade.*','label.l_Title','label.l_TitleOne','label.l_TitleTwo','label.l_TitleThree','label.l_Current')
+
+                $trade = $TradeModel->select('trade.*','label.l_Title','label.l_TitleOne','label.l_TitleTwo','label.l_TitleThree','label.l_Current',
+                DB::raw("(SELECT trades.id ".
+                        "FROM trade trades ".
+                        "LEFT JOIN label labels ON labels.l_Id = trades.t_lId ".
+                        "WHERE IFNULL(labels.l_Current,'') IN ('day','shift') ".
+                        "and trades.t_Print = 1 ".
+                        "and trades.id = trade.id ".
+                        "and DATE_FORMAT(trades.created_at, '%Y%m%d%H') > ".
+                        "DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H') ".
+                        "ORDER BY trades.created_at DESC) AS 'resetId'"))
                 ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
                 ->limit(25)->reorder('trade.created_at', 'desc')->get();
+
+
+                // $trade = $TradeModel->select('trade.*','label.l_Title','label.l_TitleOne','label.l_TitleTwo','label.l_TitleThree','label.l_Current')
+                // ->leftJoin('label', 'label.l_Id', '=', 'trade.t_lId')
+                // ->limit(25)->reorder('trade.created_at', 'desc')->get();
             }
 
             return view('dashboard', ['trade'=>$trade]);
@@ -95,11 +137,11 @@ class DashboardController extends Controller
             if(isset($request->tId) && $request->tId != '')
             {
                 try
-                {  
+                {
                     $data = TradeModel::where('t_Id', $request->tId)->update([
                         't_Print'=>0
                     ]);
-    
+
                     if($data)
                     {
                         $msg = '編輯成功';

@@ -46,87 +46,108 @@
 
             <form id="formUpdate" action="{{ route('trade_list') }}" method="POST">
                 @csrf
-                <div class="flex justify-center items-center mt-3">
-                    <label class="font-bold text-center w-1/6" for="cardId">
+                <div class="flex justify-center items-center mt-2">
+                    <label class="font-bold text-right pr-1 w-1/6" for="cardId">
                         身分證:
                     </label>
                     <input type="text" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
                         maxlength="10" pattern="^[A-Z]{1}[0-9]{9}$"
-                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
+                        class="py-1 text-gray-600 bg-transparent border-0 border-b-2 border-gray-400 focus:outline-none focus:border-gray-300 focus:ring-gray-500"
                         placeholder="英文大寫開頭" />
                 </div>
-                <div class="flex justify-center items-center mt-5">
-                    <label class="font-bold text-center w-1/6" for="Id">
+                <div class="flex justify-center items-center mt-4">
+                    <label class="font-bold text-right pr-1 w-1/6" for="Id">
                         編號:
                     </label>
 
                     <input type="text" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}" maxlength="10"
-                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
+                        class="py-1 text-gray-600 bg-transparent border-0 border-b-2 border-gray-400 focus:outline-none focus:border-gray-300 focus:ring-gray-500" />
                 </div>
-                <div class="flex justify-center items-center mt-5">
-                    <label class="font-bold text-center w-1/6" for="name">
+                <div class="flex justify-center items-center mt-4">
+                    <label class="font-bold text-right pr-1 w-1/6" for="name">
                         姓名:
                     </label>
 
                     <input type="text" name="name" value="{{ isset($data) ? $data->m_Name : '' }}" maxlength="20"
-                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
+                        class="py-1 text-gray-600 bg-transparent border-0 border-b-2 border-gray-400 focus:outline-none focus:border-gray-300 focus:ring-gray-500" />
                 </div>
-                <div class="flex justify-center items-center mt-5">
-                    <label class="font-bold text-center w-1/6" for="birthday">
+                <div class="flex justify-center items-center mt-4">
+                    <label class="font-bold text-right pr-1 w-1/6" for="birthday">
                         生日:
                     </label>
 
                     <input type="text" name="birthday" value="{{ isset($data) ? $data->m_Birthday : '' }}"
                         pattern="^[0-1]{1}[0-9]{2}-(([0]{1}[1-9]{1})|([1]{1}[0-2]{1}))-(([0]{1}[1-9]{1})|([1-2]{1}[0-9]{1})|([3]{1}[0-1]{1}))$"
                         maxlength="9"
-                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
+                        class="py-1 text-gray-600 bg-transparent border-0 border-b-2 border-gray-400 focus:outline-none focus:border-gray-300 focus:ring-gray-500"
                         placeholder="格式xxx-xx-xx" />
                 </div>
-                <div class="flex justify-center items-center mb-3 mt-5">
-                    <label class="font-bold text-center w-1/6" for="phone">
+                <div class="flex justify-center items-center mb-3 mt-4">
+                    <label class="font-bold text-right pr-1 w-1/6" for="phone">
                         電話:
                     </label>
 
                     <input type="text" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
                         maxlength="20"
-                        class="py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none" />
+                        class="py-1 text-gray-600 bg-transparent border-0 border-b-2 border-gray-400 focus:outline-none focus:border-gray-300 focus:ring-gray-500" />
                 </div>
                 <input type="submit" class="text-white hidden" name="search" />
             </form>
-
+            <hr class="h-px mx-4 my-2 bg-gray-400 border-0">
             {{-- 交易紀錄 --}}
-            <div class="grid grid-cols-2 gap-1 mb-1 text-center bg-slate-300">
-                <div class="font-bold">
-                    紀錄
-                </div>
-                <div class="font-bold">
-                    次數
-                </div>
-                @if (isset($memberlabel))
-                    @foreach ($memberlabel as $memberlabels)
-                        <div>{{ $memberlabels->t_lTitle }}</div>
-                        <div>{{ $memberlabels->t_Count }}</div>
-                    @endforeach
-                @endif
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-center font-bold">
+                            <th scope="col" class="px-2 py-2">
+                                標籤
+                            </th>
+                            <th scope="col" class="px-2 py-2">
+                                次數
+                            </th>
+                            <th scope="col" class="px-2 py-2">
+                                日期
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (isset($memberlabel))
+                            @foreach ($memberlabel as $memberlabels)
+                                <tr class="text-center text-gray-600">
+                                    <td class="px-2 py-2">
+                                        {{ $memberlabels->t_lTitle }}
+                                    </td>
+                                    <td>
+                                        {{ $memberlabels->t_Count }}
+                                    </td>
+                                    <td>
+                                        {{ $memberlabels->created_at }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
             </div>
+            <hr class="h-px mx-4 my-2 bg-400 border-0">
 
-            <p class="font-bold bg-gray-300 text-center">標籤機連結</p>
+            <p class="font-bold text-center w-28">標籤機連結</p>
 
-            <div class="bg-gray-300 grid grid-cols-4 pt-2 justify-items-center">
+            <div class=" grid grid-cols-4 pt-2 justify-items-center">
                 @if (isset($label))
                     @foreach ($label as $labels)
                         @php
                             $CountdownTimeArray = [];
-                            $CountdownTimeArrayFormat = [];
 
                             if (isset($currentlabel)) {
                                 foreach ($currentlabel as $currentlabels) {
                                     if ($currentlabels->t_lId == $labels->l_Id) {
-                                        $CountdownTimeArray[$labels->l_Id] = $currentlabels->countdownTime;
-                                        $CountdownTimeArrayFormat[$labels->l_Id] = intval(
-                                            str_replace('.', '', $currentlabels->countdownTime),
-                                            0,
-                                        );
+                                        if (
+                                            !array_key_exists($labels->l_Id, $CountdownTimeArray) &&
+                                            $currentlabels->countdownTime > 0
+                                        ) {
+                                            $CountdownTimeArray[$labels->l_Id] = $currentlabels->countdownTime;
+                                        }
                                     }
                                 }
                             }
@@ -151,7 +172,7 @@
 
                             @if ($labels->l_Current == 'day')
                                 <div class="relative">
-                                    @if (array_key_exists($labels->l_Id, $CountdownTimeArrayFormat) && $CountdownTimeArrayFormat[$labels->l_Id] > 0)
+                                    @if (array_key_exists($labels->l_Id, $CountdownTimeArray))
                                         <input type="button"
                                             class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                             value="{{ $labels->l_Title }}"
@@ -168,7 +189,7 @@
                                 </div>
                             @elseif($labels->l_Current == 'shift')
                                 <div class="relative">
-                                    @if (array_key_exists($labels->l_Id, $CountdownTimeArrayFormat) == true && $CountdownTimeArrayFormat[$labels->l_Id] > 0)
+                                    @if (array_key_exists($labels->l_Id, $CountdownTimeArray))
                                         <input type="button"
                                             class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                             value="{{ $labels->l_Title }}"

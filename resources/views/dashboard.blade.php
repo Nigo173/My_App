@@ -139,6 +139,8 @@
                 </thead>
                 <tbody>
                     @if (isset($trade))
+
+
                         @foreach ($trade as $trades)
                             <tr class="bg-white border-b hover:bg-gray-200">
                                 <td class="px-2 py-4">
@@ -192,7 +194,8 @@
                                 </td>
                                 <td>
                                     @if (session('Level') == '2')
-                                        @if ($trades->l_Current != 'all')
+                                        @if ($trades->l_Current != 'all' && $trades->id == $trades->resetId)
+
                                             {{-- <form id="formUpdate" data-action="{{ route('trade_update') }}"
                                                 method="POST">
                                                 @csrf
@@ -209,6 +212,7 @@
                                 </td>
                             </tr>
                         @endforeach
+                        {{ $trade->onEachSide(5)->links() }}
                     @endif
                 </tbody>
             </table>
