@@ -93,25 +93,26 @@
                 </div>
                 <input type="submit" class="text-white hidden" name="search" />
             </form>
-            <hr class="h-px mx-4 my-2 bg-gray-400 border-0">
-            {{-- 交易紀錄 --}}
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="text-center font-bold">
-                            <th scope="col" class="px-2 py-2">
-                                標籤
-                            </th>
-                            <th scope="col" class="px-2 py-2">
-                                次數
-                            </th>
-                            <th scope="col" class="px-2 py-2">
-                                日期
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (isset($memberlabel))
+
+            <hr class="h-px mx-4 my-2  {{ isset($memberlabel) ? 'bg-gray-400' : '' }} border-0">
+            @if (isset($memberlabel))
+                {{-- 交易紀錄 --}}
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-center font-bold">
+                                <th scope="col" class="px-2 py-2">
+                                    標籤
+                                </th>
+                                <th scope="col" class="px-2 py-2">
+                                    次數
+                                </th>
+                                <th scope="col" class="px-2 py-2">
+                                    日期
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             @foreach ($memberlabel as $memberlabels)
                                 <tr class="text-center text-gray-600">
                                     <td class="px-2 py-2">
@@ -125,104 +126,105 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-            <hr class="h-px mx-4 my-2 bg-400 border-0">
+                        </tbody>
+                    </table>
+                </div>
+                <hr class="h-px mx-4 my-2 bg-400 border-0">
 
-            <p class="font-bold text-center w-28">標籤機連結</p>
+                <p class="font-bold text-center w-28">標籤機連結</p>
 
-            <div class=" grid grid-cols-4 pt-2 justify-items-center">
-                @if (isset($label))
-                    @foreach ($label as $labels)
-                        @php
-                            $CountdownTimeArray = [];
+                <div class=" grid grid-cols-4 pt-2 justify-items-center">
+                    @if (isset($label))
+                        @foreach ($label as $labels)
+                            @php
+                                $CountdownTimeArray = [];
 
-                            if (isset($currentlabel)) {
-                                foreach ($currentlabel as $currentlabels) {
-                                    if ($currentlabels->t_lId == $labels->l_Id) {
-                                        if (
-                                            !array_key_exists($labels->l_Id, $CountdownTimeArray) &&
-                                            $currentlabels->countdownTime > 0
-                                        ) {
-                                            $CountdownTimeArray[$labels->l_Id] = $currentlabels->countdownTime;
+                                if (isset($currentlabel)) {
+                                    foreach ($currentlabel as $currentlabels) {
+                                        if ($currentlabels->t_lId == $labels->l_Id) {
+                                            if (
+                                                !array_key_exists($labels->l_Id, $CountdownTimeArray) &&
+                                                $currentlabels->countdownTime > 0
+                                            ) {
+                                                $CountdownTimeArray[$labels->l_Id] = $currentlabels->countdownTime;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        @endphp
+                            @endphp
 
-                        <form id="formCreate" data-action="{{ route('trade_create') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
-                                required />
-                            <input type="hidden" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
-                                required />
-                            <input type="hidden" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
-                                required />
-                            <input type="hidden" name="birthday" value="{{ isset($data) ? $data->m_Birthday : '' }}"
-                                required />
-                            <input type="hidden" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
-                                required />
-                            <input type="hidden" name="mImg" value="{{ isset($data) ? $data->m_Img : '' }}"
-                                required />
-                            <input type="hidden" name="lId" value="{{ $labels->l_Id }}" required />
-                            <input type="hidden" name="lTitle" value="{{ $labels->l_Title }}" required />
+                            <form id="formCreate" data-action="{{ route('trade_create') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="Id" value="{{ isset($data) ? $data->m_Id : '' }}"
+                                    required />
+                                <input type="hidden" name="cardId" value="{{ isset($data) ? $data->m_CardId : '' }}"
+                                    required />
+                                <input type="hidden" name="name" value="{{ isset($data) ? $data->m_Name : '' }}"
+                                    required />
+                                <input type="hidden" name="birthday"
+                                    value="{{ isset($data) ? $data->m_Birthday : '' }}" required />
+                                <input type="hidden" name="phone" value="{{ isset($data) ? $data->m_Phone : '' }}"
+                                    required />
+                                <input type="hidden" name="mImg" value="{{ isset($data) ? $data->m_Img : '' }}"
+                                    required />
+                                <input type="hidden" name="lId" value="{{ $labels->l_Id }}" required />
+                                <input type="hidden" name="lTitle" value="{{ $labels->l_Title }}" required />
 
-                            @if ($labels->l_Current == 'day')
-                                <div class="relative">
-                                    @if (array_key_exists($labels->l_Id, $CountdownTimeArray))
-                                        <input type="button"
-                                            class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                            value="{{ $labels->l_Title }}"
-                                            onclick="labelConten({{ $labels }})"
-                                            data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
-                                        <div
-                                            class="absolute inline-flex items-center justify-center w-9 h-5 text-xs font-bold text-white bg-yellow-400 rounded -bottom-2 -end-2">
-                                            {{ $CountdownTimeArray[$labels->l_Id] }} </div>
-                                    @else
-                                        <input type="submit"
-                                            class="cursor-pointer text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                            value="{{ $labels->l_Title }}" />
-                                    @endif
-                                </div>
-                            @elseif($labels->l_Current == 'shift')
-                                <div class="relative">
-                                    @if (array_key_exists($labels->l_Id, $CountdownTimeArray))
-                                        <input type="button"
-                                            class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                            value="{{ $labels->l_Title }}"
-                                            onclick="labelConten({{ $labels }})"
-                                            data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
-                                        <div
-                                            class="absolute inline-flex items-center justify-center w-9 h-5 text-xs font-bold text-white bg-yellow-400 rounded -bottom-2 -end-2">
-                                            {{ $CountdownTimeArray[$labels->l_Id] }}</div>
-                                    @else
-                                        <input type="submit"
-                                            class="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                            value="{{ $labels->l_Title }}" />
-                                    @endif
-                                </div>
-                            @else
-                                <input type="submit"
-                                    class="cursor-pointer text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                                    value="{{ $labels->l_Title }}" />
-                            @endif
-                        </form>
-                    @endforeach
-                @endif
-            </div>
+                                @if ($labels->l_Current == 'day')
+                                    <div class="relative">
+                                        @if (array_key_exists($labels->l_Id, $CountdownTimeArray))
+                                            <input type="button"
+                                                class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                                value="{{ $labels->l_Title }}"
+                                                onclick="labelConten({{ $labels }})"
+                                                data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
+                                            <div
+                                                class="absolute inline-flex items-center justify-center w-9 h-5 text-xs font-bold text-white bg-yellow-400 rounded -bottom-2 -end-2">
+                                                {{ $CountdownTimeArray[$labels->l_Id] }} </div>
+                                        @else
+                                            <input type="submit"
+                                                class="cursor-pointer text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                                value="{{ $labels->l_Title }}" />
+                                        @endif
+                                    </div>
+                                @elseif($labels->l_Current == 'shift')
+                                    <div class="relative">
+                                        @if (array_key_exists($labels->l_Id, $CountdownTimeArray))
+                                            <input type="button"
+                                                class="cursor-pointer text-white bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                                value="{{ $labels->l_Title }}"
+                                                onclick="labelConten({{ $labels }})"
+                                                data-modal-target="popup-modal" data-modal-toggle="popup-modal" />
+                                            <div
+                                                class="absolute inline-flex items-center justify-center w-9 h-5 text-xs font-bold text-white bg-yellow-400 rounded -bottom-2 -end-2">
+                                                {{ $CountdownTimeArray[$labels->l_Id] }}</div>
+                                        @else
+                                            <input type="submit"
+                                                class="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                                value="{{ $labels->l_Title }}" />
+                                        @endif
+                                    </div>
+                                @else
+                                    <input type="submit"
+                                        class="cursor-pointer text-white bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        value="{{ $labels->l_Title }}" />
+                                @endif
+                            </form>
+                        @endforeach
+                    @endif
+                </div>
 
-            <div class="flex justify-center items-center mb-8 py-8">
-                <label class="font-bold text-center" for="name">
-                    備註
-                </label>
+                <div class="flex justify-center items-center mb-8 py-8">
+                    <label class="font-bold text-center" for="name">
+                        備註
+                    </label>
 
-                <input type="text" name="remark" value="{{ isset($data) ? $data->m_Remark : '' }}" maxlength=50"
-                    class="w-5/6 py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
-                    placeholder="會員備註" />
-            </div>
+                    <input type="text" name="remark" value="{{ isset($data) ? $data->m_Remark : '' }}"
+                        maxlength=50"
+                        class="w-5/6 py-1 text-blue-900 bg-transparent border-0 border-b-2 dark:focus:border-gray-400 focus:outline-none"
+                        placeholder="會員備註" />
+                </div>
+            @endif
         </div>
     </div>
     {{-- Modal Content Detail --}}
