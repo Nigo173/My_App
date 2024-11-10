@@ -89,7 +89,7 @@
                         success: function(response) {
                             if (response.msg.indexOf('成功') > -1) {
                                 setTimeout(function() {
-                                    window.location.href = 'dashboard';
+                                    window.location.href = response.action;
                                 }, 500);
                             } else {
                                 $('#toast-success').removeClass('text-green-500');
