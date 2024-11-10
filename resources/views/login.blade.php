@@ -10,7 +10,7 @@
     <script src="{{ url('assets/jquery.min.js') }}"></script>
 
     <script>
-        setTimeout(function() => {
+        setTimeout(function() {
             window.history.forward();
         }, 0);
         window.onunload = function() {
