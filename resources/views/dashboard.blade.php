@@ -492,16 +492,22 @@
                 day.value = '';
             }
         }
-
         setLastDate();
 
-        var url_string = window.location.href;
-        var url = new URL(url_string);
-        var selectDay = url.searchParams.get('selectDay');
+        function getSelectDay()
+        {
+            setTimeout(function() {
+                var url_string = window.location.href;
+                var url = new URL(url_string);
+                var selectDay = url.searchParams.get('selectDay');
 
-        if (selectDay != null && selectDay != '') {
-            document.getElementsByName('selectDay')[0].value = selectDay;
+                if (selectDay != null && selectDay != '') {
+
+                    document.getElementsByName('selectDay')[0].value = selectDay;
+                }
+            }, 500);
         }
+        getSelectDay();
 
         // Go Top
         window.addEventListener('scroll', function() {
