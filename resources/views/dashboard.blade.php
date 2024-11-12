@@ -3,11 +3,15 @@
         <div class="px-2 py-2">
             {{-- 搜尋 --}}
             <form class="max-w-4xl mx-auto px-2 py-2 flex justify-center items-center gap-1" method="GET">
-                @if (isset($trade))
-                    <div class="px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm">
-                        搜尋筆數: {{ sizeof($trade) }}
-                    </div>
-                @endif
+                <div class="px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm">
+                    搜尋筆數:
+                    @if (isset($alldata))
+                        {{ sizeof($alldata) }}
+                    @endif
+                    @if (isset($trade) && !isset($alldata))
+                        {{ sizeof($trade) }}
+                    @endif
+                </div>
 
                 <input type="search" name="cardId"
                     class="w-32 ms-2 me-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -57,16 +61,16 @@
                 </div>
             </form>
             @php
-                if (isset($trade)) {
+                if (isset($alldata)) {
                     $CurrentArray = [];
                     $titleArray = [];
 
-                    foreach ($trade as $trades) {
-                        if (!array_key_exists($trades->l_Current, $CurrentArray)) {
-                            $CurrentArray[$trades->l_Current] = 1;
-                            $titleArray[$trades->l_Current] = $trades->t_lTitle;
-                        } elseif (array_key_exists($trades->l_Current, $CurrentArray)) {
-                            $CurrentArray[$trades->l_Current] += 1;
+                    foreach ($alldata as $alldatas) {
+                        if (!array_key_exists($alldatas->l_Current, $CurrentArray)) {
+                            $CurrentArray[$alldatas->l_Current] = 1;
+                            $titleArray[$alldatas->l_Current] = $alldatas->t_lTitle;
+                        } elseif (array_key_exists($alldatas->l_Current, $CurrentArray)) {
+                            $CurrentArray[$alldatas->l_Current] += 1;
                         }
                     }
 
@@ -204,74 +208,100 @@
                             </tr>
                         @endforeach
                         @if ($trade instanceof \Illuminate\Pagination\AbstractPaginator)
-                            <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="flex items-center justify-end">
+                            <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}"
+                                class="flex items-center justify-end">
                                 <span class="relative z-0 inline-flex shadow-sm rounded-md">
                                     {{-- Previous Page Link --}}
                                     @if ($trade->onFirstPage())
                                         <span aria-disabled="true" aria-label="{{ __('pagination.previous') }}">
-                                            <span class="relative inline-flex items-center px-1 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5" aria-hidden="true">
+                                            <span
+                                                class="relative inline-flex items-center px-1 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5"
+                                                aria-hidden="true">
                                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                                        clip-rule="evenodd" />
                                                 </svg>
                                             </span>
                                         </span>
                                     @else
-                                        <a href="{{ $trade->previousPageUrl() }}" rel="prev" class="relative inline-flex items-center px-1 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150" aria-label="{{ __('pagination.previous') }}">
+                                        <a href="{{ $trade->previousPageUrl() }}" rel="prev"
+                                            class="relative inline-flex items-center px-1 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+                                            aria-label="{{ __('pagination.previous') }}">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                <path fill-rule="evenodd"
+                                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </a>
                                     @endif
 
                                     {{-- Pagination Elements --}}
-                                    @if($trade->currentPage() > 2)
-                                        <a href="{{ $trade->url(1) }}" class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium text-success bg-white border border-gray-300 leading-5 hover:text-black hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150" aria-label="{{ __('Go to page :page', ['page' => 1]) }}">
+                                    @if ($trade->currentPage() > 2)
+                                        <a href="{{ $trade->url(1) }}"
+                                            class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium text-success bg-white border border-gray-300 leading-5 hover:text-black hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                            aria-label="{{ __('Go to page :page', ['page' => 1]) }}">
                                             1
                                         </a>
                                     @endif
-                                    @if($trade->currentPage() > 3)
+                                    @if ($trade->currentPage() > 3)
                                         {{-- "Three Dots" Separator --}}
                                         <span aria-disabled="true">
-                                            <span class="relative inline-flex items-center p-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5">...</span>
+                                            <span
+                                                class="relative inline-flex items-center p-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5">...</span>
                                         </span>
                                     @endif
-                                    @foreach(range(1, $trade->lastPage()) as $i)
-                                        @if($i >= $trade->currentPage() - 1 && $i <= $trade->currentPage() + 1)
+                                    @foreach (range(1, $trade->lastPage()) as $i)
+                                        @if ($i >= $trade->currentPage() - 1 && $i <= $trade->currentPage() + 1)
                                             @if ($i == $trade->currentPage())
                                                 <span aria-current="page">
-                                                    <span class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium badge-success border border-gray-300 cursor-default leading-5">{{ $i }}</span>
+                                                    <span
+                                                        class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium badge-success border border-gray-300 cursor-default leading-5">{{ $i }}</span>
                                                 </span>
                                             @else
-                                                <a href="{{ $trade->url($i) }}" class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium text-success bg-white border border-gray-300 leading-5 hover:text-black hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150" aria-label="{{ __('Go to page :page', ['page' => $i]) }}">
+                                                <a href="{{ $trade->url($i) }}"
+                                                    class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium text-success bg-white border border-gray-300 leading-5 hover:text-black hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                                    aria-label="{{ __('Go to page :page', ['page' => $i]) }}">
                                                     {{ $i }}
                                                 </a>
                                             @endif
                                         @endif
                                     @endforeach
-                                    @if($trade->currentPage() < $trade->lastPage() - 2)
+                                    @if ($trade->currentPage() < $trade->lastPage() - 2)
                                         {{-- "Three Dots" Separator --}}
                                         <span aria-disabled="true">
-                                            <span class="relative inline-flex items-center p-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5">...</span>
+                                            <span
+                                                class="relative inline-flex items-center p-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5">...</span>
                                         </span>
                                     @endif
-                                    @if($trade->currentPage() < $trade->lastPage() - 1)
-                                        <a href="{{ $trade->url($trade->lastPage()) }}" class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium text-success bg-white border border-gray-300 leading-5 hover:text-black hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150" aria-label="{{ __('Go to page :page', ['page' => $trade->lastPage()]) }}">
+                                    @if ($trade->currentPage() < $trade->lastPage() - 1)
+                                        <a href="{{ $trade->url($trade->lastPage()) }}"
+                                            class="relative inline-flex items-center px-3 py-2 -ml-px text-sm font-medium text-success bg-white border border-gray-300 leading-5 hover:text-black hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                            aria-label="{{ __('Go to page :page', ['page' => $trade->lastPage()]) }}">
                                             {{ $trade->lastPage() }}
                                         </a>
                                     @endif
 
                                     {{-- Next Page Link --}}
                                     @if ($trade->hasMorePages())
-                                        <a href="{{ $trade->nextPageUrl() }}" rel="next" class="relative inline-flex items-center px-1 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150" aria-label="{{ __('pagination.next') }}">
+                                        <a href="{{ $trade->nextPageUrl() }}" rel="next"
+                                            class="relative inline-flex items-center px-1 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+                                            aria-label="{{ __('pagination.next') }}">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                                <path fill-rule="evenodd"
+                                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </a>
                                     @else
                                         <span aria-disabled="true" aria-label="{{ __('pagination.next') }}">
-                                            <span class="relative inline-flex items-center px-1 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-r-md leading-5" aria-hidden="true">
+                                            <span
+                                                class="relative inline-flex items-center px-1 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-r-md leading-5"
+                                                aria-hidden="true">
                                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                        clip-rule="evenodd" />
                                                 </svg>
                                             </span>
                                         </span>
@@ -494,8 +524,7 @@
         }
         setLastDate();
 
-        function getSelectDay()
-        {
+        function getSelectDay() {
             setTimeout(function() {
                 var url_string = window.location.href;
                 var url = new URL(url_string);

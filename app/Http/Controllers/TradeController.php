@@ -45,13 +45,13 @@ class TradeController extends Controller
                 $currentlabel = DB::select("SELECT trade.*,".
                 "(CASE WHEN IFNULL(label.l_Current,'') = 'day' THEN ".
                 "   CASE WHEN trade.t_Print = 1 THEN ".
-                "       CASE WHEN DATE_FORMAT(NOW(), '%H%i') > 0800 AND DATE_FORMAT(NOW(), '%Y%m%d') != DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
+                "       CASE WHEN trade.created_at < CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00') AND DATE_FORMAT(NOW(), '%H%i') > 0800 THEN  ".
                 "           0 ".
                 "       ELSE ".
                 "           CASE WHEN DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
-                "               DATE_FORMAT(TIMEDIFF(NOW(),CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y-%m-%d'),' 20:00:00')), '%H.%i') ".
+                "               DATE_FORMAT(TIMEDIFF(DATE_ADD(NOW(), INTERVAL 1 MINUTE),CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
                 "           ELSE ".
-                "               DATE_FORMAT(TIMEDIFF(NOW(),CONCAT(DATE_FORMAT(trade.created_at, '%Y-%m-%d'),' 20:00:00')), '%H.%i') ".
+                "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(trade.created_at, '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
                 "           END ".
                 "       END ".
                 "   ELSE ".
@@ -85,7 +85,7 @@ class TradeController extends Controller
                 "LEFT JOIN label label ON label.l_Id = trade.t_lId ".
                 "WHERE trade.t_mCardId = '".$request->searchMember."' ".
                 "and IFNULL(label.l_Current,'') IN ('day','shift')  ".
-                "and DATE_FORMAT(trade.created_at, '%Y%m%d%H') > DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H') ".
+                "and DATE_FORMAT(trade.created_at, '%Y%m%d%H') > CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H'),' 08:00:00') ".
                 "ORDER BY created_at DESC");
 
                 $data = MemberModel::Where('m_CardId', $request->searchMember)->get()->first();

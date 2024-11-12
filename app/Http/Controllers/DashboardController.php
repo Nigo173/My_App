@@ -18,6 +18,7 @@ class DashboardController extends Controller
         {
             $TradeModel = new TradeModel();
             $trade = null;
+            $alldata = null;
 
             if($request->isMethod('get') && (isset($request->selectShift) && $request->selectShift != '') ||
             (isset($request->selectMonth) && $request->selectMonth != '') || (isset($request->selectYear) && $request->selectYear != '') || (isset($request->cardId) && $request->cardId != '')) // Like
@@ -76,6 +77,7 @@ class DashboardController extends Controller
 
             if($trade != null)
             {
+                $alldata = $trade->get();
                 $trade = $trade->reorder('trade.created_at', 'desc')->paginate(25)->withQueryString();
             }
             else
@@ -94,7 +96,7 @@ class DashboardController extends Controller
                 ->limit(25)->reorder('trade.created_at', 'desc')->cursorPaginate(25);
             }
 
-            return view('dashboard', ['trade'=>$trade]);
+            return view('dashboard', ['trade'=>$trade,'alldata'=>$alldata]);
         }
         catch(Exception $e)
         {
