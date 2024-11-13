@@ -54,7 +54,7 @@ class TradeController extends Controller
                     "           CASE WHEN DATE_FORMAT(NOW(), '%H') < 8 THEN ".
                     "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
                     "           ELSE ".
-                    "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(trade.created_at, '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
+                    "               DATE_FORMAT(TIMEDIFF(DATE_ADD(NOW(), INTERVAL 1 MINUTE), CONCAT(DATE_FORMAT(trade.created_at, '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
                     "           END ".
                     "       END ".
                     "   ELSE ".
