@@ -26,3 +26,18 @@ http://laravelapp.rf.gd/login
 相機
 https://ithelp.ithome.com.tw/m/articles/10239176
 https://webmix.cc/lab/show_webcam_on_video_and_take_a_picture
+
+
+
+# Update
+11.12
+更新label 停用功能
+-view
+--dashboard
+--label
+-controller
+--trade
+
+11.13 整日時段00~08 時間計算
+-controller
+--trade

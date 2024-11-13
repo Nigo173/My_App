@@ -37,6 +37,7 @@ class TradeController extends Controller
             }
             else if(isset($request->searchMember) && $request->searchMember != '')
             {
+                // 最近消費紀錄
                 $memberlabel = TradeModel::select('t_Print AS t_Count','t_mId','t_lTitle','created_at')
                 ->where('t_mCardId', $request->searchMember)
                 ->limit(5)->reorder('created_at', 'desc')->get();
@@ -48,8 +49,8 @@ class TradeController extends Controller
                 "       CASE WHEN trade.created_at < CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00') AND DATE_FORMAT(NOW(), '%H%i') > 0800 THEN  ".
                 "           0 ".
                 "       ELSE ".
-                "           CASE WHEN DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
-                "               DATE_FORMAT(TIMEDIFF(DATE_ADD(NOW(), INTERVAL 1 MINUTE),CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
+                "           CASE WHEN DATE_FORMAT(NOW(), '%H') < 8 THEN ".
+                "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
                 "           ELSE ".
                 "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(trade.created_at, '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
                 "           END ".
@@ -88,8 +89,10 @@ class TradeController extends Controller
                 "and DATE_FORMAT(trade.created_at, '%Y%m%d%H') > CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H'),' 08:00:00') ".
                 "ORDER BY created_at DESC");
 
+                // 搜尋會員
                 $data = MemberModel::Where('m_CardId', $request->searchMember)->get()->first();
-                $label = LabelModel::limit(8)->get();
+                // 標籤按鈕判斷是否停用
+                $label = LabelModel::Where('l_Current', '<>', '')->limit(8)->get();
                 return view('trade', ['data' => $data,'label' => $label,'memberlabel' => $memberlabel,'currentlabel' => $currentlabel]);
             }
         }

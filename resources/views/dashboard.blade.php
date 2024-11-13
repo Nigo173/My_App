@@ -73,7 +73,7 @@
                             $CurrentArray[$alldatas->l_Current] += 1;
                         }
                     }
-
+                    // 搜尋結果標籤統計
                     echo '<div class="max-w-lg mx-auto flex justify-around items-center">';
 
                     $keys = array_keys($titleArray);
@@ -195,7 +195,11 @@
                                 </td>
                                 <td>
                                     @if (session('Level') == '2')
-                                        @if ($trades->l_Current != 'all' && $trades->id == $trades->resetId)
+                                        @if (
+                                            ($trades->l_Current == 'shift' &&
+                                                substr($trades->created_at, 0, 10) == date('Y-m-d') &&
+                                                $trades->id == $trades->resetId) ||
+                                                ($trades->l_Current == 'day' && $trades->id == $trades->resetId))
                                             <button type="button" onclick="confirm_modal({{ $trades }})"
                                                 data-modal-target="popup-modal-confirm"
                                                 data-modal-toggle="popup-modal-confirm"

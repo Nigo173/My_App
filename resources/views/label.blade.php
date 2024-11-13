@@ -70,7 +70,7 @@
                         @if (isset($label))
                             @foreach ($label as $labels)
                                 <tr
-                                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
+                                    class="bg-white border-b hover:bg-gray-200">
                                     <td class="px-6 py-4">
                                         {{ $labels->l_Title }}
                                     </td>
@@ -103,6 +103,11 @@
                                                     class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full -top-2 -end-2">
                                                 </div>
                                                 無限制
+                                            @elseif($labels->l_Current == '')
+                                                <div
+                                                    class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full -top-2 -end-2">
+                                                </div>
+                                                停用
                                             @endif
                                         </div>
                                     </td>
@@ -142,21 +147,21 @@
                         <div class="mx-auto">
                             <input type="text" name="title" maxlength="3"
                                 value="{{ isset($data) ? $data->l_Title : '' }}"
-                                class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder="標籤代號" required />
                         </div>
                         {{-- 標題1 --}}
                         <div class="mx-auto">
                             <input type="text" name="titleOne" maxlength="10"
                                 value="{{ isset($data) ? $data->l_TitleOne : '' }}"
-                                class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
                         </div>
                         {{-- 標題2 --}}
                         <div class="mx-auto">
                             <input type="text" name="titleTwo" maxlength="10"
                                 value="{{ isset($data) ? $data->l_TitleTwo : '' }}"
-                                class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                class="block py-2.5 px-0 w-50 text-xl text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder=" " required />
                         </div>
                         {{-- 標題2 3 --}}
@@ -164,13 +169,13 @@
                             <div class="row-start-2">
                                 <input type="text" name="titleThree" maxlength="5"
                                     value="{{ isset($data) ? $data->l_TitleThree : '' }}"
-                                    class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                    class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                     placeholder=" " required />
                             </div>
                             <div class="row-start-2">
                                 <input type="text" name="titleFour" maxlength="5"
                                     value="{{ isset($data) ? $data->l_TitleFour : '' }}"
-                                    class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                    class="block py-2.5 px-0 w-50 text-lg text-center text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                     placeholder=" " />
                             </div>
                         </div>
@@ -179,35 +184,42 @@
                             <div class="flex items-center me-4">
                                 <input id="state" type="radio" value="all" name="current"
                                     {{ isset($data) && $data->l_Current == 'all' ? 'checked' : 'checked' }}
-                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
                                 <label for="state"
-                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">無限制</label>
+                                    class="ms-2 text-sm font-medium text-gray-900">無限制</label>
                             </div>
                             <div class="flex items-center me-4">
                                 <input id="state" type="radio" value="shift" name="current"
                                     {{ isset($data) && $data->l_Current == 'shift' ? 'checked' : '' }}
-                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2">
                                 <label for="state"
-                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">班次限制</label>
+                                    class="ms-2 text-sm font-medium text-gray-900">班次限制</label>
                             </div>
                             <div class="flex items-center me-4">
                                 <input id="state" type="radio" value="day" name="current"
                                     {{ isset($data) && $data->l_Current == 'day' ? 'checked' : '' }}
-                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 focus:ring-2">
                                 <label for="level"
-                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">整日限一次</label>
+                                    class="ms-2 text-sm font-medium text-gray-900">整日限一次</label>
+                            </div>
+                            <div class="flex items-center me-4">
+                                <input id="state" type="radio" value="" name="current"
+                                    {{ isset($data) && $data->l_Current == '' ? 'checked' : '' }}
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                <label for="level"
+                                    class="ms-2 text-sm font-medium text-gray-900">停用</label>
                             </div>
                         </div>
                     </div>
                     <div class="text-center">
                         @if (isset($data))
                             <button type="submit"
-                                class="text-white bg-yellow-400 hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-10 py-2 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                class="text-white bg-yellow-400 hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-10 py-2 text-center">
                                 編輯
                             </button>
                         @else
                             <button type="submit"
-                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-10 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm w-full sm:w-auto px-10 py-2 text-center">
                                 新增
                             </button>
                         @endif
