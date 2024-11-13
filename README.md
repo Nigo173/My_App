@@ -38,6 +38,7 @@ https://webmix.cc/lab/show_webcam_on_video_and_take_a_picture
 -controller
 --trade
 
-11.13 整日時段00~08 時間計算
--controller
---trade
+11.13
+-controller 
+--trade 整日時段00~08 時間計算
+--trade list 導向錯誤修正

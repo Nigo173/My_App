@@ -36,8 +36,8 @@ Route::middleware(AdminsMiddleware::class)
     ->group(function()
     {
     Route::get('/', [TradeController::class, 'index'])->name('trade');
-    Route::post('list', [TradeController::class, 'list'])->name('trade_list');
-    Route::post('create', [TradeController::class, 'create'])->name('trade_create');
+    Route::any('list', [TradeController::class, 'list'])->name('trade_list');
+    Route::any('create', [TradeController::class, 'create'])->name('trade_create');
 });
 
 Route::prefix('dashboard')

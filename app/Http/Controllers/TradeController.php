@@ -21,95 +21,98 @@ class TradeController extends Controller
 
     public function list(Request $request)
     {
-        try
+        if($request->isMethod('post'))
         {
-            if(isset($request->search) && $request->search != '')
+            try
             {
-                $m_Id = ($request->Id != "" ? " AND m_Id LIKE '".$request->Id."%'" : "");
-                $m_CardId = ($request->cardId != "" ? " AND m_CardId LIKE '".$request->cardId."%'" : "");
-                $m_Name = ($request->name != '' ? " AND m_Name LIKE '". $request->name ."%'" : "");
-                $m_Birthday = ($request->birthday != "" ? " AND m_Birthday LIKE '".$request->birthday."%'" : "");
-                $m_Phone = ($request->phone != "" ? " AND m_Phone LIKE '".$request->phone."%'" : "");
+                if(isset($request->search) && $request->search != '')
+                {
+                    $m_Id = ($request->Id != "" ? " AND m_Id LIKE '".$request->Id."%'" : "");
+                    $m_CardId = ($request->cardId != "" ? " AND m_CardId LIKE '".$request->cardId."%'" : "");
+                    $m_Name = ($request->name != '' ? " AND m_Name LIKE '". $request->name ."%'" : "");
+                    $m_Birthday = ($request->birthday != "" ? " AND m_Birthday LIKE '".$request->birthday."%'" : "");
+                    $m_Phone = ($request->phone != "" ? " AND m_Phone LIKE '".$request->phone."%'" : "");
 
-                $member = DB::select("SELECT * FROM member WHERE 1=1".$m_Id.$m_CardId.$m_Name.$m_Birthday.$m_Phone." LIMIT 10");
+                    $member = DB::select("SELECT * FROM member WHERE 1=1".$m_Id.$m_CardId.$m_Name.$m_Birthday.$m_Phone." LIMIT 10");
 
-                return view('trade', ['member' => $member]);
+                    return view('trade', ['member' => $member]);
+                }
+                else if(isset($request->searchMember) && $request->searchMember != '')
+                {
+                    // 最近消費紀錄
+                    $memberlabel = TradeModel::select('t_Print AS t_Count','t_mId','t_lTitle','created_at')
+                    ->where('t_mCardId', $request->searchMember)
+                    ->limit(5)->reorder('created_at', 'desc')->get();
+
+                    // 篩選客戶交易選項
+                    $currentlabel = DB::select("SELECT trade.*,".
+                    "(CASE WHEN IFNULL(label.l_Current,'') = 'day' THEN ".
+                    "   CASE WHEN trade.t_Print = 1 THEN ".
+                    "       CASE WHEN trade.created_at < CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00') AND DATE_FORMAT(NOW(), '%H%i') > 0800 THEN  ".
+                    "           0 ".
+                    "       ELSE ".
+                    "           CASE WHEN DATE_FORMAT(NOW(), '%H') < 8 THEN ".
+                    "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
+                    "           ELSE ".
+                    "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(trade.created_at, '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
+                    "           END ".
+                    "       END ".
+                    "   ELSE ".
+                    "       0 ".
+                    "   END ".
+                    "WHEN IFNULL(label.l_Current,'') = 'shift' THEN ".
+                    "   CASE WHEN DATE_FORMAT(trade.created_at, '%H') >= 8 AND DATE_FORMAT(trade.created_at, '%H') < 16 THEN ".
+                    "       CASE WHEN DATE_FORMAT(NOW(), '%H') >= 8 AND DATE_FORMAT(NOW(), '%H') < 16 AND DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
+                    "           CASE WHEN trade.t_Print = 1 THEN ".
+                    "            IF(DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00')), '%H%i') > 0800,0, ".
+                    "               DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00')), INTERVAL 1 MINUTE), '%H.%i')) ".
+                    "       ELSE 0 END ".
+                    "    ELSE 0 END ".
+                    "   WHEN DATE_FORMAT(trade.created_at, '%H') >= 16 AND DATE_FORMAT(trade.created_at, '%H') < 24 THEN ".
+                    "       CASE WHEN DATE_FORMAT(NOW(), '%H') >= 16 AND DATE_FORMAT(NOW(), '%H') < 24 AND DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
+                    "           CASE WHEN trade.t_Print = 1 THEN ".
+                    "               IF(DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 16:00:00')), '%H%i') > 0800,0, ".
+                    "                   DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 16:00:00')), INTERVAL 1 MINUTE), '%H.%i')) ".
+                    "           ELSE 0 END ".
+                    "       ELSE 0 END ".
+                    "   WHEN DATE_FORMAT(trade.created_at, '%H') >= 0 AND DATE_FORMAT(trade.created_at, '%H') < 8 THEN ".
+                    "       CASE WHEN DATE_FORMAT(NOW(), '%H') >= 0 AND DATE_FORMAT(NOW(), '%H') < 8 AND DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
+                    "           CASE WHEN trade.t_Print = 1 THEN ".
+                    "               IF(DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 00:00:00')), '%H%i') > 0800,0, ".
+                    "                   DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 00:00:00')), INTERVAL 1 MINUTE), '%H.%i')) ".
+                    "           ELSE 0 END ".
+                    "       ELSE 0 END ".
+                    "   END ".
+                    "END) AS 'countdownTime' ".
+                    "FROM trade trade ".
+                    "LEFT JOIN label label ON label.l_Id = trade.t_lId ".
+                    "WHERE trade.t_mCardId = '".$request->searchMember."' ".
+                    "and IFNULL(label.l_Current,'') IN ('day','shift')  ".
+                    "and DATE_FORMAT(trade.created_at, '%Y%m%d%H') > CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H'),' 08:00:00') ".
+                    "ORDER BY created_at DESC");
+
+                    // 搜尋會員
+                    $data = MemberModel::Where('m_CardId', $request->searchMember)->get()->first();
+                    // 標籤按鈕判斷是否停用
+                    $label = LabelModel::Where('l_Current', '<>', '')->limit(8)->get();
+                    return view('trade', ['data' => $data,'label' => $label,'memberlabel' => $memberlabel,'currentlabel' => $currentlabel]);
+                }
             }
-            else if(isset($request->searchMember) && $request->searchMember != '')
+            catch(Exception $e)
             {
-                // 最近消費紀錄
-                $memberlabel = TradeModel::select('t_Print AS t_Count','t_mId','t_lTitle','created_at')
-                ->where('t_mCardId', $request->searchMember)
-                ->limit(5)->reorder('created_at', 'desc')->get();
-
-                // 篩選客戶交易選項
-                $currentlabel = DB::select("SELECT trade.*,".
-                "(CASE WHEN IFNULL(label.l_Current,'') = 'day' THEN ".
-                "   CASE WHEN trade.t_Print = 1 THEN ".
-                "       CASE WHEN trade.created_at < CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00') AND DATE_FORMAT(NOW(), '%H%i') > 0800 THEN  ".
-                "           0 ".
-                "       ELSE ".
-                "           CASE WHEN DATE_FORMAT(NOW(), '%H') < 8 THEN ".
-                "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
-                "           ELSE ".
-                "               DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(trade.created_at, '%Y-%m-%d'),' 08:00:00')), '%H.%i') ".
-                "           END ".
-                "       END ".
-                "   ELSE ".
-                "       0 ".
-                "   END ".
-                "WHEN IFNULL(label.l_Current,'') = 'shift' THEN ".
-                "   CASE WHEN DATE_FORMAT(trade.created_at, '%H') >= 8 AND DATE_FORMAT(trade.created_at, '%H') < 16 THEN ".
-                "       CASE WHEN DATE_FORMAT(NOW(), '%H') >= 8 AND DATE_FORMAT(NOW(), '%H') < 16 AND DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
-                "           CASE WHEN trade.t_Print = 1 THEN ".
-                "            IF(DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00')), '%H%i') > 0800,0, ".
-                "               DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 08:00:00')), INTERVAL 1 MINUTE), '%H.%i')) ".
-                "       ELSE 0 END ".
-                "    ELSE 0 END ".
-                "   WHEN DATE_FORMAT(trade.created_at, '%H') >= 16 AND DATE_FORMAT(trade.created_at, '%H') < 24 THEN ".
-                "       CASE WHEN DATE_FORMAT(NOW(), '%H') >= 16 AND DATE_FORMAT(NOW(), '%H') < 24 AND DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
-                "           CASE WHEN trade.t_Print = 1 THEN ".
-                "               IF(DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 16:00:00')), '%H%i') > 0800,0, ".
-                "                   DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 16:00:00')), INTERVAL 1 MINUTE), '%H.%i')) ".
-                "           ELSE 0 END ".
-                "       ELSE 0 END ".
-                "   WHEN DATE_FORMAT(trade.created_at, '%H') >= 0 AND DATE_FORMAT(trade.created_at, '%H') < 8 THEN ".
-                "       CASE WHEN DATE_FORMAT(NOW(), '%H') >= 0 AND DATE_FORMAT(NOW(), '%H') < 8 AND DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(trade.created_at, '%Y%m%d') THEN ".
-                "           CASE WHEN trade.t_Print = 1 THEN ".
-                "               IF(DATE_FORMAT(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 00:00:00')), '%H%i') > 0800,0, ".
-                "                   DATE_FORMAT(DATE_ADD(TIMEDIFF(NOW(), CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'),' 00:00:00')), INTERVAL 1 MINUTE), '%H.%i')) ".
-                "           ELSE 0 END ".
-                "       ELSE 0 END ".
-                "   END ".
-                "END) AS 'countdownTime' ".
-                "FROM trade trade ".
-                "LEFT JOIN label label ON label.l_Id = trade.t_lId ".
-                "WHERE trade.t_mCardId = '".$request->searchMember."' ".
-                "and IFNULL(label.l_Current,'') IN ('day','shift')  ".
-                "and DATE_FORMAT(trade.created_at, '%Y%m%d%H') > CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d%H'),' 08:00:00') ".
-                "ORDER BY created_at DESC");
-
-                // 搜尋會員
-                $data = MemberModel::Where('m_CardId', $request->searchMember)->get()->first();
-                // 標籤按鈕判斷是否停用
-                $label = LabelModel::Where('l_Current', '<>', '')->limit(8)->get();
-                return view('trade', ['data' => $data,'label' => $label,'memberlabel' => $memberlabel,'currentlabel' => $currentlabel]);
+                return view('error');
             }
-        }
-        catch(Exception $e)
-        {
-            return view('error');
         }
         return view('trade');
     }
 
     public function create(Request $request)
     {
-        $request->except(['msg']);
-        $msg = '';
-
         if($request->isMethod('post'))
         {
+            $request->except(['msg']);
+            $msg = '';
+
             try
             {
                 $img = '';
