@@ -29,29 +29,31 @@
                 </span>
 
                 <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-
                     <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider"
                         class="text-white bg-blue-700 hover:bg-blue-800 font-medium text-sm px-3 py-2 text-center inline-flex items-center"
-                        type="button">{{ session('Name') }}<svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        type="button">
+                        {{ Session::has('Name') ? session('Name') : '...' }}
+                        <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 10 6">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="m1 1 4 4 4-4" />
                         </svg>
-
                     </button>
-                    <div id="dropdownDivider" class="z-10 hidden bg-white rounded-sm shadow-xl w-28">
+                    <div id="dropdownDivider" class="z-10 hidden bg-white rounded-sm shadow-xl w-24">
                         <ul class="px-2 py-2 text-sm text-gray-700 text-center">
-                            @if (intval(session('Level')) > 1)
-                                <li>
-                                    @if (Route::current()->getName() == 'settings')
-                                        <form action="{{ url('settings/admins/update') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="account" value="{{ session('Account') }}">
-                                            <a href="#" class="block px-4 py-3 hover:bg-gray-200"
-                                                onclick="this.closest('form').submit()" title="編 輯">編 輯</a>
-                                        </form>
-                                    @endif
-                                </li>
+                            @if (Session::has('Level'))
+                                @if (intval(session('Level')) > 1)
+                                    <li>
+                                        @if (Route::current()->getName() == 'settings')
+                                            <form action="{{ url('settings/admins/update') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="account" value="{{ session('Account') }}">
+                                                <a href="#" class="block px-4 py-3 hover:bg-gray-200"
+                                                    onclick="this.closest('form').submit()" title="編 輯">編 輯</a>
+                                            </form>
+                                        @endif
+                                    </li>
+                                @endif
                             @endif
                             <li>
                                 <a href="{{ route('logout') }}" class="block px-4 py-3 hover:bg-gray-200"
@@ -73,22 +75,22 @@
                 </div>
                 <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
                     <ul
-                        class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                        class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
                         <li>
                             <a href="{{ route('member') }}"
-                                class="block py-2 px-3 md:p-0 hover:text-blue-500 {{ Request::segment(1) == 'member' ? 'text-blue-500' : '' }}">會員管理</a>
+                                class="block py-2 px-3 md:p-0 hover:text-blue-500 @if (Request::segment(1) == 'member') text-blue-500 @endif">會員管理</a>
                         </li>
                         <li>
                             <a href="{{ route('dashboard') }}"
-                                class="block py-2 px-3 md:p-0 hover:text-blue-500 {{ Request::segment(1) == 'dashboard' ? 'text-blue-500' : '' }}">來店統計</a>
+                                class="block py-2 px-3 md:p-0 hover:text-blue-500 @if (Request::segment(1) == 'dashboard') text-blue-500 @endif">來店統計</a>
                         </li>
                         <li>
                             <a href="{{ route('trade') }}"
-                                class="block py-2 px-3 md:p-0 hover:text-blue-500 {{ Request::segment(1) == 'trade' ? 'text-blue-500' : '' }}">點餐系統</a>
+                                class="block py-2 px-3 md:p-0 hover:text-blue-500 @if (Request::segment(1) == 'trade') text-blue-500 @endif">點餐系統</a>
                         </li>
                         <li>
                             <a href="{{ route('settings') }}"
-                                class="block py-2 px-3 md:p-0 hover:text-blue-500 {{ Request::segment(1) == 'settings' ? 'text-blue-500' : '' }}">系統管理</a>
+                                class="block py-2 px-3 md:p-0 hover:text-blue-500 @if (Request::segment(1) == 'settings') text-blue-500 @endif">系統管理</a>
                         </li>
                     </ul>
                 </div>

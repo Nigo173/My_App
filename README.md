@@ -1,10 +1,8 @@
 https://www.youtube.com/watch?v=R00eTP8BiVI&list=PL38wFHH4qYZXH8Gb7PIbmyjdsWdEJLImp&index=3
 
 
-
 upload img
 https://www.youtube.com/watch?v=xqm-HQZpnIE&t=1s
-
 
 
 hosting
@@ -42,3 +40,11 @@ https://webmix.cc/lab/show_webcam_on_video_and_take_a_picture
 -controller 
 --trade 整日時段00~08 時間計算
 --trade list 導向錯誤修正
+
+11.14
+-database
+--migrate admins增加shiftx欄位
+-controller
+--admins 更新 shift
+-view 
+--all 更新所有view、並移除dark class

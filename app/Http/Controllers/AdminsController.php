@@ -80,6 +80,7 @@ class AdminsController extends Controller
                         'a_Permissions'=>$new_Permissions,
                         'a_Level'=>$request->level,
                         'a_State'=>$request->state,
+                        'a_Shift'=>$request->shift
                     ]);
 
                     if($data->save())
@@ -159,6 +160,7 @@ class AdminsController extends Controller
                             'a_Permissions'=>$new_Permissions,
                             'a_Level'=>$request->level,
                             'a_State'=>$request->state,
+                            'a_Shift'=>$request->shift
                         ]);
                     }
                     else
@@ -169,6 +171,7 @@ class AdminsController extends Controller
                             'a_Permissions'=>$new_Permissions,
                             'a_Level'=>$request->level,
                             'a_State'=>$request->state,
+                            'a_Shift'=>$request->shift
                         ]);
                     }
 
@@ -184,6 +187,8 @@ class AdminsController extends Controller
                     if(session('Account') == $request->account)
                     {
                         $request->session()->put('Name', $request->name);
+                        $request->session()->put('Mac', $request->a_Mac);
+                        $request->session()->put('Shift', $request->a_Shift);
                     }
                 }
                 catch(Exception $e)

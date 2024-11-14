@@ -45,6 +45,7 @@ class LoginController extends Controller
                 $request->session()->put('Mac', $data->a_Mac);
                 $request->session()->put('Permissions', $data->a_Permissions);
                 $request->session()->put('Level', $data->a_Level);
+                $request->session()->put('Shift', $data->a_Shift);
 
                 if($data->a_State == '0')
                 {

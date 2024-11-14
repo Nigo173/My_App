@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('admins', function (Blueprint $table) {
-            $table->string('a_Shift', 20)->default('dayShift')->comment('班次')->nullable()->after('a_State');
+            $table->string('a_Shift', 20)->default('早班')->comment('班次')->nullable()->after('a_State');
         });
     }
 

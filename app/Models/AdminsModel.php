@@ -16,6 +16,7 @@ class AdminsModel extends Model
                             'a_Level',
                             'a_Mac',
                             'a_State',
+                            'a_Shift',
                             'created_at',
                             'updated_at'
                             ];

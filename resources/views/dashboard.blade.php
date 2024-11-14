@@ -22,22 +22,18 @@
                     <select name="selectShift"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block">
                         <option value="" selected>班查詢</option>
-                        <option value="早班"
-                            {{ isset($_GET['selectShift']) && $_GET['selectShift'] == '早班' ? 'selected' : '' }}>早班
+                        <option value="早班" @if (isset($_GET['selectShift']) && $_GET['selectShift'] == '早班') selected @endif>早班
                         </option>
-                        <option value="中班"
-                            {{ isset($_GET['selectShift']) && $_GET['selectShift'] == '中班' ? 'selected' : '' }}>中班
+                        <option value="中班" @if (isset($_GET['selectShift']) && $_GET['selectShift'] == '中班') selected @endif>中班
                         </option>
-                        <option value="晚班"
-                            {{ isset($_GET['selectShift']) && $_GET['selectShift'] == '晚班' ? 'selected' : '' }}>晚班
+                        <option value="晚班" @if (isset($_GET['selectShift']) && $_GET['selectShift'] == '晚班') selected @endif>晚班
                         </option>
                     </select>
                     <select name="selectYear" onchange="setLastDate()"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block">
                         <option value="" selected>年查詢</option>
                         @for ($i = ((int) date('Y')) - 1913; $i < ((int) date('Y')) - 1908; $i++)
-                            <option value="{{ $i }}"
-                                {{ isset($_GET['selectYear']) && $_GET['selectYear'] == $i ? 'selected' : '' }}>
+                            <option value="{{ $i }}" @if (isset($_GET['selectYear']) && $_GET['selectYear'] == $i) selected @endif>
                                 {{ $i . '年' }}</option>
                         @endfor
                     </select>
@@ -45,8 +41,7 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block">
                         <option value="" selected>月查詢</option>
                         @for ($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}"
-                                {{ isset($_GET['selectMonth']) && $_GET['selectMonth'] == $i ? 'selected' : '' }}>
+                            <option value="{{ $i }}" @if (isset($_GET['selectMonth']) && $_GET['selectMonth'] == $i) selected @endif>
                                 {{ $i . '月' }}</option>
                         @endfor
                     </select>
@@ -322,9 +317,9 @@
     <div id="popup-modal" tabindex="-1"
         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow w-96 h-96 dark:bg-gray-700">
+            <div class="relative bg-white rounded-lg shadow w-96 h-96">
                 <button type="button"
-                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                     data-modal-hide="popup-modal">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 14 14">
@@ -341,9 +336,9 @@
     <div id="popup-label-modal" tabindex="-1"
         class="hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div class="relative bg-white rounded-lg shadow">
                 <button type="button"
-                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                     data-modal-hide="popup-label-modal">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 14 14">
@@ -353,20 +348,20 @@
                     <span class="sr-only">Close modal</span>
                 </button>
                 <div class="p-4 md:p-5 text-center">
-                    <h5 id="label-title" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    <h5 id="label-title" class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
                     </h5>
-                    <h6 id="label-TitleOne" class="text-lg text-gray-700 dark:text-gray-400">
+                    <h6 id="label-TitleOne" class="text-lg text-gray-700">
                     </h6>
                     <div class="grid grid-cols-2">
-                        <p id="label-TitleTwo" class="text-lg text-gray-700 dark:text-gray-400"></p>
-                        <p id="label-TitleThree" class="text-lg text-gray-700 dark:text-gray-400"></p>
+                        <p id="label-TitleTwo" class="text-lg text-gray-700"></p>
+                        <p id="label-TitleThree" class="text-lg text-gray-700"></p>
                     </div>
                     <div class="grid grid-cols-2">
-                        <p id="label-MId" class="text-lg text-gray-700 dark:text-gray-400"></p>
-                        <p id="label-MName" class="text-lg text-gray-700 dark:text-gray-400"></p>
+                        <p id="label-MId" class="text-lg text-gray-700"></p>
+                        <p id="label-MName" class="text-lg text-gray-700"></p>
                     </div>
                     <div class="grid grid-cols-1">
-                        <p id="label-No" class="text-lg text-gray-700 dark:text-gray-400"></p>
+                        <p id="label-No" class="text-lg text-gray-700"></p>
                     </div>
                 </div>
             </div>
@@ -376,9 +371,9 @@
     <div id="popup-modal-confirm" tabindex="-1"
         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div class="relative bg-white rounded-lg shadow">
                 <button type="button"
-                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                     data-modal-hide="popup-modal-confirm">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 14 14">
@@ -388,7 +383,7 @@
                     <span class="sr-only">Close modal</span>
                 </button>
                 <div class="p-4 md:p-5 text-center">
-                    <svg class="mx-auto mb-4 text-red-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                    <svg class="mx-auto mb-4 text-red-400 w-12 h-12" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
