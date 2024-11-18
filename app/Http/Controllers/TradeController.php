@@ -112,91 +112,99 @@ class TradeController extends Controller
         {
             $request->except(['msg']);
             $msg = '';
+            $shift = $this->check_Shift($request->lCurrent);
 
-            try
+            if($shift == "")
             {
-                $img = '';
-
-                if($request->mImg != '')
+                try
                 {
-                    // $img = $this->get_Image($request->mImg);
-                    // if(strlen($img) < 10)
-                    // {
-                    //     $msg = "圖片大於2MB、請壓縮圖片";
-                    //     return response()->json(['action' => 'list','msg' => $msg]);
-                    // }
+                    $img = '';
 
-                    $tId = date('Ymdhis', time()).$request->Id;
-                    $tNo = date('Ymd', time()).$request->Id.' '.date('h:i', time());
-                    // return response()->json(['action' => $request->birthday. '='.$request->phone]);
-                    // return response()->json(['action' => 'list','msg' => 'birthday ='.$request->birthday.' , t_No: '.$tNo.' , '
-                    // .$request->lTitle.' , t_lId:'.$request->lId.' , t_lTitle: '.$request->lTitle.' , t_mId = '.$request->Id. ' , t_mCardId:'.$request->cardId. ', name'.$request->name]);
-
-                    $data = TradeModel::create([
-                        't_Id'=>$tId,
-                        't_No'=>$tNo,
-                        't_Print'=>1,
-                        't_aId'=>$request->session()->get('Account'),
-                        't_aName'=>$request->session()->get('Name'),
-                        't_lId'=>$request->lId,
-                        't_lTitle'=>$request->lTitle,
-                        't_mId'=>$request->Id,
-                        't_mCardId'=>$request->cardId,
-                        't_mName'=>$request->name,
-                        't_mBirthday'=>$request->birthday,
-                        't_mPhone'=>$request->phone,
-                        't_mImg'=>$request->mImg
-                    ]);
-
-                    $msg = "交易成功";
-                    $tId = '';
-
-                    if($data->save())
+                    if($request->mImg != '')
                     {
-                        $tId = $data->id;
+                        // $img = $this->get_Image($request->mImg);
+                        // if(strlen($img) < 10)
+                        // {
+                        //     $msg = "圖片大於2MB、請壓縮圖片";
+                        //     return response()->json(['action' => 'list','msg' => $msg]);
+                        // }
 
-                        // 更新會員備註
-                        $member = MemberModel::where('m_Id', $request->Id)->update([
-                            'm_Remark'=>$request->remark
+                        $tId = date('YmdHis', time()).$request->Id;
+                        $tNo = date('Ymd', time()).$request->Id.' '.date('H:i', time());
+                        // return response()->json(['action' => $request->birthday. '='.$request->phone]);
+                        // return response()->json(['action' => 'list','msg' => 'birthday ='.$request->birthday.' , t_No: '.$tNo.' , '
+                        // .$request->lTitle.' , t_lId:'.$request->lId.' , t_lTitle: '.$request->lTitle.' , t_mId = '.$request->Id. ' , t_mCardId:'.$request->cardId. ', name'.$request->name]);
+
+                        $data = TradeModel::create([
+                            't_Id'=>$tId,
+                            't_No'=>$tNo,
+                            't_Print'=>1,
+                            't_aId'=>$request->session()->get('Account'),
+                            't_aName'=>$request->session()->get('Name'),
+                            't_lId'=>$request->lId,
+                            't_lTitle'=>$request->lTitle,
+                            't_mId'=>$request->Id,
+                            't_mCardId'=>$request->cardId,
+                            't_mName'=>$request->name,
+                            't_mBirthday'=>$request->birthday,
+                            't_mPhone'=>$request->phone,
+                            't_mImg'=>$request->mImg
                         ]);
 
-                        if(isset($member->m_Remark))
+                        $msg = "交易成功";
+                        $tId = '';
+
+                        if($data->save())
                         {
-                            $msg .= ' 會員備註:'.$request->remark;
+                            $tId = $data->id;
+
+                            // 更新會員備註
+                            $member = MemberModel::where('m_Id', $request->Id)->update([
+                                'm_Remark'=>$request->remark
+                            ]);
+
+                            if(isset($member->m_Remark))
+                            {
+                                $msg .= ' 會員備註:'.$request->remark;
+                            }
                         }
+                        else
+                        {
+                            $msg = "交易失敗";
+                        }
+
+                        $this->create_Log($request, $msg);
+
+                        // 帶入資料 trade
+                        $trade = '';
+
+                        if($tId != '')
+                        {
+                            $trade = TradeModel::where('id', $tId)->get()->first();
+                            $trade = json_encode($trade);
+                        }
+
+                        // 帶入資料 label
+                        $label = '';
+
+                        if($request->lId != '')
+                        {
+                            $label = LabelModel::where('l_Id', $request->lId)->get()->first();
+                            $label = json_encode($label);
+                        }
+
+                        return response()->json(['action' => 'list','msg' => $msg,'trade' => $trade,'label' => $label]);
                     }
-                    else
-                    {
-                        $msg = "交易失敗";
-                    }
-
-                    $this->create_Log($request, $msg);
-
-                    // 帶入資料 trade
-                    $trade = '';
-
-                    if($tId != '')
-                    {
-                        $trade = TradeModel::where('id', $tId)->get()->first();
-                        $trade = json_encode($trade);
-                    }
-
-                    // 帶入資料 label
-                    $label = '';
-
-                    if($request->lId != '')
-                    {
-                        $label = LabelModel::where('l_Id', $request->lId)->get()->first();
-                        $label = json_encode($label);
-                    }
-
-                    return response()->json(['action' => 'list','msg' => $msg,'trade' => $trade,'label' => $label]);
+                    return response()->json(['action' => 'list','msg' => '圖片異常']);
                 }
-                return response()->json(['action' => 'list','msg' => '圖片異常']);
+                catch(Exception $e)
+                {
+                    return view('error');
+                }
             }
-            catch(Exception $e)
+            else
             {
-                return view('error');
+                return response()->json(['action' => 'list','msg' => '交班時段'.$shift.'、無法下單']);
             }
         }
         return view('trade');
@@ -216,6 +224,34 @@ class TradeController extends Controller
         }
 
         return "data:image/png;base64,". $encode_Img;
+    }
+
+    private function check_Shift(string $lCurrent)
+    {
+        $time = date('Hi');
+
+        if(date('H') == 00)
+        {
+            $time = date('24i');
+        }
+
+        if(($lCurrent == 'day' || $lCurrent == 'shift') && intval(session('Level')) < 2)
+        {
+            if($time > 1500 && $time < 1600)
+            {
+                return "1500~1600";
+            }
+            else if($time > 2300 && $time < 2400)
+            {
+                return "2300~2400";
+            }
+            else  if($time > 700 && $time < 800)
+            {
+                return "0700~0800";
+            }
+        }
+
+        return "";
     }
 
     private function create_Log(Request $request, string $note)

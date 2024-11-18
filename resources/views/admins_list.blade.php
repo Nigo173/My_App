@@ -43,6 +43,9 @@
                                 電腦
                             </th> --}}
                             <th scope="col">
+                                班別
+                            </th>
+                            <th scope="col">
                                 狀態
                             </th>
                             <th scope="col">
@@ -76,6 +79,9 @@
                                 {{-- <td>
                                     {{ $admins->a_Mac }}
                                 </td> --}}
+                                <td>
+                                    {{ $admins->a_Shift }}
+                                </td>
                                 <td>
                                     @if ($admins->a_State == '1')
                                         正常

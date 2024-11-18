@@ -43,8 +43,14 @@ https://webmix.cc/lab/show_webcam_on_video_and_take_a_picture
 
 11.14
 -database
---migrate admins增加shiftx欄位
+--migrate admins增加shift欄位
 -controller
 --admins 更新 shift
 -view 
 --all 更新所有view、並移除dark class
+
+11.19
+-controller
+--trade 交班無法下單
+-view 
+--admins 顯示班別

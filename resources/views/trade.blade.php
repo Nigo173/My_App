@@ -134,9 +134,12 @@
                 <p class="font-bold text-center w-28">標籤機連結</p>
 
                 <div class=" grid grid-cols-4 pt-2 justify-items-center">
+
                     @if (isset($label))
+
                         @foreach ($label as $labels)
                             @php
+
                                 $CountdownTimeArray = [];
 
                                 if (isset($currentlabel)) {
@@ -169,6 +172,7 @@
                                     required />
                                 <input type="hidden" name="lId" value="{{ $labels->l_Id }}" required />
                                 <input type="hidden" name="lTitle" value="{{ $labels->l_Title }}" required />
+                                <input type="hidden" name="lCurrent" value="{{ $labels->l_Current }}" required />
 
                                 @if ($labels->l_Current == 'day')
                                     <div class="relative">
@@ -182,7 +186,7 @@
                                                 class="absolute inline-flex items-center justify-center w-9 h-5 text-xs font-bold text-white bg-yellow-400 rounded -bottom-2 -end-2">
                                                 {{ $CountdownTimeArray[$labels->l_Id] }} </div>
                                         @else
-                                            <input type="submit"
+                                            <input type="submit" id="btn-day"
                                                 class="cursor-pointer text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                                 value="{{ $labels->l_Title }}" />
                                         @endif
@@ -199,7 +203,7 @@
                                                 class="absolute inline-flex items-center justify-center w-9 h-5 text-xs font-bold text-white bg-yellow-400 rounded -bottom-2 -end-2">
                                                 {{ $CountdownTimeArray[$labels->l_Id] }}</div>
                                         @else
-                                            <input type="submit"
+                                            <input type="submit" id="btn-shift"
                                                 class="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-gray-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                                 value="{{ $labels->l_Title }}" />
                                         @endif
