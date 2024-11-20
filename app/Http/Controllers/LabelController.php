@@ -104,7 +104,8 @@ class LabelController extends Controller
                     'l_TitleTwo'=>$request->titleTwo,
                     'l_TitleThree'=>$request->titleThree,
                     'l_TitleFour'=>$request->titleFour,
-                    'l_Current'=>$request->current
+                    'l_Current'=>$request->current,
+                    'l_State'=>$request->state
                 ]);
 
                 if($data->save())
@@ -145,7 +146,8 @@ class LabelController extends Controller
                     'l_TitleTwo'=>$request->titleTwo,
                     'l_TitleThree'=>$request->titleThree,
                     'l_TitleFour'=>$request->titleFour,
-                    'l_Current'=>$request->current
+                    'l_Current'=>$request->current,
+                    'l_State'=>$request->state
                 ]);
 
                 $msg = '編輯標籤成功';

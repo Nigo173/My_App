@@ -51,6 +51,8 @@ https://webmix.cc/lab/show_webcam_on_video_and_take_a_picture
 
 11.19
 -controller
---trade 交班無法下單
+--trade 1.交班無法下單 2.判斷標籤狀態
+--label 新增狀態
 -view 
 --admins 顯示班別
+--label 標籤狀態

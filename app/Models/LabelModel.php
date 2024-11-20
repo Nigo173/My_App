@@ -17,6 +17,7 @@ class LabelModel extends Model
                             'l_TitleThree',
                             'l_TitleFour',
                             'l_Current',
+                            'l_State',
                             'created_at',
                             'updated_at'
                             ];

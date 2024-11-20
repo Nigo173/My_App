@@ -19,8 +19,7 @@
                                 placeholder="關鍵字 帳號 或 姓名" />
                             <button type="submit"
                                 class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
-                                data-modal-target="Modal"
-                                data-modal-toggle="Modal">搜尋</button>
+                                data-modal-target="Modal" data-modal-toggle="Modal">搜尋</button>
                         </div>
                     </form>
                     @if (isset($label))
@@ -69,8 +68,7 @@
                     <tbody>
                         @if (isset($label))
                             @foreach ($label as $labels)
-                                <tr
-                                    class="bg-white border-b hover:bg-gray-200">
+                                <tr class="bg-white border-b hover:bg-gray-200">
                                     <td class="px-6 py-4">
                                         {{ $labels->l_Title }}
                                     </td>
@@ -103,13 +101,15 @@
                                                     class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full -top-2 -end-2">
                                                 </div>
                                                 無限制
-                                            @elseif($labels->l_Current == '')
-                                                <div
-                                                    class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full -top-2 -end-2">
-                                                </div>
-                                                停用
                                             @endif
                                         </div>
+                                    </td>
+                                    <td>
+                                        @if ($labels->l_State == '1')
+                                            啟用
+                                        @else
+                                            <span class="text-red-600">停用</span>
+                                        @endif
                                     </td>
                                     <td>
                                         {{ $labels->created_at }}
@@ -185,29 +185,34 @@
                                 <input id="state" type="radio" value="all" name="current"
                                     {{ isset($data) && $data->l_Current == 'all' ? 'checked' : 'checked' }}
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                <label for="state"
-                                    class="ms-2 text-sm font-medium text-gray-900">無限制</label>
+                                <label for="state" class="ms-2 text-sm font-medium text-gray-900">無限制</label>
                             </div>
                             <div class="flex items-center me-4">
                                 <input id="state" type="radio" value="shift" name="current"
                                     {{ isset($data) && $data->l_Current == 'shift' ? 'checked' : '' }}
                                     class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2">
-                                <label for="state"
-                                    class="ms-2 text-sm font-medium text-gray-900">班次限制</label>
+                                <label for="state" class="ms-2 text-sm font-medium text-gray-900">班次限制</label>
                             </div>
                             <div class="flex items-center me-4">
                                 <input id="state" type="radio" value="day" name="current"
                                     {{ isset($data) && $data->l_Current == 'day' ? 'checked' : '' }}
                                     class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 focus:ring-2">
-                                <label for="level"
-                                    class="ms-2 text-sm font-medium text-gray-900">整日限一次</label>
+                                <label for="level" class="ms-2 text-sm font-medium text-gray-900">整日限一次</label>
+                            </div>
+                        </div>
+                        {{-- 狀態 --}}
+                        <div class="flex justify-around py-4 px-0 w-full text-sm">
+                            <div class="flex items-center me-4">
+                                <input id="state" type="radio" value="1" name="state"
+                                    {{ isset($data) && $data->l_State == '1' ? 'checked' : 'checked' }}
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                <label for="state" class="ms-2 text-sm font-medium text-gray-900">啟用</label>
                             </div>
                             <div class="flex items-center me-4">
-                                <input id="state" type="radio" value="" name="current"
-                                    {{ isset($data) && $data->l_Current == '' ? 'checked' : '' }}
+                                <input id="state" type="radio" value="0" name="state"
+                                    {{ isset($data) && $data->l_State == '0' ? 'checked' : '' }}
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                <label for="level"
-                                    class="ms-2 text-sm font-medium text-gray-900">停用</label>
+                                <label for="state" class="ms-2 text-sm font-medium text-gray-900">停用</label>
                             </div>
                         </div>
                     </div>
@@ -252,8 +257,7 @@
                         cache: false,
                         processData: false,
                         success: function(response) {
-                            if (response.msg.indexOf('成功') > -1) {
-                            } else {
+                            if (response.msg.indexOf('成功') > -1) {} else {
                                 $('#toast-success').removeClass('text-green-500');
                                 $('#toast-success').addClass('text-red-500');
                                 $('#success-path').attr('d',

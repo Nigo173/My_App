@@ -94,7 +94,7 @@ class TradeController extends Controller
                     // 搜尋會員
                     $data = MemberModel::Where('m_CardId', $request->searchMember)->get()->first();
                     // 標籤按鈕判斷是否停用
-                    $label = LabelModel::Where('l_Current', '<>', '')->limit(8)->get();
+                    $label = LabelModel::Where('l_State', '1')->limit(8)->get();
                     return view('trade', ['data' => $data,'label' => $label,'memberlabel' => $memberlabel,'currentlabel' => $currentlabel]);
                 }
             }
